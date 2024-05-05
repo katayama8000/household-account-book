@@ -2,12 +2,34 @@ import { StyleSheet } from 'react-native';
 
 import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
+import { Link } from 'expo-router';
 
 export default function TabTwoScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Tab Two</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+      <Text>hello</Text>
+      <Link
+        href="/sample"
+        style={{ color: 'blue', fontSize: 20, marginTop: 20 }}>
+        sample
+      </Link>
+      <Link
+        href="/auth/sign-in"
+        style={{ color: 'blue', fontSize: 20, marginTop: 20 }}>
+        sign-in
+      </Link>
+      <Link
+        href="/auth/sign-up"
+        style={{ color: 'blue', fontSize: 20, marginTop: 20 }}>
+        sign-up
+      </Link>
+
+      <View
+        style={styles.separator}
+        lightColor="#eee"
+        darkColor="rgba(255,255,255,0.1)"
+      />
       <EditScreenInfo path="app/(tabs)/two.tsx" />
     </View>
   );
