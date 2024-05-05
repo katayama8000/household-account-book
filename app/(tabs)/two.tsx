@@ -14,6 +14,17 @@ export default function TabTwoScreen() {
         style={{ color: 'blue', fontSize: 20, marginTop: 20 }}>
         sample
       </Link>
+      <Link
+        href="/auth/sign-in"
+        style={{ color: 'blue', fontSize: 20, marginTop: 20 }}>
+        sign-in
+      </Link>
+      <Link
+        href="/auth/sign-up"
+        style={{ color: 'blue', fontSize: 20, marginTop: 20 }}>
+        sign-up
+      </Link>
+
       <View
         style={styles.separator}
         lightColor="#eee"
