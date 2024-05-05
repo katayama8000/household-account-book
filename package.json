@@ -10,7 +10,9 @@
     "web": "expo start --web",
     "test": "jest --watchAll",
     "format": "yarn biome format --write .",
-    "format:check": "yarn biome format ."
+    "format:check": "yarn biome format .",
+    "lint": "yarn biome check --apply .",
+    "lint:check": "yarn biome check ."
   },
   "jest": {
     "preset": "jest-expo"
