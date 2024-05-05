@@ -1,12 +1,12 @@
-import { View, Text } from '@/components/Themed';
-import { supabase } from '@/lib/supabase';
-import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { Alert, Button, TextInput, StyleSheet } from 'react-native';
+import { View, Text } from "@/components/Themed";
+import { supabase } from "@/lib/supabase";
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
+import { Alert, Button, TextInput, StyleSheet } from "react-native";
 
 const SignInScreen = () => {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const { push } = useRouter();
 
@@ -20,8 +20,8 @@ const SignInScreen = () => {
     if (error) {
       Alert.alert(error.message);
     } else {
-      Alert.alert('Signed in!');
-      push('/sample');
+      Alert.alert("Signed in!");
+      push("/sample");
     }
     setLoading(false);
   };
@@ -33,8 +33,8 @@ const SignInScreen = () => {
           onChangeText={(text) => setEmail(text)}
           value={email}
           placeholder="email@address.com"
-          autoCapitalize={'none'}
-          style={{ color: 'white' }}
+          autoCapitalize={"none"}
+          style={{ color: "white" }}
         />
       </View>
       <View style={styles.verticallySpaced}>
@@ -43,16 +43,12 @@ const SignInScreen = () => {
           value={password}
           secureTextEntry={true}
           placeholder="Password"
-          autoCapitalize={'none'}
-          style={{ color: 'white' }}
+          autoCapitalize={"none"}
+          style={{ color: "white" }}
         />
       </View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Button
-          title="Sign in"
-          disabled={loading}
-          onPress={() => signInWithEmail()}
-        />
+        <Button title="Sign in" disabled={loading} onPress={() => signInWithEmail()} />
       </View>
     </View>
   );
@@ -66,7 +62,7 @@ const styles = StyleSheet.create({
   verticallySpaced: {
     paddingTop: 4,
     paddingBottom: 4,
-    alignSelf: 'stretch',
+    alignSelf: "stretch",
   },
   mt20: {
     marginTop: 20,
