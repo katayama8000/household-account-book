@@ -1,7 +1,7 @@
-import { View, Text } from "@/components/Themed";
+import { Text, View } from "@/components/Themed";
 import { supabase } from "@/lib/supabase";
 import React, { useState } from "react";
-import { Alert, Button, TextInput, StyleSheet } from "react-native";
+import { Alert, Button, StyleSheet, TextInput } from "react-native";
 
 const SignUpScreen = () => {
   const [email, setEmail] = useState<string>("");
