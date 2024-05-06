@@ -12,10 +12,10 @@ export default function TabTwoScreen() {
       <Link href="/sample" style={{ color: "blue", fontSize: 20, marginTop: 20 }}>
         sample
       </Link>
-      <Link href="/auth/sign-in" style={{ color: "blue", fontSize: 20, marginTop: 20 }}>
+      <Link href="/sign-in" style={{ color: "blue", fontSize: 20, marginTop: 20 }}>
         sign-in
       </Link>
-      <Link href="/auth/sign-up" style={{ color: "blue", fontSize: 20, marginTop: 20 }}>
+      <Link href="/sign-up" style={{ color: "blue", fontSize: 20, marginTop: 20 }}>
         sign-up
       </Link>
 
