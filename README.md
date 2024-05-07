@@ -6,5 +6,4 @@
 - Expo
 - Expo Router
 - Supabase
-- (UI Library): I am serching for a good UI library. [tamagUI
-  ](https://tamagui.dev/) is a candidate.
+- Biome
