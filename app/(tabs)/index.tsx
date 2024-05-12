@@ -26,6 +26,9 @@ export default function HomeScreen() {
         <Link href="/modal" style={{ color: "blue", fontSize: 20, marginTop: 20 }}>
           modal
         </Link>
+        <Link href="/sample" style={{ color: "blue", fontSize: 20, marginTop: 20 }}>
+          sample
+        </Link>
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Step 1: Try it</ThemedText>
