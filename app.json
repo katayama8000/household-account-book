@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "account-book",
-    "slug": "account-book",
+    "name": "household-account-book",
+    "slug": "household-account-book",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
