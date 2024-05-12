@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "household-account-book",
-    "slug": "household-account-book",
+    "name": "account-book",
+    "slug": "account-book",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -12,7 +12,6 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
