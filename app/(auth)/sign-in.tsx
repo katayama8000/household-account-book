@@ -1,8 +1,7 @@
-import { View } from "@/components/Themed";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Alert, Button, StyleSheet, TextInput } from "react-native";
+import { Alert, Button, StyleSheet, TextInput, View } from "react-native";
 
 const SignInScreen = () => {
   const [email, setEmail] = useState<string>("");
