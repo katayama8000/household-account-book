@@ -27,7 +27,7 @@ export default function HomeScreen() {
           padding: 4,
         }}
         onPress={() => {
-          push("/modal");
+          push("/addItemModal");
         }}
       >
         <AntDesign name="pluscircleo" size={24} color="white" />
