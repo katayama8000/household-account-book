@@ -42,7 +42,20 @@ export default function HomeScreen() {
         </Text>
       </TouchableOpacity>
 
-      <FlatList data={[1, 2, 3]} renderItem={({ item }) => <Item />} />
+      <FlatList
+        data={[1, 2, 3, 4, 5, 6, 7]}
+        renderItem={({ item }) => <Item />}
+        keyExtractor={(item) => item.toString()}
+        ItemSeparatorComponent={() => <View style={{ height: 4 }} />}
+        ListEmptyComponent={() => <Text>No items</Text>}
+        contentContainerStyle={{ paddingBottom: 100 }}
+        onRefresh={(): void => {
+          // get items from server
+          console.log("refresh");
+        }}
+        // set refreshing to true when loading items from server
+        refreshing={false}
+      />
     </View>
   );
 }
