@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Platform, StyleSheet, Text, TextInput, View, SafeAreaView, Button, TouchableOpacity } from "react-native";
 
-export default function AddItemModalScreen() {
+export default function ItemModalScreen() {
   const [item, setItem] = useState<string | null>(null);
   const [price, setPrice] = useState<number | null>(null);
   const [count, setCount] = useState<number | null>(null);

@@ -1,6 +1,8 @@
-import { View, Text, FlatList, TouchableOpacity } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, Alert } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import type { ExpoRouter } from "expo-router/types/expo-router";
+import type { FC } from "react";
 
 export default function HomeScreen() {
   const { push } = useRouter();
@@ -27,7 +29,7 @@ export default function HomeScreen() {
           padding: 4,
         }}
         onPress={() => {
-          push("/addItemModal");
+          push("/itemModal");
         }}
       >
         <AntDesign name="pluscircleo" size={24} color="white" />
@@ -44,7 +46,7 @@ export default function HomeScreen() {
 
       <FlatList
         data={[1, 2, 3, 4, 5, 6, 7]}
-        renderItem={({ item }) => <Item />}
+        renderItem={({ item }) => <Item routerPush={push} />}
         keyExtractor={(item) => item.toString()}
         ItemSeparatorComponent={() => <View style={{ height: 4 }} />}
         ListEmptyComponent={() => <Text>No items</Text>}
@@ -60,7 +62,11 @@ export default function HomeScreen() {
   );
 }
 
-const Item = () => {
+type ItemProps = {
+  routerPush: (href: ExpoRouter.Href) => void;
+};
+
+const Item: FC<ItemProps> = ({ routerPush }) => {
   return (
     <View
       style={{
@@ -96,7 +102,9 @@ const Item = () => {
             borderRadius: 5,
             marginRight: 8,
           }}
-          onPress={() => {}}
+          onPress={() => {
+            routerPush("/itemModal");
+          }}
         >
           <Text style={{ color: "#fff" }}>Edit</Text>
         </TouchableOpacity>
@@ -108,9 +116,63 @@ const Item = () => {
             backgroundColor: "#ff6347",
             borderRadius: 5,
           }}
-          onPress={() => {}}
+          onPress={() => {
+            Alert.alert("Alert Title", "My Alert Msg", [
+              {
+                text: "OK",
+                onPress: () => {},
+              },
+              { text: "No", onPress: () => {} },
+            ]);
+          }}
         >
           <Text style={{ color: "#fff" }}>Delete</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
+const DeleteModal: FC = () => {
+  return (
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: "#282c34",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Text style={{ color: "#fff", fontSize: 24 }}>Delete Item?</Text>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-around",
+          width: "100%",
+          marginTop: 24,
+        }}
+      >
+        <TouchableOpacity
+          style={{
+            paddingVertical: 8,
+            paddingHorizontal: 16,
+            backgroundColor: "#4caf50",
+            borderRadius: 5,
+          }}
+          onPress={() => {}}
+        >
+          <Text style={{ color: "#fff" }}>Yes</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            paddingVertical: 8,
+            paddingHorizontal: 16,
+            backgroundColor: "#ff6347",
+            borderRadius: 5,
+          }}
+          onPress={() => {}}
+        >
+          <Text style={{ color: "#fff" }}>No</Text>
         </TouchableOpacity>
       </View>
     </View>
