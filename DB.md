@@ -1,9 +1,22 @@
+ +-----------------+
+ |     couples     |
+ +-----------------+
+ | id (PK)         |
+ | user1_id        |
+ | user2_id        |
+ | created_at      |
+ | updated_at      |
+ +-----------------+
+           |
+           |
+           | 1:M
+           |
+           v
  +----------------------+
- |    monthly_bills     |
+ |   monthly_invoices   |
  +----------------------+
  | id (PK)              |
- | user_id              |
- | month                |
+ | couple_id (FK)       |
  | total_amount         |
  | is_paid              |
  | created_at           |
@@ -18,11 +31,10 @@
  |      payments        |
  +----------------------+
  | id (PK)              |
- | monthly_bill_id (FK) |
+ | monthly_invoice_id (FK) |
  | amount               |
- | payment_date         |
+ | quantity             |
+ | name                 |
  | created_at           |
  | updated_at           |
  +----------------------+
-
- 
