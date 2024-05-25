@@ -24,3 +24,7 @@ create table dev_payments (
   name text not null
 );
 
+insert into dev_couples (id, user1_id, user2_id) values (789, 123, 456);
+insert into dev_monthly_invoices (id, couple_id, total_amount, is_paid) values (123, 789, 1000, false);
+insert into dev_payments (id, monthly_invoice_id, amount, quantity, name) values (456, 123, 500, 2, 'Rent');
+
