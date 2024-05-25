@@ -1,5 +1,4 @@
 import { Image, Platform, StyleSheet } from "react-native";
-
 import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
@@ -28,6 +27,9 @@ export default function HomeScreen() {
         </Link>
         <Link href="/sample" style={{ color: "blue", fontSize: 20, marginTop: 20 }}>
           sample
+        </Link>
+        <Link href="/home" style={{ color: "blue", fontSize: 20, marginTop: 20 }}>
+          home
         </Link>
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
