@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Platform, StyleSheet, Text, TextInput, View, SafeAreaView, TouchableOpacity } from "react-native";
 import { dev_payments } from "@/constants/Table";
 
-export default function ItemModalScreen() {
+export default function PaymentModalScreen() {
   const [item, setItem] = useState<string | null>(null);
   const [price, setPrice] = useState<number | null>(null);
   const [count, setCount] = useState<number | null>(null);

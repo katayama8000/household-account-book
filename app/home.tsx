@@ -29,7 +29,7 @@ export default function HomeScreen() {
           padding: 4,
         }}
         onPress={() => {
-          push("/itemModal");
+          push("/payment-modal");
         }}
       >
         <AntDesign name="pluscircleo" size={24} color="white" />
@@ -103,7 +103,7 @@ const Item: FC<ItemProps> = ({ routerPush }) => {
             marginRight: 8,
           }}
           onPress={() => {
-            routerPush("/itemModal");
+            routerPush("/payment-modal");
           }}
         >
           <Text style={{ color: "#fff" }}>Edit</Text>
