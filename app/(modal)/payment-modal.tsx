@@ -32,7 +32,7 @@ export default function PaymentModalScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Add Item Modal</Text>
+      <Text style={styles.title}>Payment Modal</Text>
       {/* itemForm */}
       <View style={styles.formWrapper}>
         <Text style={styles.inputLabel}>Item</Text>
