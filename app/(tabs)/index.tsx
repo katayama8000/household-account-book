@@ -2,10 +2,36 @@ import { View, Text, FlatList, TouchableOpacity, Alert } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import type { ExpoRouter } from "expo-router/types/expo-router";
-import type { FC } from "react";
+import { useEffect, useState, type FC } from "react";
+import { supabase } from "@/lib/supabase";
+import { dev_payments } from "@/constants/Table";
+import type { Database } from "@/types/supabase";
+
+type Payment = Database["public"]["Tables"]["dev_payments"]["Row"];
 
 export default function HomeScreen() {
+  const [payments, setPayments] = useState<Payment[]>([]);
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const { push } = useRouter();
+  const fetchAllPayments = async () => {
+    console.log("fetching all payments");
+    setIsRefreshing(true);
+    const { data, status, error } = await supabase.from(dev_payments).select("*");
+    if (error) {
+      console.error(error);
+      return;
+    }
+    if (data) {
+      setPayments(data);
+    }
+    setIsRefreshing(false);
+  };
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    fetchAllPayments();
+  }, []);
+
   return (
     <View style={{}}>
       <Text
@@ -45,28 +71,30 @@ export default function HomeScreen() {
       </TouchableOpacity>
 
       <FlatList
-        data={[1, 2, 3, 4, 5, 6, 7]}
-        renderItem={({ item }) => <Item routerPush={push} />}
-        keyExtractor={(item) => item.toString()}
+        data={payments}
+        renderItem={({ item }) => <Payment payment={item} routerPush={push} />}
+        keyExtractor={(item) => item.id.toString()}
         ItemSeparatorComponent={() => <View style={{ height: 4 }} />}
         ListEmptyComponent={() => <Text>No items</Text>}
         contentContainerStyle={{ paddingBottom: 100 }}
         onRefresh={(): void => {
           // get items from server
-          console.log("refresh");
+          // console.log("refresh");
+          fetchAllPayments();
         }}
         // set refreshing to true when loading items from server
-        refreshing={false}
+        refreshing={isRefreshing}
       />
     </View>
   );
 }
 
-type ItemProps = {
+type PaymentProps = {
   routerPush: (href: ExpoRouter.Href) => void;
+  payment: Payment;
 };
 
-const Item: FC<ItemProps> = ({ routerPush }) => {
+const Payment: FC<PaymentProps> = ({ routerPush, payment }) => {
   return (
     <View
       style={{
@@ -85,11 +113,14 @@ const Item: FC<ItemProps> = ({ routerPush }) => {
       {/* Item info container */}
       <View style={{ flex: 1 }}>
         {/* item name */}
-        <Text style={{ fontSize: 16, fontWeight: "bold" }}>Item</Text>
+        <Text style={{ fontSize: 16, fontWeight: "bold" }}>name</Text>
+        <Text style={{ fontSize: 14 }}>{payment.name}</Text>
         {/* count */}
         <Text style={{ fontSize: 14 }}>Count</Text>
+        <Text style={{ fontSize: 14 }}>{payment.quantity}</Text>
         {/* price */}
         <Text style={{ fontSize: 14 }}>Price</Text>
+        <Text style={{ fontSize: 14 }}>{payment.amount}</Text>
       </View>
       {/* Edit and Delete buttons container */}
       <View style={{ flexDirection: "row", alignItems: "center" }}>
