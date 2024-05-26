@@ -8,7 +8,7 @@ const links = [
   { href: "/modal", text: "modal" },
   { href: "/sample", text: "sample" },
   { href: "/home", text: "home" },
-  { href: "/past", text: "past" },
+  { href: "/past-invoices", text: "past-invoices" },
 ];
 
 export default function HomeScreen() {

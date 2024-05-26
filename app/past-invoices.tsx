@@ -4,7 +4,7 @@ import type { FC } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { FlatList } from "react-native";
 
-export default function PastScreen() {
+export default function PastInvoicesScreen() {
   const { push } = useRouter();
   const dummyMonth = [
     "2021-01",
@@ -25,7 +25,7 @@ export default function PastScreen() {
       <Text>Past Screen</Text>
       <FlatList
         data={dummyMonth}
-        renderItem={({ item }) => <PastMonth month={item} total={1000} routerPush={push} />}
+        renderItem={({ item }) => <MonthlyInvoice month={item} total={1000} routerPush={push} />}
         keyExtractor={(item) => item}
         ItemSeparatorComponent={() => <View style={{ height: 4 }} />}
         ListEmptyComponent={() => <Text>No items</Text>}
@@ -41,13 +41,13 @@ export default function PastScreen() {
   );
 }
 
-type PastMonthProps = {
+type MonthlyInvoiceProps = {
   month: string;
   total: number;
   routerPush: (href: ExpoRouter.Href) => void;
 };
 
-const PastMonth: FC<PastMonthProps> = ({ month, total, routerPush }) => {
+const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ month, total, routerPush }) => {
   return (
     <TouchableOpacity
       style={{
