@@ -1,46 +1,10 @@
-import { supabase } from "@/lib/supabase";
-import React, { useState } from "react";
+import React from "react";
 import { Platform, StyleSheet, Text, TextInput, View, SafeAreaView, TouchableOpacity } from "react-native";
-import { dev_payments } from "@/constants/Table";
-import dayjs from "dayjs";
+
+import { usePayment } from "../hooks/usePayment";
 
 export default function PaymentModalScreen() {
-  const [item, setItem] = useState<string | null>(null);
-  const [price, setPrice] = useState<number | null>(null);
-  const [count, setCount] = useState<number | null>(null);
-
-  const monthly_invoice_id = 123;
-
-  const onSubmit = async (): Promise<void> => {
-    if (!item || !price || !count) {
-      alert("Please fill out all fields");
-      return;
-    }
-    const { data, error, status } = await supabase.from(dev_payments).insert([
-      {
-        amount: price,
-        monthly_invoice_id,
-        name: item,
-        quantity: count,
-        updated_at: dayjs().toISOString(),
-        created_at: dayjs().toISOString(),
-      },
-    ]);
-    if (error) {
-      alert("error");
-      console.error(error);
-      console.log(error);
-      return;
-    }
-    alert("success");
-    if (status === 201) {
-      setItem(null);
-      setPrice(null);
-      setCount(null);
-      console.log("inserted successfully");
-      console.log(data, status);
-    }
-  };
+  const { item, setItem, price, setPrice, count, setCount, addPayment, fetchAllPayments } = usePayment();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -81,10 +45,13 @@ export default function PaymentModalScreen() {
       >
         <TouchableOpacity
           style={styles.submitButton}
-          onPress={onSubmit}
-          // disabled={!item || !price || !count}
+          onPress={() => {
+            addPayment();
+            fetchAllPayments();
+          }}
+          disabled={!item || !price || !count}
         >
-          <Text style={{ color: "#fff" }}>Submit</Text>
+          <Text style={{ color: "#fff" }}>登録</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

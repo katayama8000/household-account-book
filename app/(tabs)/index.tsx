@@ -1,31 +1,14 @@
-import { View, Text, FlatList, TouchableOpacity, Alert } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, Alert, StyleSheet } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import type { ExpoRouter } from "expo-router/types/expo-router";
-import { useEffect, useState, type FC } from "react";
-import { supabase } from "@/lib/supabase";
-import { dev_payments } from "@/constants/Table";
+import { useEffect, type FC } from "react";
 import type { Database } from "@/types/supabase";
+import type { ExpoRouter } from "expo-router/types/expo-router";
+import { usePayment } from "../hooks/usePayment";
 
 type Payment = Database["public"]["Tables"]["dev_payments"]["Row"];
 
 export default function HomeScreen() {
-  const [payments, setPayments] = useState<Payment[]>([]);
-  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
-  const { push } = useRouter();
-  const fetchAllPayments = async () => {
-    console.log("fetching all payments");
-    setIsRefreshing(true);
-    const { data, status, error } = await supabase.from(dev_payments).select("*");
-    if (error) {
-      console.error(error);
-      return;
-    }
-    if (data) {
-      setPayments(data);
-    }
-    setIsRefreshing(false);
-  };
+  const { payments, isRefreshing, fetchAllPayments, deletePayment, router } = usePayment();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
@@ -33,56 +16,22 @@ export default function HomeScreen() {
   }, []);
 
   return (
-    <View style={{}}>
-      <Text
-        style={{
-          color: "white",
-          fontSize: 24,
-          marginBottom: 24,
-        }}
-      >
-        Home Screen
-      </Text>
+    <View style={styles.container}>
+      <Text style={styles.headerText}>Home Screen</Text>
 
-      <TouchableOpacity
-        style={{
-          borderRadius: 50,
-          marginBottom: 16,
-          flexDirection: "row",
-          alignItems: "center",
-          backgroundColor: "#4caf50",
-          width: 80,
-          padding: 4,
-        }}
-        onPress={() => {
-          push("/payment-modal");
-        }}
-      >
+      <TouchableOpacity style={styles.addButton} onPress={() => router.push("/payment-modal")}>
         <AntDesign name="pluscircleo" size={24} color="white" />
-        <Text
-          style={{
-            color: "white",
-            fontSize: 16,
-            paddingHorizontal: 8,
-          }}
-        >
-          追加
-        </Text>
+        <Text style={styles.addButtonText}>追加</Text>
       </TouchableOpacity>
 
       <FlatList
         data={payments}
-        renderItem={({ item }) => <Payment payment={item} routerPush={push} />}
+        renderItem={({ item }) => <Payment payment={item} routerPush={router.push} deletePayment={deletePayment} />}
         keyExtractor={(item) => item.id.toString()}
         ItemSeparatorComponent={() => <View style={{ height: 4 }} />}
-        ListEmptyComponent={() => <Text>No items</Text>}
+        ListEmptyComponent={() => <Text style={styles.emptyListText}>No items</Text>}
         contentContainerStyle={{ paddingBottom: 100 }}
-        onRefresh={(): void => {
-          // get items from server
-          // console.log("refresh");
-          fetchAllPayments();
-        }}
-        // set refreshing to true when loading items from server
+        onRefresh={fetchAllPayments}
         refreshing={isRefreshing}
       />
     </View>
@@ -90,122 +39,125 @@ export default function HomeScreen() {
 }
 
 type PaymentProps = {
+  deletePayment: (id: number) => Promise<void>;
   routerPush: (href: ExpoRouter.Href) => void;
   payment: Payment;
 };
 
-const Payment: FC<PaymentProps> = ({ routerPush, payment }) => {
+const Payment: FC<PaymentProps> = ({ deletePayment, routerPush, payment }) => {
   return (
-    <View
-      style={{
-        backgroundColor: "#f0f8ff",
-        padding: 16,
-        marginBottom: 12,
-        marginHorizontal: 8,
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: "#e0e0e0",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-      }}
-    >
-      {/* Item info container */}
-      <View style={{ flex: 1 }}>
-        {/* item name */}
-        <Text style={{ fontSize: 16, fontWeight: "bold" }}>name</Text>
-        <Text style={{ fontSize: 14 }}>{payment.name}</Text>
-        {/* count */}
-        <Text style={{ fontSize: 14 }}>Count</Text>
-        <Text style={{ fontSize: 14 }}>{payment.quantity}</Text>
-        {/* price */}
-        <Text style={{ fontSize: 14 }}>Price</Text>
-        <Text style={{ fontSize: 14 }}>{payment.amount}</Text>
+    <TouchableOpacity style={styles.paymentContainer} onPress={() => routerPush(`/payment/${payment.id}`)}>
+      <View style={styles.paymentInfoContainer}>
+        <Text style={styles.itemTitle}>{payment.name}</Text>
+        <View style={styles.row}>
+          <Text style={styles.label}>数:</Text>
+          <Text style={styles.value}>{payment.quantity}</Text>
+        </View>
+        <View style={styles.row}>
+          <Text style={styles.label}>金額:</Text>
+          <Text style={styles.value}>{payment.amount}円</Text>
+        </View>
       </View>
-      {/* Edit and Delete buttons container */}
-      <View style={{ flexDirection: "row", alignItems: "center" }}>
-        {/* edit */}
-        <TouchableOpacity
-          style={{
-            paddingVertical: 8,
-            paddingHorizontal: 16,
-            backgroundColor: "#4caf50",
-            borderRadius: 5,
-            marginRight: 8,
-          }}
-          onPress={() => {
-            routerPush("/payment-modal");
-          }}
-        >
-          <Text style={{ color: "#fff" }}>Edit</Text>
+      <View style={styles.actions}>
+        <TouchableOpacity style={styles.iconButton} onPress={() => routerPush("/payment-modal")}>
+          <AntDesign name="edit" size={16} color="white" />
         </TouchableOpacity>
-        {/* delete */}
         <TouchableOpacity
-          style={{
-            paddingVertical: 8,
-            paddingHorizontal: 16,
-            backgroundColor: "#ff6347",
-            borderRadius: 5,
-          }}
+          style={styles.iconButton}
           onPress={() => {
-            Alert.alert("Alert Title", "My Alert Msg", [
+            Alert.alert("Delete Item", "Are you sure you want to delete this item?", [
+              { text: "Cancel", style: "cancel" },
               {
                 text: "OK",
-                onPress: () => {},
+                onPress: () => {
+                  deletePayment(payment.id);
+                },
               },
-              { text: "No", onPress: () => {} },
             ]);
           }}
         >
-          <Text style={{ color: "#fff" }}>Delete</Text>
+          <AntDesign name="delete" size={16} color="white" />
         </TouchableOpacity>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
-const DeleteModal: FC = () => {
-  return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: "#282c34",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text style={{ color: "#fff", fontSize: 24 }}>Delete Item?</Text>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-around",
-          width: "100%",
-          marginTop: 24,
-        }}
-      >
-        <TouchableOpacity
-          style={{
-            paddingVertical: 8,
-            paddingHorizontal: 16,
-            backgroundColor: "#4caf50",
-            borderRadius: 5,
-          }}
-          onPress={() => {}}
-        >
-          <Text style={{ color: "#fff" }}>Yes</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            paddingVertical: 8,
-            paddingHorizontal: 16,
-            backgroundColor: "#ff6347",
-            borderRadius: 5,
-          }}
-          onPress={() => {}}
-        >
-          <Text style={{ color: "#fff" }}>No</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-};
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#282c34",
+    padding: 16,
+  },
+  headerText: {
+    color: "white",
+    fontSize: 24,
+    marginBottom: 24,
+  },
+  addButton: {
+    borderRadius: 50,
+    marginBottom: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#4caf50",
+    width: 100,
+    padding: 8,
+  },
+  addButtonText: {
+    color: "white",
+    fontSize: 16,
+    paddingHorizontal: 8,
+  },
+  emptyListText: {
+    color: "white",
+    fontSize: 16,
+    textAlign: "center",
+  },
+  paymentContainer: {
+    backgroundColor: "#ffffff",
+    padding: 16,
+    marginBottom: 12,
+    borderRadius: 8,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  paymentInfoContainer: {
+    flex: 1,
+  },
+  itemTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 4,
+  },
+  label: {
+    fontSize: 14,
+    color: "#888",
+  },
+  value: {
+    fontSize: 14,
+    fontWeight: "bold",
+  },
+  actions: {
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  iconButton: {
+    width: 32,
+    height: 32,
+    backgroundColor: "#4caf50",
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    margin: 4,
+  },
+});
