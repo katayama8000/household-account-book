@@ -1,10 +1,34 @@
+import { supabase } from "@/lib/supabase";
 import React, { useState } from "react";
-import { Platform, StyleSheet, Text, TextInput, View, SafeAreaView, Button, TouchableOpacity } from "react-native";
+import { Platform, StyleSheet, Text, TextInput, View, SafeAreaView, TouchableOpacity } from "react-native";
+import { dev_payments } from "@/constants/Table";
 
-export default function AddItemModalScreen() {
+export default function ItemModalScreen() {
   const [item, setItem] = useState<string | null>(null);
   const [price, setPrice] = useState<number | null>(null);
   const [count, setCount] = useState<number | null>(null);
+
+  const monthly_invoice_id = 123;
+
+  const onSubmit = async (): Promise<void> => {
+    const { data, error, status } = await supabase
+      .from(dev_payments)
+      .insert([{ name: item, amount: price, quantity: count, monthly_invoice_id }]);
+    if (error) {
+      alert("error");
+      console.error(error);
+      console.log(error);
+      return;
+    }
+    alert("success");
+    if (status === 201) {
+      setItem(null);
+      setPrice(null);
+      setCount(null);
+      console.log("inserted successfully");
+      console.log(data, status);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -45,10 +69,8 @@ export default function AddItemModalScreen() {
       >
         <TouchableOpacity
           style={styles.submitButton}
-          onPress={() => {
-            alert("submit!");
-          }}
-          disabled={!item || !price || !count}
+          onPress={onSubmit}
+          // disabled={!item || !price || !count}
         >
           <Text style={{ color: "#fff" }}>Submit</Text>
         </TouchableOpacity>
