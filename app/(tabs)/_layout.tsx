@@ -23,7 +23,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="past-invoices"
         options={{
           title: "過去",
           tabBarIcon: ({ color, focused }) => (

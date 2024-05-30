@@ -3,29 +3,30 @@ import type { ExpoRouter } from "expo-router/types/expo-router";
 import type { FC } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { FlatList } from "react-native";
+import dayjs from "dayjs";
 
-export default function PastScreen() {
+export default function PastInvoicesScreen() {
   const { push } = useRouter();
   const dummyMonth = [
-    "2021-01",
-    "2021-02",
-    "2021-03",
-    "2021-04",
-    "2021-05",
-    "2021-06",
-    "2021-07",
-    "2021-08",
-    "2021-09",
-    "2021-10",
-    "2021-11",
-    "2021-12",
+    dayjs().format("YYYY-MM"),
+    dayjs().subtract(1, "month").format("YYYY-MM"),
+    dayjs().subtract(2, "month").format("YYYY-MM"),
+    dayjs().subtract(3, "month").format("YYYY-MM"),
+    dayjs().subtract(4, "month").format("YYYY-MM"),
+    dayjs().subtract(5, "month").format("YYYY-MM"),
+    dayjs().subtract(6, "month").format("YYYY-MM"),
+    dayjs().subtract(7, "month").format("YYYY-MM"),
+    dayjs().subtract(8, "month").format("YYYY-MM"),
+    dayjs().subtract(9, "month").format("YYYY-MM"),
+    dayjs().subtract(10, "month").format("YYYY-MM"),
+    dayjs().subtract(11, "month").format("YYYY-MM"),
   ] as const;
   return (
     <View>
       <Text>Past Screen</Text>
       <FlatList
         data={dummyMonth}
-        renderItem={({ item }) => <PastMonth month={item} total={1000} routerPush={push} />}
+        renderItem={({ item }) => <MonthlyInvoice month={item} total={1000} routerPush={push} />}
         keyExtractor={(item) => item}
         ItemSeparatorComponent={() => <View style={{ height: 4 }} />}
         ListEmptyComponent={() => <Text>No items</Text>}
@@ -41,13 +42,13 @@ export default function PastScreen() {
   );
 }
 
-type PastMonthProps = {
+type MonthlyInvoiceProps = {
   month: string;
   total: number;
   routerPush: (href: ExpoRouter.Href) => void;
 };
 
-const PastMonth: FC<PastMonthProps> = ({ month, total, routerPush }) => {
+const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ month, total, routerPush }) => {
   return (
     <TouchableOpacity
       style={{
@@ -57,7 +58,7 @@ const PastMonth: FC<PastMonthProps> = ({ month, total, routerPush }) => {
         margin: 8,
       }}
       onPress={() => {
-        routerPush("/home");
+        routerPush("/past-invoice-details");
       }}
     >
       <Text

@@ -1,63 +1,163 @@
-import { StyleSheet, View } from "react-native";
-import { ThemedView } from "@/components/ThemedView";
-import { Link } from "expo-router";
+import { View, Text, FlatList, TouchableOpacity, Alert, StyleSheet } from "react-native";
+import { AntDesign } from "@expo/vector-icons";
+import { useEffect, type FC } from "react";
+import type { Database } from "@/types/supabase";
+import type { ExpoRouter } from "expo-router/types/expo-router";
+import { usePayment } from "../hooks/usePayment";
 
-const links = [
-  { href: "/sign-in", text: "sign-in" },
-  { href: "/sign-up", text: "sign-up" },
-  { href: "/modal", text: "modal" },
-  { href: "/sample", text: "sample" },
-  { href: "/home", text: "home" },
-  { href: "/past", text: "past" },
-];
+type Payment = Database["public"]["Tables"]["dev_payments"]["Row"];
 
 export default function HomeScreen() {
+  const { payments, isRefreshing, fetchAllPayments, deletePayment, router } = usePayment();
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    fetchAllPayments();
+  }, []);
+
   return (
     <View style={styles.container}>
-      <ThemedView style={styles.titleContainer}>
-        {links.map((link) => (
-          <Link key={link.text} href={link.href} style={styles.link}>
-            {link.text}
-          </Link>
-        ))}
-      </ThemedView>
+      <Text style={styles.headerText}>Home Screen</Text>
+
+      <TouchableOpacity style={styles.addButton} onPress={() => router.push("/payment-modal")}>
+        <AntDesign name="pluscircleo" size={24} color="white" />
+        <Text style={styles.addButtonText}>追加</Text>
+      </TouchableOpacity>
+
+      <FlatList
+        data={payments}
+        renderItem={({ item }) => <Payment payment={item} routerPush={router.push} deletePayment={deletePayment} />}
+        keyExtractor={(item) => item.id.toString()}
+        ItemSeparatorComponent={() => <View style={{ height: 4 }} />}
+        ListEmptyComponent={() => <Text style={styles.emptyListText}>No items</Text>}
+        contentContainerStyle={{ paddingBottom: 100 }}
+        onRefresh={fetchAllPayments}
+        refreshing={isRefreshing}
+      />
     </View>
   );
 }
 
+type PaymentProps = {
+  deletePayment: (id: number) => Promise<void>;
+  routerPush: (href: ExpoRouter.Href) => void;
+  payment: Payment;
+};
+
+const Payment: FC<PaymentProps> = ({ deletePayment, routerPush, payment }) => {
+  return (
+    <TouchableOpacity style={styles.paymentContainer} onPress={() => routerPush(`/payment/${payment.id}`)}>
+      <View style={styles.paymentInfoContainer}>
+        <Text style={styles.itemTitle}>{payment.name}</Text>
+        <View style={styles.row}>
+          <Text style={styles.label}>数:</Text>
+          <Text style={styles.value}>{payment.quantity}</Text>
+        </View>
+        <View style={styles.row}>
+          <Text style={styles.label}>金額:</Text>
+          <Text style={styles.value}>{payment.amount}円</Text>
+        </View>
+      </View>
+      <View style={styles.actions}>
+        <TouchableOpacity style={styles.iconButton} onPress={() => routerPush("/payment-modal")}>
+          <AntDesign name="edit" size={16} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={() => {
+            Alert.alert("Delete Item", "Are you sure you want to delete this item?", [
+              { text: "Cancel", style: "cancel" },
+              {
+                text: "OK",
+                onPress: () => {
+                  deletePayment(payment.id);
+                },
+              },
+            ]);
+          }}
+        >
+          <AntDesign name="delete" size={16} color="white" />
+        </TouchableOpacity>
+      </View>
+    </TouchableOpacity>
+  );
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#282c34",
+    padding: 16,
   },
-  titleContainer: {
+  headerText: {
+    color: "white",
+    fontSize: 24,
+    marginBottom: 24,
+  },
+  addButton: {
+    borderRadius: 50,
+    marginBottom: 16,
     flexDirection: "row",
     alignItems: "center",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    gap: 16,
-    padding: 20,
+    backgroundColor: "#4caf50",
+    width: 100,
+    padding: 8,
   },
-  link: {
-    color: "blue",
+  addButtonText: {
+    color: "white",
+    fontSize: 16,
+    paddingHorizontal: 8,
+  },
+  emptyListText: {
+    color: "white",
+    fontSize: 16,
+    textAlign: "center",
+  },
+  paymentContainer: {
+    backgroundColor: "#ffffff",
+    padding: 16,
+    marginBottom: 12,
+    borderRadius: 8,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  paymentInfoContainer: {
+    flex: 1,
+  },
+  itemTitle: {
     fontSize: 18,
-    marginVertical: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    backgroundColor: "#e0e0e0",
-    borderRadius: 4,
-  },
-  stepContainer: {
-    gap: 8,
+    fontWeight: "bold",
     marginBottom: 8,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 4,
+  },
+  label: {
+    fontSize: 14,
+    color: "#888",
+  },
+  value: {
+    fontSize: 14,
+    fontWeight: "bold",
+  },
+  actions: {
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  iconButton: {
+    width: 32,
+    height: 32,
+    backgroundColor: "#4caf50",
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    margin: 4,
   },
 });

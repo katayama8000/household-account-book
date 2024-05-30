@@ -1,38 +1,14 @@
-import { supabase } from "@/lib/supabase";
-import React, { useState } from "react";
+import React from "react";
 import { Platform, StyleSheet, Text, TextInput, View, SafeAreaView, TouchableOpacity } from "react-native";
-import { dev_payments } from "@/constants/Table";
 
-export default function ItemModalScreen() {
-  const [item, setItem] = useState<string | null>(null);
-  const [price, setPrice] = useState<number | null>(null);
-  const [count, setCount] = useState<number | null>(null);
+import { usePayment } from "../hooks/usePayment";
 
-  const monthly_invoice_id = 123;
-
-  const onSubmit = async (): Promise<void> => {
-    const { data, error, status } = await supabase
-      .from(dev_payments)
-      .insert([{ name: item, amount: price, quantity: count, monthly_invoice_id }]);
-    if (error) {
-      alert("error");
-      console.error(error);
-      console.log(error);
-      return;
-    }
-    alert("success");
-    if (status === 201) {
-      setItem(null);
-      setPrice(null);
-      setCount(null);
-      console.log("inserted successfully");
-      console.log(data, status);
-    }
-  };
+export default function PaymentModalScreen() {
+  const { item, setItem, price, setPrice, count, setCount, addPayment, fetchAllPayments } = usePayment();
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Add Item Modal</Text>
+      <Text style={styles.title}>Payment Modal</Text>
       {/* itemForm */}
       <View style={styles.formWrapper}>
         <Text style={styles.inputLabel}>Item</Text>
@@ -69,10 +45,13 @@ export default function ItemModalScreen() {
       >
         <TouchableOpacity
           style={styles.submitButton}
-          onPress={onSubmit}
-          // disabled={!item || !price || !count}
+          onPress={() => {
+            addPayment();
+            fetchAllPayments();
+          }}
+          disabled={!item || !price || !count}
         >
-          <Text style={{ color: "#fff" }}>Submit</Text>
+          <Text style={{ color: "#fff" }}>登録</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
