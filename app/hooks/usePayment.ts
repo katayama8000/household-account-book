@@ -45,6 +45,7 @@ export const usePayment = () => {
       setCount(null);
       console.log("inserted successfully");
       console.log(data, status);
+      fetchAllPayments();
     }
     // close modal
     router.back();
