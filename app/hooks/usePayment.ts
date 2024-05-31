@@ -65,6 +65,26 @@ export const usePayment = () => {
     setIsRefreshing(false);
   };
 
+  const fetchPaymentById = async (id: number) => {
+    const { data, error } = await supabase.from(dev_payments).select("*").eq("id", id);
+    if (error) {
+      console.error(error);
+      return;
+    }
+    if (data) {
+      return data[0];
+    }
+  };
+
+  const updatePayment = async (id: number, payment: Partial<Payment>) => {
+    const { data, error, status } = await supabase.from(dev_payments).update(payment).match({ id });
+    if (error) {
+      console.error(error);
+      return;
+    }
+    fetchAllPayments();
+  };
+
   const deletePayment = async (id: number) => {
     const { error } = await supabase.from(dev_payments).delete().match({ id });
     if (error) {
@@ -87,5 +107,7 @@ export const usePayment = () => {
     fetchAllPayments,
     deletePayment,
     router,
+    fetchPaymentById,
+    updatePayment,
   };
 };

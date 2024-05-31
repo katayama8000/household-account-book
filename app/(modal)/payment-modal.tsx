@@ -2,12 +2,15 @@ import React from "react";
 import { Platform, StyleSheet, Text, TextInput, View, SafeAreaView, TouchableOpacity } from "react-native";
 
 import { usePayment } from "../hooks/usePayment";
+import { useLocalSearchParams } from "expo-router";
 
 export default function PaymentModalScreen() {
   const { item, setItem, price, setPrice, count, setCount, addPayment, fetchAllPayments } = usePayment();
+  const { kind } = useLocalSearchParams();
 
   return (
     <SafeAreaView style={styles.container}>
+      <Text style={styles.title}>{kind === "edit" ? "Edit" : "Add"} Payment</Text>
       <Text style={styles.title}>Payment Modal</Text>
       {/* itemForm */}
       <View style={styles.formWrapper}>

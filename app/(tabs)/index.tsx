@@ -19,7 +19,15 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <Text style={styles.headerText}>Home Screen</Text>
 
-      <TouchableOpacity style={styles.addButton} onPress={() => router.push("/payment-modal")}>
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() =>
+          router.push({
+            pathname: "/payment-modal",
+            params: { kind: "add" },
+          })
+        }
+      >
         <AntDesign name="pluscircleo" size={24} color="white" />
         <Text style={styles.addButtonText}>追加</Text>
       </TouchableOpacity>
@@ -59,7 +67,15 @@ const Payment: FC<PaymentProps> = ({ deletePayment, routerPush, payment }) => {
         </View>
       </View>
       <View style={styles.actions}>
-        <TouchableOpacity style={styles.iconButton} onPress={() => routerPush("/payment-modal")}>
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={() =>
+            routerPush({
+              pathname: "/payment-modal",
+              params: { kind: "edit" },
+            })
+          }
+        >
           <AntDesign name="edit" size={16} color="white" />
         </TouchableOpacity>
         <TouchableOpacity
