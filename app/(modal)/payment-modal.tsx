@@ -1,40 +1,50 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Platform, StyleSheet, Text, TextInput, View, SafeAreaView, TouchableOpacity } from "react-native";
-
 import { usePayment } from "../hooks/usePayment";
 import { useLocalSearchParams } from "expo-router";
 
 export default function PaymentModalScreen() {
-  const { item, setItem, price, setPrice, count, setCount, addPayment, fetchAllPayments } = usePayment();
-  const { kind } = useLocalSearchParams();
+  const { addPayment, fetchAllPayments, updatePayment, setName, setAmount, setQuantity, name, amount, quantity } =
+    usePayment();
+  const { kind, id, name: nameQuery, quantity: quantityQuery, amount: amountQuery } = useLocalSearchParams();
+
+  useEffect(() => {
+    if (kind === "edit" && id) {
+      if (typeof nameQuery === "string" && typeof quantityQuery === "string" && typeof amountQuery === "string") {
+        setName(nameQuery);
+        setAmount(Number(amountQuery));
+        setQuantity(Number(quantityQuery));
+      }
+    }
+  }, [kind, id, nameQuery, quantityQuery, amountQuery, setName, setAmount, setQuantity]);
 
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>{kind === "edit" ? "Edit" : "Add"} Payment</Text>
       <Text style={styles.title}>Payment Modal</Text>
-      {/* itemForm */}
+      {/* 項目名 */}
       <View style={styles.formWrapper}>
         <Text style={styles.inputLabel}>Item</Text>
-        <TextInput style={styles.input} onChangeText={setItem} value={item ?? ""} numberOfLines={3} />
+        <TextInput style={styles.input} value={name ? name.toString() : ""} onChangeText={(text) => setName(text)} />
       </View>
-      {/* priceForm */}
+      {/* 金額 */}
       <View style={styles.formWrapper}>
         <Text style={styles.inputLabel}>Price</Text>
         <TextInput
           style={styles.input}
-          onChangeText={(text) => setPrice(Number(text))}
-          value={price ? price.toString() : ""}
+          value={amount ? amount.toString() : ""}
+          onChangeText={(text) => setAmount(Number(text))}
           keyboardType={Platform.select({ ios: "number-pad", android: "numeric" })}
           numberOfLines={1}
         />
       </View>
-      {/* countForm */}
+      {/* 数 */}
       <View style={styles.formWrapper}>
         <Text style={styles.inputLabel}>Count</Text>
         <TextInput
           style={styles.input}
-          onChangeText={(text) => setCount(Number(text))}
-          value={count ? count.toString() : ""}
+          value={quantity ? quantity.toString() : ""}
+          onChangeText={(text) => setQuantity(Number(text))}
           keyboardType={Platform.select({ ios: "number-pad", android: "numeric" })}
           numberOfLines={1}
         />
@@ -49,12 +59,17 @@ export default function PaymentModalScreen() {
         <TouchableOpacity
           style={styles.submitButton}
           onPress={() => {
-            addPayment();
-            fetchAllPayments();
+            if (kind === "edit") {
+              if (name && quantity && amount) {
+                updatePayment(Number(id), { name, amount, quantity });
+              }
+            } else {
+              addPayment();
+            }
           }}
-          disabled={!item || !price || !count}
+          disabled={!name || !quantity || !amount}
         >
-          <Text style={{ color: "#fff" }}>登録</Text>
+          <Text style={{ color: "#fff" }}>{kind === "edit" ? "Update" : "Add"} Payment</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

@@ -3,31 +3,35 @@ import { supabase } from "@/lib/supabase";
 import type { Database } from "@/types/supabase";
 import dayjs from "dayjs";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Payment = Database["public"]["Tables"]["dev_payments"]["Row"];
 
 export const usePayment = () => {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
-  const [item, setItem] = useState<string | null>(null);
-  const [price, setPrice] = useState<number | null>(null);
-  const [count, setCount] = useState<number | null>(null);
+  const [name, setName] = useState<string | null>(null);
+  const [quantity, setQuantity] = useState<number | null>(null);
+  const [amount, setAmount] = useState<number | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    fetchAllPayments();
+  }, []);
 
   const monthly_invoice_id = 123;
 
   const addPayment = async (): Promise<void> => {
-    if (!item || !price || !count) {
+    if (!name || !quantity || !amount) {
       alert("Please fill out all fields");
       return;
     }
     const { data, error, status } = await supabase.from(dev_payments).insert([
       {
-        amount: price,
+        amount,
         monthly_invoice_id,
-        name: item,
-        quantity: count,
+        name,
+        quantity,
         updated_at: dayjs().toISOString(),
         created_at: dayjs().toISOString(),
       },
@@ -40,9 +44,9 @@ export const usePayment = () => {
     }
     alert("success");
     if (status === 201) {
-      setItem(null);
-      setPrice(null);
-      setCount(null);
+      setName(null);
+      setQuantity(null);
+      setAmount(null);
       console.log("inserted successfully");
       console.log(data, status);
       fetchAllPayments();
@@ -76,13 +80,14 @@ export const usePayment = () => {
     }
   };
 
-  const updatePayment = async (id: number, payment: Partial<Payment>) => {
+  const updatePayment = async (id: number, payment: Pick<Payment, "name" | "quantity" | "amount">): Promise<void> => {
     const { data, error, status } = await supabase.from(dev_payments).update(payment).match({ id });
     if (error) {
       console.error(error);
       return;
     }
     fetchAllPayments();
+    router.back();
   };
 
   const deletePayment = async (id: number) => {
@@ -96,13 +101,14 @@ export const usePayment = () => {
 
   return {
     payments,
+    setPayments,
     isRefreshing,
-    item,
-    price,
-    count,
-    setItem,
-    setPrice,
-    setCount,
+    name,
+    quantity,
+    amount,
+    setName,
+    setQuantity,
+    setAmount,
     addPayment,
     fetchAllPayments,
     deletePayment,

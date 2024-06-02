@@ -9,12 +9,6 @@ type Payment = Database["public"]["Tables"]["dev_payments"]["Row"];
 
 export default function HomeScreen() {
   const { payments, isRefreshing, fetchAllPayments, deletePayment, router } = usePayment();
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    fetchAllPayments();
-  }, []);
-
   return (
     <View style={styles.container}>
       <Text style={styles.headerText}>Home Screen</Text>
@@ -33,7 +27,7 @@ export default function HomeScreen() {
       </TouchableOpacity>
 
       <FlatList
-        data={payments}
+        data={payments.sort((a, b) => b.id - a.id)}
         renderItem={({ item }) => <Payment payment={item} routerPush={router.push} deletePayment={deletePayment} />}
         keyExtractor={(item) => item.id.toString()}
         ItemSeparatorComponent={() => <View style={{ height: 4 }} />}
@@ -72,7 +66,14 @@ const Payment: FC<PaymentProps> = ({ deletePayment, routerPush, payment }) => {
           onPress={() =>
             routerPush({
               pathname: "/payment-modal",
-              params: { kind: "edit" },
+              params: {
+                kind: "edit",
+                id: payment.id,
+                // FIXME: This is not the correct way to pass the payment data to the modal
+                name: payment.name,
+                quantity: payment.quantity,
+                amount: payment.amount,
+              },
             })
           }
         >
