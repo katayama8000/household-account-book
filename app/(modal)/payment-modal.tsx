@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Platform, StyleSheet, Text, TextInput, View, SafeAreaView, TouchableOpacity } from "react-native";
 import { usePayment } from "../hooks/usePayment";
 import { useLocalSearchParams } from "expo-router";
+import { Colors } from "@/constants/Colors";
 
 export default function PaymentModalScreen() {
   const { payments, addPayment, updatePayment, setName, setAmount, name, amount } = usePayment();
@@ -104,7 +105,7 @@ const styles = StyleSheet.create({
   submitButton: {
     paddingVertical: 8,
     paddingHorizontal: 16,
-    backgroundColor: "#4caf50",
+    backgroundColor: Colors.primary,
     borderRadius: 5,
     width: "100%",
     alignItems: "center",
