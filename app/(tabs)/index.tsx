@@ -65,9 +65,6 @@ const Payment: FC<PaymentProps> = ({ deletePayment, routerPush, payment }) => {
               params: {
                 kind: "edit",
                 id: payment.id,
-                // FIXME: This is not the correct way to pass the payment data to the modal
-                name: payment.name,
-                amount: payment.amount,
               },
             })
           }

@@ -4,17 +4,23 @@ import { usePayment } from "../hooks/usePayment";
 import { useLocalSearchParams } from "expo-router";
 
 export default function PaymentModalScreen() {
-  const { addPayment, updatePayment, setName, setAmount, name, amount } = usePayment();
-  const { kind, id, name: nameQuery, amount: amountQuery } = useLocalSearchParams();
+  const { payments, addPayment, updatePayment, setName, setAmount, name, amount } = usePayment();
+  const { kind, id } = useLocalSearchParams();
 
   useEffect(() => {
     if (kind === "edit" && id) {
-      if (typeof nameQuery === "string" && typeof amountQuery === "string") {
-        setName(nameQuery);
-        setAmount(Number(amountQuery));
+      if (typeof id === "string") {
+        console.log(id);
+        const payment = payments.find((p) => p.id === Number(id));
+        if (payment) {
+          setName(payment.name);
+          setAmount(Number(payment.amount));
+        } else {
+          alert("payment not found");
+        }
       }
     }
-  }, [kind, id, nameQuery, amountQuery, setName, setAmount]);
+  }, [kind, id, setName, setAmount, payments]);
 
   return (
     <SafeAreaView style={styles.container}>
