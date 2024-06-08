@@ -4,6 +4,7 @@ import type { FC } from "react";
 import type { Database } from "@/types/supabase";
 import type { ExpoRouter } from "expo-router/types/expo-router";
 import { usePayment } from "../hooks/usePayment";
+import { Colors } from "@/constants/Colors";
 
 type Payment = Database["public"]["Tables"]["dev_payments"]["Row"];
 
@@ -108,7 +109,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#4caf50",
+    backgroundColor: Colors.primary,
     width: 100,
     padding: 8,
   },
@@ -163,7 +164,7 @@ const styles = StyleSheet.create({
   iconButton: {
     width: 32,
     height: 32,
-    backgroundColor: "#4caf50",
+    backgroundColor: Colors.primary,
     borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",

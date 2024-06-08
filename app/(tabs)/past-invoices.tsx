@@ -7,6 +7,8 @@ import { useAtom } from "jotai";
 import { supabase } from "@/lib/supabase";
 import type { Database } from "@/types/supabase";
 import { MaterialIcons } from "@expo/vector-icons";
+import type { ExpoRouter } from "expo-router/types/expo-router";
+import { Colors } from "@/constants/Colors";
 
 type Payment = Database["public"]["Tables"]["dev_payments"]["Row"];
 type Invoice = Database["public"]["Tables"]["dev_monthly_invoices"]["Row"];
@@ -56,7 +58,7 @@ export default function PastInvoicesScreen() {
 
 type MonthlyInvoiceProps = {
   invoice: Invoice;
-  routerPush: (href: string) => void;
+  routerPush: (href: ExpoRouter.Href) => void;
 };
 
 const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ invoice, routerPush }) => {
@@ -82,7 +84,16 @@ const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ invoice, routerPush }) => {
   }, [invoice.id]);
 
   return (
-    <TouchableOpacity style={styles.card} onPress={() => routerPush("/past-invoice-details")} activeOpacity={0.8}>
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() =>
+        routerPush({
+          pathname: "/past-invoice-details",
+          params: { id: invoice.id, date: dayjs(invoice.created_at).format("YYYY-MM") },
+        })
+      }
+      activeOpacity={0.8}
+    >
       <View style={styles.container}>
         <Text style={styles.date}>{dayjs(invoice.created_at).format("YYYY-MM")}</Text>
         <Text style={styles.amount}>
@@ -96,7 +107,7 @@ const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ invoice, routerPush }) => {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#4caf50",
+    backgroundColor: Colors.primary,
     padding: 16,
     borderRadius: 8,
     margin: 8,
