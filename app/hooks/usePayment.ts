@@ -24,7 +24,7 @@ export const usePayment = () => {
 
   const addPayment = async (): Promise<void> => {
     if (!name || !amount) {
-      alert("Please fill out all fields");
+      alert("入力してください");
       return;
     }
     const { data, error, status } = await supabase.from(dev_payments).insert([
