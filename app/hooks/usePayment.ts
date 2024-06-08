@@ -5,7 +5,7 @@ import { useRouter } from "expo-router";
 import { useAtom } from "jotai";
 import { useEffect, useState, useCallback } from "react";
 import { paymentsAtom } from "../state/payment.state";
-import type { Payment } from "@/types/Row";
+import type { Invoice, Payment } from "@/types/Row";
 
 export const usePayment = () => {
   const [payments, setPayments] = useAtom(paymentsAtom);
@@ -131,6 +131,27 @@ export const usePayment = () => {
     [fetchAllPayments],
   );
 
+  const getTotalPayment = async (monthly_invoice_id: Payment["monthly_invoice_id"]) => {
+    const { data, error } = await supabase
+      .from("dev_payments")
+      .select("amount")
+      .eq("monthly_invoice_id", monthly_invoice_id);
+    if (error) {
+      console.error(error);
+      return 0;
+    }
+    return data.reduce((acc, cur) => acc + cur.amount, 0);
+  };
+
+  const getPaymentsByMonthlyInvoiceId = async (id: Invoice["id"]) => {
+    const { data, error } = await supabase.from("dev_payments").select("*").eq("monthly_invoice_id", id);
+    if (error) {
+      console.error(error);
+      return;
+    }
+    return data;
+  };
+
   return {
     isRefreshing,
     payments,
@@ -143,5 +164,7 @@ export const usePayment = () => {
     fetchPaymentById,
     updatePayment,
     deletePayment,
+    getTotalPayment,
+    getPaymentsByMonthlyInvoiceId,
   };
 };
