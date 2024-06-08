@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 import { Colors } from "@/constants/Colors";
 import type { Payment } from "@/types/Row";
 import { usePayment } from "./hooks/usePayment";
-import { defaultFontSize } from "@/style/defaultStyle";
+import { defaultFontSize, defaultShadowColor } from "@/style/defaultStyle";
 
 export default function PastInvoiceDetailsScreen() {
   const [payments, setPayments] = useState<Payment[]>([]);
@@ -69,15 +69,15 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   card: {
-    backgroundColor: "#fff",
-    padding: 20,
+    backgroundColor: "white",
+    padding: 16,
     borderRadius: 12,
     marginVertical: 10,
-    shadowColor: "#000",
-    shadowOpacity: 0.15,
+    shadowColor: defaultShadowColor,
+    shadowOpacity: 0.2,
     shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 6,
-    elevation: 3,
+    shadowRadius: 4,
+    elevation: 4,
     borderLeftWidth: 6,
     borderLeftColor: Colors.primary,
   },

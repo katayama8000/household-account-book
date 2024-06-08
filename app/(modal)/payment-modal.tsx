@@ -84,6 +84,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderColor: Colors.primary,
     paddingHorizontal: 10,
+    fontWeight: 600,
   },
   submitWrapper: {
     width: "100%",

@@ -7,7 +7,7 @@ import { useInvoice } from "../hooks/useInvoice";
 import { usePayment } from "../hooks/usePayment";
 import type { ExpoRouter } from "expo-router/types/expo-router";
 import type { Invoice } from "@/types/Row";
-import { defaultFontSize } from "@/style/defaultStyle";
+import { defaultFontSize, defaultShadowColor } from "@/style/defaultStyle";
 
 export default function PastInvoicesScreen() {
   const { invoices, isRefreshing, fetchInvoices } = useInvoice();
@@ -85,11 +85,11 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 8,
     marginVertical: 8,
-    shadowColor: "#000",
+    shadowColor: defaultShadowColor,
     shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 4 },
     shadowRadius: 4,
-    elevation: 5,
+    elevation: 4,
     backgroundColor: "white",
   },
   container: {

@@ -6,7 +6,7 @@ import { usePayment } from "../hooks/usePayment";
 import { Colors } from "@/constants/Colors";
 import { useRouter } from "expo-router";
 import type { ExpoRouter } from "expo-router/types/expo-router";
-import { defaultFontSize } from "@/style/defaultStyle";
+import { defaultFontSize, defaultShadowColor } from "@/style/defaultStyle";
 
 const HomeScreen: FC = () => {
   const { payments, isRefreshing, fetchAllPayments, deletePayment } = usePayment();
@@ -102,15 +102,15 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     width: 100,
     padding: 8,
-    elevation: 8,
-    shadowColor: "#000",
+    elevation: 4,
+    shadowColor: defaultShadowColor,
     shadowOpacity: 0.2,
     shadowRadius: 4,
   },
   addButtonText: {
     color: "white",
     fontSize: defaultFontSize,
-    paddingHorizontal: 8,
+    paddingLeft: 8,
     fontWeight: "bold",
   },
   emptyListText: {
@@ -126,11 +126,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
+    elevation: 4,
+    shadowColor: defaultShadowColor,
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 4 },
   },
   paymentInfoContainer: {
     flex: 1,
