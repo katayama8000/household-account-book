@@ -6,6 +6,7 @@ import { usePayment } from "../hooks/usePayment";
 import { Colors } from "@/constants/Colors";
 import { useRouter } from "expo-router";
 import type { ExpoRouter } from "expo-router/types/expo-router";
+import { defaultFontSize } from "@/style/defaultStyle";
 
 const HomeScreen: FC = () => {
   const { payments, isRefreshing, fetchAllPayments, deletePayment } = usePayment();
@@ -77,9 +78,9 @@ const PaymentItem: FC<PaymentItemProps> = ({ deletePayment, routerPush, payment 
     <TouchableOpacity
       style={styles.iconButton}
       onPress={() =>
-        Alert.alert("Delete Item", "Are you sure you want to delete this item?", [
-          { text: "Cancel", style: "cancel" },
-          { text: "OK", onPress: () => deletePayment(payment.id) },
+        Alert.alert("削除します", "よろしいですか？", [
+          { text: "いいえ", style: "cancel" },
+          { text: "はい", onPress: () => deletePayment(payment.id) },
         ])
       }
     >
@@ -108,12 +109,13 @@ const styles = StyleSheet.create({
   },
   addButtonText: {
     color: "white",
-    fontSize: 16,
+    fontSize: defaultFontSize,
     paddingHorizontal: 8,
+    fontWeight: "bold",
   },
   emptyListText: {
     color: "#888",
-    fontSize: 16,
+    fontSize: defaultFontSize,
     textAlign: "center",
   },
   paymentContainer: {
@@ -150,10 +152,10 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   iconButton: {
-    width: 32,
-    height: 32,
-    backgroundColor: "#dc3545",
-    borderRadius: 16,
+    width: 36,
+    height: 36,
+    backgroundColor: Colors.primary,
+    borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
     margin: 4,

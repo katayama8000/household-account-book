@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import { Colors } from "@/constants/Colors";
 import type { Payment } from "@/types/Row";
 import { usePayment } from "./hooks/usePayment";
+import { defaultFontSize } from "@/style/defaultStyle";
 
 export default function PastInvoiceDetailsScreen() {
   const [payments, setPayments] = useState<Payment[]>([]);
@@ -31,9 +32,9 @@ export default function PastInvoiceDetailsScreen() {
 
   const renderItem = ({ item }: { item: Payment }) => (
     <View style={styles.card}>
-      <Text style={styles.cardText}>入力日: {dayjs(item.updated_at).format("YYYY年MM月DD日")}</Text>
-      <Text style={styles.cardText}>項目: {item.name}</Text>
-      <Text style={styles.cardText}>金額: {item.amount.toLocaleString()}円</Text>
+      <Text style={styles.cardText}>入力日：{dayjs(item.updated_at).format("YYYY年MM月DD日")}</Text>
+      <Text style={styles.cardText}>項目：{item.name}</Text>
+      <Text style={styles.cardText}>金額：{item.amount.toLocaleString()}円</Text>
     </View>
   );
 
@@ -59,7 +60,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   noData: {
-    fontSize: 18,
+    fontSize: defaultFontSize,
     color: "#999",
     textAlign: "center",
     marginTop: 32,
@@ -81,7 +82,8 @@ const styles = StyleSheet.create({
     borderLeftColor: Colors.primary,
   },
   cardText: {
-    fontSize: 18,
+    fontSize: defaultFontSize,
+    fontWeight: "bold",
     color: "#444",
     marginBottom: 8,
   },

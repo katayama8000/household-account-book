@@ -7,6 +7,7 @@ import { useInvoice } from "../hooks/useInvoice";
 import { usePayment } from "../hooks/usePayment";
 import type { ExpoRouter } from "expo-router/types/expo-router";
 import type { Invoice } from "@/types/Row";
+import { defaultFontSize } from "@/style/defaultStyle";
 
 export default function PastInvoicesScreen() {
   const { invoices, isRefreshing, fetchInvoices } = useInvoice();
@@ -65,7 +66,6 @@ const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ invoice, routerPush }) => {
           params: { id: invoice.id, date: dayjs(invoice.created_at).format("YYYY年MM月") },
         })
       }
-      activeOpacity={0.8}
     >
       <View style={styles.container}>
         <View style={{}}>
@@ -98,12 +98,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   date: {
-    fontSize: 16,
+    fontSize: defaultFontSize,
     fontWeight: "bold",
     marginBottom: 4,
   },
   amount: {
-    fontSize: 16,
+    fontSize: defaultFontSize,
     fontWeight: "bold",
   },
 });

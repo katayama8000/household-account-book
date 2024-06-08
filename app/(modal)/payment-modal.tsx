@@ -3,6 +3,7 @@ import { Platform, StyleSheet, Text, TextInput, View, SafeAreaView, TouchableOpa
 import { usePayment } from "../hooks/usePayment";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { Colors } from "@/constants/Colors";
+import { defaultFontSize } from "@/style/defaultStyle";
 
 export default function PaymentModalScreen() {
   const { payments, addPayment, updatePayment, setName, setAmount, name, amount } = usePayment();
@@ -73,7 +74,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   inputLabel: {
-    fontSize: 16,
+    fontSize: defaultFontSize,
     fontWeight: "bold",
     marginBottom: 5,
   },
@@ -98,7 +99,7 @@ const styles = StyleSheet.create({
   },
   submitButtonText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: defaultFontSize,
     fontWeight: "bold",
   },
 });
