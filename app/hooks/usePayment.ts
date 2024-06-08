@@ -3,12 +3,14 @@ import { supabase } from "@/lib/supabase";
 import type { Database } from "@/types/supabase";
 import dayjs from "dayjs";
 import { useRouter } from "expo-router";
+import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
+import { paymentAtom } from "../state/payment.state";
 
 type Payment = Database["public"]["Tables"]["dev_payments"]["Row"];
 
 export const usePayment = () => {
-  const [payments, setPayments] = useState<Payment[]>([]);
+  const [payments, setPayments] = useAtom(paymentAtom);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [name, setName] = useState<string | null>(null);
   const [quantity, setQuantity] = useState<number | null>(null);

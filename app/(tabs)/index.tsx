@@ -48,7 +48,7 @@ type PaymentProps = {
 
 const Payment: FC<PaymentProps> = ({ deletePayment, routerPush, payment }) => {
   return (
-    <TouchableOpacity style={styles.paymentContainer} onPress={() => routerPush(`/payment/${payment.id}`)}>
+    <TouchableOpacity style={styles.paymentContainer}>
       <View style={styles.paymentInfoContainer}>
         <Text style={styles.itemTitle}>{payment.name}</Text>
         <View style={styles.row}>
