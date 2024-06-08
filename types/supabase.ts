@@ -30,7 +30,6 @@ export type Database = {
           created_at: string;
           id: number;
           is_paid: boolean;
-          total_amount: number;
           updated_at: string | null;
         };
         Insert: {
@@ -38,7 +37,6 @@ export type Database = {
           created_at?: string;
           id?: number;
           is_paid?: boolean;
-          total_amount?: number;
           updated_at?: string | null;
         };
         Update: {
@@ -46,7 +44,6 @@ export type Database = {
           created_at?: string;
           id?: number;
           is_paid?: boolean;
-          total_amount?: number;
           updated_at?: string | null;
         };
         Relationships: [
