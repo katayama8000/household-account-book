@@ -1,4 +1,4 @@
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, View, Text, FlatList } from "react-native";
 import dayjs from "dayjs";
@@ -10,6 +10,12 @@ export default function PastInvoiceDetailsScreen() {
   const [payments, setPayments] = useState<Payment[]>([]);
   const { id, date } = useLocalSearchParams();
   const { getPaymentsByMonthlyInvoiceId } = usePayment();
+  const { setOptions } = useNavigation();
+  useEffect(() => {
+    if (typeof date === "string") {
+      setOptions({ headerTitle: date });
+    }
+  }, [date, setOptions]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
@@ -33,7 +39,6 @@ export default function PastInvoiceDetailsScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>{date}</Text>
       {payments.length === 0 ? (
         <Text style={styles.noData}>支払い情報がありません。</Text>
       ) : (
@@ -52,13 +57,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 16,
-    textAlign: "center",
-    color: Colors.primary,
   },
   noData: {
     fontSize: 18,

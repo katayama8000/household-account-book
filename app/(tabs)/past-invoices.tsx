@@ -24,7 +24,6 @@ export default function PastInvoicesScreen() {
         paddingHorizontal: 16,
       }}
     >
-      <Text>Past Screen</Text>
       <FlatList
         data={invoices}
         renderItem={({ item }) => <MonthlyInvoice invoice={item} routerPush={push} />}

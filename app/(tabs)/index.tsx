@@ -13,7 +13,6 @@ const HomeScreen: FC = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerText}>Home Screen</Text>
       <AddPaymentButton onPress={() => router.push({ pathname: "/payment-modal", params: { kind: "add" } })} />
       <PaymentList
         payments={payments}
@@ -93,11 +92,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-  },
-  headerText: {
-    color: "#333",
-    fontSize: 24,
-    marginBottom: 24,
   },
   addButton: {
     borderRadius: 50,
