@@ -5,12 +5,12 @@ import dayjs from "dayjs";
 import { useRouter } from "expo-router";
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
-import { paymentAtom } from "../state/payment.state";
+import { paymentsAtom } from "../state/payment.state";
 
 type Payment = Database["public"]["Tables"]["dev_payments"]["Row"];
 
 export const usePayment = () => {
-  const [payments, setPayments] = useAtom(paymentAtom);
+  const [payments, setPayments] = useAtom(paymentsAtom);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [name, setName] = useState<string | null>(null);
   const [amount, setAmount] = useState<number | null>(null);

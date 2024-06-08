@@ -1,6 +1,6 @@
 import { View, Text, FlatList, TouchableOpacity, Alert, StyleSheet } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import { useEffect, type FC } from "react";
+import type { FC } from "react";
 import type { Database } from "@/types/supabase";
 import type { ExpoRouter } from "expo-router/types/expo-router";
 import { usePayment } from "../hooks/usePayment";

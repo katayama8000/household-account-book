@@ -1,33 +1,48 @@
 import { useRouter } from "expo-router";
 import type { ExpoRouter } from "expo-router/types/expo-router";
-import type { FC } from "react";
+import { useEffect, useState, type FC } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { FlatList } from "react-native";
 import dayjs from "dayjs";
+import { invoiceAtom } from "../state/invoice.state";
+import { useAtom } from "jotai";
+import { supabase } from "@/lib/supabase";
+import type { Database } from "@/types/supabase";
+
+type Payment = Database["public"]["Tables"]["dev_payments"]["Row"];
+type Invoice = Database["public"]["Tables"]["dev_monthly_invoices"]["Row"];
 
 export default function PastInvoicesScreen() {
+  const [invoices, setInvoices] = useAtom(invoiceAtom);
   const { push } = useRouter();
-  const dummyMonth = [
-    dayjs().format("YYYY-MM"),
-    dayjs().subtract(1, "month").format("YYYY-MM"),
-    dayjs().subtract(2, "month").format("YYYY-MM"),
-    dayjs().subtract(3, "month").format("YYYY-MM"),
-    dayjs().subtract(4, "month").format("YYYY-MM"),
-    dayjs().subtract(5, "month").format("YYYY-MM"),
-    dayjs().subtract(6, "month").format("YYYY-MM"),
-    dayjs().subtract(7, "month").format("YYYY-MM"),
-    dayjs().subtract(8, "month").format("YYYY-MM"),
-    dayjs().subtract(9, "month").format("YYYY-MM"),
-    dayjs().subtract(10, "month").format("YYYY-MM"),
-    dayjs().subtract(11, "month").format("YYYY-MM"),
-  ] as const;
+
+  const fetchInvoices = async () => {
+    const { data, error } = await supabase.from("dev_monthly_invoices").select("*");
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+    return data;
+  };
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    (async () => {
+      const invoices = await fetchInvoices();
+      if (invoices) {
+        setInvoices(invoices);
+      }
+    })();
+  }, []);
+
   return (
     <View>
       <Text>Past Screen</Text>
       <FlatList
-        data={dummyMonth}
-        renderItem={({ item }) => <MonthlyInvoice month={item} total={1000} routerPush={push} />}
-        keyExtractor={(item) => item}
+        data={invoices}
+        renderItem={({ item }) => <MonthlyInvoice invoice={item} routerPush={push} />}
+        keyExtractor={(item) => item.id.toString()}
         ItemSeparatorComponent={() => <View style={{ height: 4 }} />}
         ListEmptyComponent={() => <Text>No items</Text>}
         contentContainerStyle={{ paddingBottom: 100 }}
@@ -43,12 +58,30 @@ export default function PastInvoicesScreen() {
 }
 
 type MonthlyInvoiceProps = {
-  month: string;
-  total: number;
+  invoice: Invoice;
   routerPush: (href: ExpoRouter.Href) => void;
 };
 
-const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ month, total, routerPush }) => {
+const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ invoice, routerPush }) => {
+  const [totalAmount, setTotalAmount] = useState<number | null>(null);
+  const getTotalPayment = async (monthly_invoice_id: Payment["monthly_invoice_id"]) => {
+    const { data, error } = await supabase
+      .from("dev_payments")
+      .select("amount")
+      .eq("monthly_invoice_id", monthly_invoice_id);
+    if (error) {
+      console.error(error);
+      throw error;
+    }
+    return data.reduce((acc, cur) => acc + cur.amount, 0);
+  };
+
+  useEffect(() => {
+    (async () => {
+      const totalAmount = await getTotalPayment(invoice.id);
+      setTotalAmount(totalAmount);
+    })();
+  }, [invoice.id, getTotalPayment]);
   return (
     <TouchableOpacity
       style={{
@@ -68,9 +101,17 @@ const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ month, total, routerPush }) =
           marginBottom: 24,
         }}
       >
-        {month}
+        {dayjs(invoice.created_at).format("YYYY-MM")}
       </Text>
-      <Text>合計: {total}</Text>
+      <Text
+        style={{
+          color: "white",
+          fontSize: 24,
+          marginBottom: 24,
+        }}
+      >
+        {totalAmount}
+      </Text>
     </TouchableOpacity>
   );
 };
