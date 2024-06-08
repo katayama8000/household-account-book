@@ -13,7 +13,6 @@ export const usePayment = () => {
   const [payments, setPayments] = useAtom(paymentAtom);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [name, setName] = useState<string | null>(null);
-  const [quantity, setQuantity] = useState<number | null>(null);
   const [amount, setAmount] = useState<number | null>(null);
   const router = useRouter();
 
@@ -24,7 +23,7 @@ export const usePayment = () => {
   const monthly_invoice_id = 123;
 
   const addPayment = async (): Promise<void> => {
-    if (!name || !quantity || !amount) {
+    if (!name || !amount) {
       alert("Please fill out all fields");
       return;
     }
@@ -33,7 +32,7 @@ export const usePayment = () => {
         amount,
         monthly_invoice_id,
         name,
-        quantity,
+
         updated_at: dayjs().toISOString(),
         created_at: dayjs().toISOString(),
       },
@@ -47,7 +46,6 @@ export const usePayment = () => {
     alert("success");
     if (status === 201) {
       setName(null);
-      setQuantity(null);
       setAmount(null);
       console.log("inserted successfully");
       console.log(data, status);
@@ -82,7 +80,7 @@ export const usePayment = () => {
     }
   };
 
-  const updatePayment = async (id: number, payment: Pick<Payment, "name" | "quantity" | "amount">): Promise<void> => {
+  const updatePayment = async (id: number, payment: Pick<Payment, "name" | "amount">): Promise<void> => {
     const { data, error, status } = await supabase.from(dev_payments).update(payment).match({ id });
     if (error) {
       console.error(error);
@@ -106,10 +104,8 @@ export const usePayment = () => {
     setPayments,
     isRefreshing,
     name,
-    quantity,
     amount,
     setName,
-    setQuantity,
     setAmount,
     addPayment,
     fetchAllPayments,

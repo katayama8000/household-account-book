@@ -52,10 +52,6 @@ const Payment: FC<PaymentProps> = ({ deletePayment, routerPush, payment }) => {
       <View style={styles.paymentInfoContainer}>
         <Text style={styles.itemTitle}>{payment.name}</Text>
         <View style={styles.row}>
-          <Text style={styles.label}>数:</Text>
-          <Text style={styles.value}>{payment.quantity}</Text>
-        </View>
-        <View style={styles.row}>
           <Text style={styles.label}>金額:</Text>
           <Text style={styles.value}>{payment.amount}円</Text>
         </View>
@@ -71,7 +67,6 @@ const Payment: FC<PaymentProps> = ({ deletePayment, routerPush, payment }) => {
                 id: payment.id,
                 // FIXME: This is not the correct way to pass the payment data to the modal
                 name: payment.name,
-                quantity: payment.quantity,
                 amount: payment.amount,
               },
             })

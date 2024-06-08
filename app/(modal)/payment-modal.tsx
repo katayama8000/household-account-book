@@ -4,19 +4,17 @@ import { usePayment } from "../hooks/usePayment";
 import { useLocalSearchParams } from "expo-router";
 
 export default function PaymentModalScreen() {
-  const { addPayment, fetchAllPayments, updatePayment, setName, setAmount, setQuantity, name, amount, quantity } =
-    usePayment();
-  const { kind, id, name: nameQuery, quantity: quantityQuery, amount: amountQuery } = useLocalSearchParams();
+  const { addPayment, updatePayment, setName, setAmount, name, amount } = usePayment();
+  const { kind, id, name: nameQuery, amount: amountQuery } = useLocalSearchParams();
 
   useEffect(() => {
     if (kind === "edit" && id) {
-      if (typeof nameQuery === "string" && typeof quantityQuery === "string" && typeof amountQuery === "string") {
+      if (typeof nameQuery === "string" && typeof amountQuery === "string") {
         setName(nameQuery);
         setAmount(Number(amountQuery));
-        setQuantity(Number(quantityQuery));
       }
     }
-  }, [kind, id, nameQuery, quantityQuery, amountQuery, setName, setAmount, setQuantity]);
+  }, [kind, id, nameQuery, amountQuery, setName, setAmount]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -38,17 +36,6 @@ export default function PaymentModalScreen() {
           numberOfLines={1}
         />
       </View>
-      {/* 数 */}
-      <View style={styles.formWrapper}>
-        <Text style={styles.inputLabel}>Count</Text>
-        <TextInput
-          style={styles.input}
-          value={quantity ? quantity.toString() : ""}
-          onChangeText={(text) => setQuantity(Number(text))}
-          keyboardType={Platform.select({ ios: "number-pad", android: "numeric" })}
-          numberOfLines={1}
-        />
-      </View>
       {/* submitButton */}
       <View
         style={{
@@ -60,14 +47,14 @@ export default function PaymentModalScreen() {
           style={styles.submitButton}
           onPress={() => {
             if (kind === "edit") {
-              if (name && quantity && amount) {
-                updatePayment(Number(id), { name, amount, quantity });
+              if (name && amount) {
+                updatePayment(Number(id), { name, amount });
               }
             } else {
               addPayment();
             }
           }}
-          disabled={!name || !quantity || !amount}
+          disabled={!name || !amount}
         >
           <Text style={{ color: "#fff" }}>{kind === "edit" ? "Update" : "Add"} Payment</Text>
         </TouchableOpacity>
