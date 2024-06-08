@@ -17,7 +17,6 @@
  +----------------------+
  | id (PK)              |
  | couple_id (FK)       |
- | total_amount         |
  | is_paid              |
  | created_at           |
  | updated_at           |
@@ -33,7 +32,6 @@
  | id (PK)              |
  | monthly_invoice_id (FK) |
  | amount               |
- | quantity             |
  | name                 |
  | created_at           |
  | updated_at           |

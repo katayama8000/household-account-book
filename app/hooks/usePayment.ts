@@ -5,12 +5,12 @@ import dayjs from "dayjs";
 import { useRouter } from "expo-router";
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
-import { paymentAtom } from "../state/payment.state";
+import { paymentsAtom } from "../state/payment.state";
 
 type Payment = Database["public"]["Tables"]["dev_payments"]["Row"];
 
 export const usePayment = () => {
-  const [payments, setPayments] = useAtom(paymentAtom);
+  const [payments, setPayments] = useAtom(paymentsAtom);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [name, setName] = useState<string | null>(null);
   const [amount, setAmount] = useState<number | null>(null);
@@ -32,7 +32,6 @@ export const usePayment = () => {
         amount,
         monthly_invoice_id,
         name,
-
         updated_at: dayjs().toISOString(),
         created_at: dayjs().toISOString(),
       },
@@ -47,8 +46,7 @@ export const usePayment = () => {
     if (status === 201) {
       setName(null);
       setAmount(null);
-      console.log("inserted successfully");
-      console.log(data, status);
+
       fetchAllPayments();
     }
     // close modal
@@ -81,7 +79,7 @@ export const usePayment = () => {
   };
 
   const updatePayment = async (id: number, payment: Pick<Payment, "name" | "amount">): Promise<void> => {
-    const { data, error, status } = await supabase.from(dev_payments).update(payment).match({ id });
+    const { error } = await supabase.from(dev_payments).update(payment).match({ id });
     if (error) {
       console.error(error);
       return;
@@ -100,18 +98,18 @@ export const usePayment = () => {
   };
 
   return {
+    isRefreshing,
     payments,
     setPayments,
-    isRefreshing,
     name,
-    amount,
     setName,
+    amount,
     setAmount,
-    addPayment,
     fetchAllPayments,
+    fetchPaymentById,
+    addPayment,
+    updatePayment,
     deletePayment,
     router,
-    fetchPaymentById,
-    updatePayment,
   };
 };

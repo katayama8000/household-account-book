@@ -1,76 +1,124 @@
 import { useRouter } from "expo-router";
-import type { ExpoRouter } from "expo-router/types/expo-router";
-import type { FC } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import { FlatList } from "react-native";
+import { useEffect, useState, type FC } from "react";
+import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, StyleSheet } from "react-native";
 import dayjs from "dayjs";
+import { invoiceAtom } from "../state/invoice.state";
+import { useAtom } from "jotai";
+import { supabase } from "@/lib/supabase";
+import type { Database } from "@/types/supabase";
+import { MaterialIcons } from "@expo/vector-icons";
+
+type Payment = Database["public"]["Tables"]["dev_payments"]["Row"];
+type Invoice = Database["public"]["Tables"]["dev_monthly_invoices"]["Row"];
 
 export default function PastInvoicesScreen() {
+  const [invoices, setInvoices] = useAtom(invoiceAtom);
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const { push } = useRouter();
-  const dummyMonth = [
-    dayjs().format("YYYY-MM"),
-    dayjs().subtract(1, "month").format("YYYY-MM"),
-    dayjs().subtract(2, "month").format("YYYY-MM"),
-    dayjs().subtract(3, "month").format("YYYY-MM"),
-    dayjs().subtract(4, "month").format("YYYY-MM"),
-    dayjs().subtract(5, "month").format("YYYY-MM"),
-    dayjs().subtract(6, "month").format("YYYY-MM"),
-    dayjs().subtract(7, "month").format("YYYY-MM"),
-    dayjs().subtract(8, "month").format("YYYY-MM"),
-    dayjs().subtract(9, "month").format("YYYY-MM"),
-    dayjs().subtract(10, "month").format("YYYY-MM"),
-    dayjs().subtract(11, "month").format("YYYY-MM"),
-  ] as const;
+
+  const fetchInvoices = async () => {
+    setIsRefreshing(true);
+    const { data, error } = await supabase.from("dev_monthly_invoices").select("*");
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+    if (data) {
+      setInvoices(data);
+    }
+    setIsRefreshing(false);
+  };
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    fetchInvoices();
+  }, []);
+
   return (
     <View>
       <Text>Past Screen</Text>
       <FlatList
-        data={dummyMonth}
-        renderItem={({ item }) => <MonthlyInvoice month={item} total={1000} routerPush={push} />}
-        keyExtractor={(item) => item}
+        data={invoices}
+        renderItem={({ item }) => <MonthlyInvoice invoice={item} routerPush={push} />}
+        keyExtractor={(item) => item.id.toString()}
         ItemSeparatorComponent={() => <View style={{ height: 4 }} />}
         ListEmptyComponent={() => <Text>No items</Text>}
         contentContainerStyle={{ paddingBottom: 100 }}
-        onRefresh={(): void => {
-          // get items from server
-          console.log("refresh");
+        onRefresh={async (): Promise<void> => {
+          await fetchInvoices();
         }}
-        // set refreshing to true when loading items from server
-        refreshing={false}
+        refreshing={isRefreshing}
       />
     </View>
   );
 }
 
 type MonthlyInvoiceProps = {
-  month: string;
-  total: number;
-  routerPush: (href: ExpoRouter.Href) => void;
+  invoice: Invoice;
+  routerPush: (href: string) => void;
 };
 
-const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ month, total, routerPush }) => {
+const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ invoice, routerPush }) => {
+  const [totalAmount, setTotalAmount] = useState<number | null>(null);
+
+  useEffect(() => {
+    const getTotalPayment = async (monthly_invoice_id: Payment["monthly_invoice_id"]) => {
+      const { data, error } = await supabase
+        .from("dev_payments")
+        .select("amount")
+        .eq("monthly_invoice_id", monthly_invoice_id);
+      if (error) {
+        console.error(error);
+        return 0;
+      }
+      return data.reduce((acc, cur) => acc + cur.amount, 0);
+    };
+
+    (async () => {
+      const totalAmount = await getTotalPayment(invoice.id);
+      setTotalAmount(totalAmount);
+    })();
+  }, [invoice.id]);
+
   return (
-    <TouchableOpacity
-      style={{
-        backgroundColor: "#4caf50",
-        padding: 16,
-        borderRadius: 8,
-        margin: 8,
-      }}
-      onPress={() => {
-        routerPush("/past-invoice-details");
-      }}
-    >
-      <Text
-        style={{
-          color: "white",
-          fontSize: 24,
-          marginBottom: 24,
-        }}
-      >
-        {month}
-      </Text>
-      <Text>合計: {total}</Text>
+    <TouchableOpacity style={styles.card} onPress={() => routerPush("/past-invoice-details")} activeOpacity={0.8}>
+      <View style={styles.container}>
+        <Text style={styles.date}>{dayjs(invoice.created_at).format("YYYY-MM")}</Text>
+        <Text style={styles.amount}>
+          {totalAmount !== null ? `¥${totalAmount.toLocaleString()}` : <ActivityIndicator color="#fff" />}
+        </Text>
+        <MaterialIcons name="arrow-forward-ios" size={24} color="#fff" />
+      </View>
     </TouchableOpacity>
   );
 };
+
+const styles = StyleSheet.create({
+  card: {
+    backgroundColor: "#4caf50",
+    padding: 16,
+    borderRadius: 8,
+    margin: 8,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  container: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  date: {
+    color: "#fff",
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+  amount: {
+    color: "#fff",
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+});
