@@ -1,12 +1,16 @@
 import React, { useEffect } from "react";
 import { Platform, StyleSheet, Text, TextInput, View, SafeAreaView, TouchableOpacity } from "react-native";
 import { usePayment } from "../hooks/usePayment";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { Colors } from "@/constants/Colors";
 
 export default function PaymentModalScreen() {
   const { payments, addPayment, updatePayment, setName, setAmount, name, amount } = usePayment();
   const { kind, id } = useLocalSearchParams();
+  const { setOptions } = useNavigation();
+  setOptions({
+    headerTitle: kind === "edit" ? "編集" : "支払い",
+  });
 
   useEffect(() => {
     if (kind === "edit" && id) {
@@ -25,16 +29,12 @@ export default function PaymentModalScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>{kind === "edit" ? "Edit" : "Add"} Payment</Text>
-      <Text style={styles.title}>Payment Modal</Text>
-      {/* 項目名 */}
       <View style={styles.formWrapper}>
-        <Text style={styles.inputLabel}>Item</Text>
+        <Text style={styles.inputLabel}>項目</Text>
         <TextInput style={styles.input} value={name ? name.toString() : ""} onChangeText={(text) => setName(text)} />
       </View>
-      {/* 金額 */}
       <View style={styles.formWrapper}>
-        <Text style={styles.inputLabel}>Price</Text>
+        <Text style={styles.inputLabel}>値段</Text>
         <TextInput
           style={styles.input}
           value={amount ? amount.toString() : ""}
@@ -43,7 +43,6 @@ export default function PaymentModalScreen() {
           numberOfLines={1}
         />
       </View>
-      {/* submitButton */}
       <View
         style={{
           width: "100%",
@@ -63,7 +62,7 @@ export default function PaymentModalScreen() {
           }}
           disabled={!name || !amount}
         >
-          <Text style={{ color: "#fff" }}>{kind === "edit" ? "Update" : "Add"} Payment</Text>
+          <Text style={{ color: "#fff" }}>{kind === "edit" ? "更新" : "登録"}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -75,8 +74,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     backgroundColor: "#282c34",
-    padding: 20,
     paddingTop: Platform.OS === "android" ? 40 : 0, // Android用に上部パディングを追加
+    paddingHorizontal: 16,
   },
   title: {
     fontSize: 24,
@@ -90,24 +89,27 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     color: "#ccc",
+    fontSize: 16,
+    fontWeight: "bold",
     marginBottom: 5,
   },
   input: {
     height: 40,
     borderColor: "#555",
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 16,
     color: "#fff",
     backgroundColor: "#333",
     paddingHorizontal: 10,
-    width: "100%",
   },
   submitButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    marginTop: 12,
+    paddingVertical: 16,
     backgroundColor: Colors.primary,
-    borderRadius: 5,
+    borderRadius: 16,
     width: "100%",
     alignItems: "center",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
