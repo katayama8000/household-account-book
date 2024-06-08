@@ -48,17 +48,15 @@ export const usePayment = () => {
         return;
       }
 
-      if (status === 201 && data) {
-        alert("Success");
-        setPayments((prev) => [...prev, data[0]]);
-        resetForm();
-        router.back();
-      }
+      alert("Success");
+      resetForm();
+      fetchAllPayments();
+      router.back();
     } catch (error) {
       console.error(error);
       alert("An error occurred. Please try again.");
     }
-  }, [name, amount, router, setPayments, resetForm]);
+  }, [name, amount, router, resetForm]);
 
   const fetchAllPayments = useCallback(async (): Promise<void> => {
     setIsRefreshing(true);

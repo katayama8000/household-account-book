@@ -84,7 +84,7 @@ const PaymentItem: FC<PaymentItemProps> = ({ deletePayment, routerPush, payment 
         ])
       }
     >
-      <AntDesign name="delete" size={16} color="white" />
+      <AntDesign name="delete" size={24} color="white" />
     </TouchableOpacity>
   </TouchableOpacity>
 );
