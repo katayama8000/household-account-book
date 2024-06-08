@@ -1,13 +1,10 @@
 import { supabase } from "@/lib/supabase";
-import type { Database } from "@/types/supabase";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, View, Text, FlatList } from "react-native";
 import dayjs from "dayjs";
 import { Colors } from "@/constants/Colors";
-
-type Payment = Database["public"]["Tables"]["dev_payments"]["Row"];
-type Invoice = Database["public"]["Tables"]["dev_monthly_invoices"]["Row"];
+import type { Invoice, Payment } from "@/types/Row";
 
 export default function PastInvoiceDetailsScreen() {
   const [payments, setPayments] = useState<Payment[]>([]);

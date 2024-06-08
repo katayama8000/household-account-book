@@ -1,15 +1,15 @@
 import { View, Text, FlatList, TouchableOpacity, Alert, StyleSheet } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import type { FC } from "react";
-import type { Database } from "@/types/supabase";
+import type { Payment as PaymentRow } from "@/types/Row";
 import type { ExpoRouter } from "expo-router/types/expo-router";
 import { usePayment } from "../hooks/usePayment";
 import { Colors } from "@/constants/Colors";
-
-type Payment = Database["public"]["Tables"]["dev_payments"]["Row"];
+import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
-  const { payments, isRefreshing, fetchAllPayments, deletePayment, router } = usePayment();
+  const { payments, isRefreshing, fetchAllPayments, deletePayment } = usePayment();
+  const { push } = useRouter();
   return (
     <View style={styles.container}>
       <Text style={styles.headerText}>Home Screen</Text>
@@ -17,7 +17,7 @@ export default function HomeScreen() {
       <TouchableOpacity
         style={styles.addButton}
         onPress={() =>
-          router.push({
+          push({
             pathname: "/payment-modal",
             params: { kind: "add" },
           })
@@ -29,7 +29,7 @@ export default function HomeScreen() {
 
       <FlatList
         data={payments.sort((a, b) => b.id - a.id)}
-        renderItem={({ item }) => <Payment payment={item} routerPush={router.push} deletePayment={deletePayment} />}
+        renderItem={({ item }) => <Payment payment={item} routerPush={push} deletePayment={deletePayment} />}
         keyExtractor={(item) => item.id.toString()}
         ItemSeparatorComponent={() => <View style={{ height: 4 }} />}
         ListEmptyComponent={() => <Text style={styles.emptyListText}>No items</Text>}
@@ -44,7 +44,7 @@ export default function HomeScreen() {
 type PaymentProps = {
   deletePayment: (id: number) => Promise<void>;
   routerPush: (href: ExpoRouter.Href) => void;
-  payment: Payment;
+  payment: PaymentRow;
 };
 
 const Payment: FC<PaymentProps> = ({ deletePayment, routerPush, payment }) => {

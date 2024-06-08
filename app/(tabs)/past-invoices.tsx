@@ -5,13 +5,10 @@ import dayjs from "dayjs";
 import { invoiceAtom } from "../state/invoice.state";
 import { useAtom } from "jotai";
 import { supabase } from "@/lib/supabase";
-import type { Database } from "@/types/supabase";
 import { MaterialIcons } from "@expo/vector-icons";
 import type { ExpoRouter } from "expo-router/types/expo-router";
 import { Colors } from "@/constants/Colors";
-
-type Payment = Database["public"]["Tables"]["dev_payments"]["Row"];
-type Invoice = Database["public"]["Tables"]["dev_monthly_invoices"]["Row"];
+import type { Invoice, Payment } from "@/types/Row";
 
 export default function PastInvoicesScreen() {
   const [invoices, setInvoices] = useAtom(invoiceAtom);
