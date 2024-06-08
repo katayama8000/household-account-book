@@ -1,6 +1,5 @@
 import { dev_payments } from "@/constants/Table";
 import { supabase } from "@/lib/supabase";
-import type { Database } from "@/types/supabase";
 import dayjs from "dayjs";
 import { useRouter } from "expo-router";
 import { useAtom } from "jotai";

@@ -20,7 +20,7 @@ const SignInScreen = () => {
       Alert.alert(error.message);
     } else {
       Alert.alert("Signed in!");
-      push("/sample");
+      push("/");
     }
     setLoading(false);
   };
