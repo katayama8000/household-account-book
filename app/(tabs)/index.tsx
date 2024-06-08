@@ -6,6 +6,7 @@ import { usePayment } from "../hooks/usePayment";
 import { Colors } from "@/constants/Colors";
 import { useRouter } from "expo-router";
 import type { ExpoRouter } from "expo-router/types/expo-router";
+import { defaultFontSize, defaultShadowColor } from "@/style/defaultStyle";
 
 const HomeScreen: FC = () => {
   const { payments, isRefreshing, fetchAllPayments, deletePayment } = usePayment();
@@ -13,7 +14,6 @@ const HomeScreen: FC = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerText}>Home Screen</Text>
       <AddPaymentButton onPress={() => router.push({ pathname: "/payment-modal", params: { kind: "add" } })} />
       <PaymentList
         payments={payments}
@@ -78,13 +78,13 @@ const PaymentItem: FC<PaymentItemProps> = ({ deletePayment, routerPush, payment 
     <TouchableOpacity
       style={styles.iconButton}
       onPress={() =>
-        Alert.alert("Delete Item", "Are you sure you want to delete this item?", [
-          { text: "Cancel", style: "cancel" },
-          { text: "OK", onPress: () => deletePayment(payment.id) },
+        Alert.alert("削除します", "よろしいですか？", [
+          { text: "いいえ", style: "cancel" },
+          { text: "はい", onPress: () => deletePayment(payment.id) },
         ])
       }
     >
-      <AntDesign name="delete" size={16} color="white" />
+      <AntDesign name="delete" size={24} color="white" />
     </TouchableOpacity>
   </TouchableOpacity>
 );
@@ -94,11 +94,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
-  headerText: {
-    color: "#333",
-    fontSize: 24,
-    marginBottom: 24,
-  },
   addButton: {
     borderRadius: 50,
     marginBottom: 16,
@@ -107,19 +102,20 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     width: 100,
     padding: 8,
-    elevation: 8,
-    shadowColor: "#000",
+    elevation: 4,
+    shadowColor: defaultShadowColor,
     shadowOpacity: 0.2,
     shadowRadius: 4,
   },
   addButtonText: {
     color: "white",
-    fontSize: 16,
-    paddingHorizontal: 8,
+    fontSize: defaultFontSize,
+    paddingLeft: 8,
+    fontWeight: "bold",
   },
   emptyListText: {
     color: "#888",
-    fontSize: 16,
+    fontSize: defaultFontSize,
     textAlign: "center",
   },
   paymentContainer: {
@@ -130,11 +126,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
+    elevation: 4,
+    shadowColor: defaultShadowColor,
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 4 },
   },
   paymentInfoContainer: {
     flex: 1,
@@ -156,10 +152,10 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   iconButton: {
-    width: 32,
-    height: 32,
-    backgroundColor: "#dc3545",
-    borderRadius: 16,
+    width: 36,
+    height: 36,
+    backgroundColor: Colors.primary,
+    borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
     margin: 4,

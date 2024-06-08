@@ -7,6 +7,7 @@ import { useInvoice } from "../hooks/useInvoice";
 import { usePayment } from "../hooks/usePayment";
 import type { ExpoRouter } from "expo-router/types/expo-router";
 import type { Invoice } from "@/types/Row";
+import { defaultFontSize, defaultShadowColor } from "@/style/defaultStyle";
 
 export default function PastInvoicesScreen() {
   const { invoices, isRefreshing, fetchInvoices } = useInvoice();
@@ -24,7 +25,6 @@ export default function PastInvoicesScreen() {
         paddingHorizontal: 16,
       }}
     >
-      <Text>Past Screen</Text>
       <FlatList
         data={invoices}
         renderItem={({ item }) => <MonthlyInvoice invoice={item} routerPush={push} />}
@@ -66,7 +66,6 @@ const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ invoice, routerPush }) => {
           params: { id: invoice.id, date: dayjs(invoice.created_at).format("YYYY年MM月") },
         })
       }
-      activeOpacity={0.8}
     >
       <View style={styles.container}>
         <View style={{}}>
@@ -86,11 +85,11 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 8,
     marginVertical: 8,
-    shadowColor: "#000",
+    shadowColor: defaultShadowColor,
     shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 4 },
     shadowRadius: 4,
-    elevation: 5,
+    elevation: 4,
     backgroundColor: "white",
   },
   container: {
@@ -99,12 +98,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   date: {
-    fontSize: 16,
+    fontSize: defaultFontSize,
     fontWeight: "bold",
     marginBottom: 4,
   },
   amount: {
-    fontSize: 16,
+    fontSize: defaultFontSize,
     fontWeight: "bold",
   },
 });

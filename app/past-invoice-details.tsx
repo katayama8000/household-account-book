@@ -1,15 +1,22 @@
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, View, Text, FlatList } from "react-native";
 import dayjs from "dayjs";
 import { Colors } from "@/constants/Colors";
 import type { Payment } from "@/types/Row";
 import { usePayment } from "./hooks/usePayment";
+import { defaultFontSize, defaultShadowColor } from "@/style/defaultStyle";
 
 export default function PastInvoiceDetailsScreen() {
   const [payments, setPayments] = useState<Payment[]>([]);
   const { id, date } = useLocalSearchParams();
   const { getPaymentsByMonthlyInvoiceId } = usePayment();
+  const { setOptions } = useNavigation();
+  useEffect(() => {
+    if (typeof date === "string") {
+      setOptions({ headerTitle: date });
+    }
+  }, [date, setOptions]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
@@ -25,15 +32,14 @@ export default function PastInvoiceDetailsScreen() {
 
   const renderItem = ({ item }: { item: Payment }) => (
     <View style={styles.card}>
-      <Text style={styles.cardText}>入力日: {dayjs(item.updated_at).format("YYYY年MM月DD日")}</Text>
-      <Text style={styles.cardText}>項目: {item.name}</Text>
-      <Text style={styles.cardText}>金額: {item.amount.toLocaleString()}円</Text>
+      <Text style={styles.cardText}>入力日：{dayjs(item.updated_at).format("YYYY年MM月DD日")}</Text>
+      <Text style={styles.cardText}>項目：{item.name}</Text>
+      <Text style={styles.cardText}>金額：{item.amount.toLocaleString()}円</Text>
     </View>
   );
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>{date}</Text>
       {payments.length === 0 ? (
         <Text style={styles.noData}>支払い情報がありません。</Text>
       ) : (
@@ -53,15 +59,8 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
-  header: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 16,
-    textAlign: "center",
-    color: Colors.primary,
-  },
   noData: {
-    fontSize: 18,
+    fontSize: defaultFontSize,
     color: "#999",
     textAlign: "center",
     marginTop: 32,
@@ -70,20 +69,21 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   card: {
-    backgroundColor: "#fff",
-    padding: 20,
+    backgroundColor: "white",
+    padding: 16,
     borderRadius: 12,
     marginVertical: 10,
-    shadowColor: "#000",
-    shadowOpacity: 0.15,
+    shadowColor: defaultShadowColor,
+    shadowOpacity: 0.2,
     shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 6,
-    elevation: 3,
+    shadowRadius: 4,
+    elevation: 4,
     borderLeftWidth: 6,
     borderLeftColor: Colors.primary,
   },
   cardText: {
-    fontSize: 18,
+    fontSize: defaultFontSize,
+    fontWeight: "bold",
     color: "#444",
     marginBottom: 8,
   },

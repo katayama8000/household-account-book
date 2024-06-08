@@ -3,6 +3,7 @@ import { Platform, StyleSheet, Text, TextInput, View, SafeAreaView, TouchableOpa
 import { usePayment } from "../hooks/usePayment";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { Colors } from "@/constants/Colors";
+import { defaultFontSize } from "@/style/defaultStyle";
 
 export default function PaymentModalScreen() {
   const { payments, addPayment, updatePayment, setName, setAmount, name, amount } = usePayment();
@@ -65,7 +66,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: "#282c34",
     paddingTop: Platform.OS === "android" ? 40 : 0, // Android用に上部パディングを追加
     paddingHorizontal: 16,
   },
@@ -74,19 +74,17 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   inputLabel: {
-    color: "#ccc",
-    fontSize: 16,
+    fontSize: defaultFontSize,
     fontWeight: "bold",
     marginBottom: 5,
   },
   input: {
     height: 40,
-    borderColor: "#555",
     borderWidth: 1,
     borderRadius: 16,
-    color: "#fff",
-    backgroundColor: "#333",
+    borderColor: Colors.primary,
     paddingHorizontal: 10,
+    fontWeight: 600,
   },
   submitWrapper: {
     width: "100%",
@@ -102,7 +100,7 @@ const styles = StyleSheet.create({
   },
   submitButtonText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: defaultFontSize,
     fontWeight: "bold",
   },
 });
