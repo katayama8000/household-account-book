@@ -9,23 +9,25 @@ type Payment = Database["public"]["Tables"]["dev_payments"]["Row"];
 
 export default function HomeScreen() {
   const { payments, isRefreshing, fetchAllPayments, deletePayment, router } = usePayment();
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    fetchAllPayments();
-  }, []);
-
   return (
     <View style={styles.container}>
       <Text style={styles.headerText}>Home Screen</Text>
 
-      <TouchableOpacity style={styles.addButton} onPress={() => router.push("/payment-modal")}>
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() =>
+          router.push({
+            pathname: "/payment-modal",
+            params: { kind: "add" },
+          })
+        }
+      >
         <AntDesign name="pluscircleo" size={24} color="white" />
         <Text style={styles.addButtonText}>追加</Text>
       </TouchableOpacity>
 
       <FlatList
-        data={payments}
+        data={payments.sort((a, b) => b.id - a.id)}
         renderItem={({ item }) => <Payment payment={item} routerPush={router.push} deletePayment={deletePayment} />}
         keyExtractor={(item) => item.id.toString()}
         ItemSeparatorComponent={() => <View style={{ height: 4 }} />}
@@ -46,20 +48,27 @@ type PaymentProps = {
 
 const Payment: FC<PaymentProps> = ({ deletePayment, routerPush, payment }) => {
   return (
-    <TouchableOpacity style={styles.paymentContainer} onPress={() => routerPush(`/payment/${payment.id}`)}>
+    <TouchableOpacity style={styles.paymentContainer}>
       <View style={styles.paymentInfoContainer}>
         <Text style={styles.itemTitle}>{payment.name}</Text>
-        <View style={styles.row}>
-          <Text style={styles.label}>数:</Text>
-          <Text style={styles.value}>{payment.quantity}</Text>
-        </View>
         <View style={styles.row}>
           <Text style={styles.label}>金額:</Text>
           <Text style={styles.value}>{payment.amount}円</Text>
         </View>
       </View>
       <View style={styles.actions}>
-        <TouchableOpacity style={styles.iconButton} onPress={() => routerPush("/payment-modal")}>
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={() =>
+            routerPush({
+              pathname: "/payment-modal",
+              params: {
+                kind: "edit",
+                id: payment.id,
+              },
+            })
+          }
+        >
           <AntDesign name="edit" size={16} color="white" />
         </TouchableOpacity>
         <TouchableOpacity
