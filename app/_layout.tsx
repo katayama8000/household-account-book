@@ -30,7 +30,6 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="(modal)/modal" options={{ presentation: "modal" }} />
         <Stack.Screen name="(modal)/payment-modal" options={{ presentation: "modal" }} />
         <Stack.Screen name="+not-found" />
       </Stack>

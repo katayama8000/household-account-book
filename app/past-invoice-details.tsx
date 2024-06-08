@@ -1,26 +1,15 @@
-import { supabase } from "@/lib/supabase";
-import type { Database } from "@/types/supabase";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, View, Text, FlatList } from "react-native";
 import dayjs from "dayjs";
 import { Colors } from "@/constants/Colors";
-
-type Payment = Database["public"]["Tables"]["dev_payments"]["Row"];
-type Invoice = Database["public"]["Tables"]["dev_monthly_invoices"]["Row"];
+import type { Payment } from "@/types/Row";
+import { usePayment } from "./hooks/usePayment";
 
 export default function PastInvoiceDetailsScreen() {
   const [payments, setPayments] = useState<Payment[]>([]);
   const { id, date } = useLocalSearchParams();
-
-  const getPaymentsByMonthlyInvoiceId = async (id: Invoice["id"]) => {
-    const { data, error } = await supabase.from("dev_payments").select("*").eq("monthly_invoice_id", id);
-    if (error) {
-      console.error(error);
-      return;
-    }
-    return data;
-  };
+  const { getPaymentsByMonthlyInvoiceId } = usePayment();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
@@ -36,7 +25,7 @@ export default function PastInvoiceDetailsScreen() {
 
   const renderItem = ({ item }: { item: Payment }) => (
     <View style={styles.card}>
-      <Text style={styles.cardText}>入力日: {dayjs(item.updated_at).format("YYYY-MM-DD")}</Text>
+      <Text style={styles.cardText}>入力日: {dayjs(item.updated_at).format("YYYY年MM月DD日")}</Text>
       <Text style={styles.cardText}>項目: {item.name}</Text>
       <Text style={styles.cardText}>金額: {item.amount.toLocaleString()}円</Text>
     </View>

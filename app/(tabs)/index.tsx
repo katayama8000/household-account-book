@@ -1,106 +1,101 @@
 import { View, Text, FlatList, TouchableOpacity, Alert, StyleSheet } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import type { FC } from "react";
-import type { Database } from "@/types/supabase";
-import type { ExpoRouter } from "expo-router/types/expo-router";
+import type { Payment as PaymentRow } from "@/types/Row";
 import { usePayment } from "../hooks/usePayment";
 import { Colors } from "@/constants/Colors";
+import { useRouter } from "expo-router";
+import type { ExpoRouter } from "expo-router/types/expo-router";
 
-type Payment = Database["public"]["Tables"]["dev_payments"]["Row"];
+const HomeScreen: FC = () => {
+  const { payments, isRefreshing, fetchAllPayments, deletePayment } = usePayment();
+  const router = useRouter();
 
-export default function HomeScreen() {
-  const { payments, isRefreshing, fetchAllPayments, deletePayment, router } = usePayment();
   return (
     <View style={styles.container}>
       <Text style={styles.headerText}>Home Screen</Text>
-
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={() =>
-          router.push({
-            pathname: "/payment-modal",
-            params: { kind: "add" },
-          })
-        }
-      >
-        <AntDesign name="pluscircleo" size={24} color="white" />
-        <Text style={styles.addButtonText}>追加</Text>
-      </TouchableOpacity>
-
-      <FlatList
-        data={payments.sort((a, b) => b.id - a.id)}
-        renderItem={({ item }) => <Payment payment={item} routerPush={router.push} deletePayment={deletePayment} />}
-        keyExtractor={(item) => item.id.toString()}
-        ItemSeparatorComponent={() => <View style={{ height: 4 }} />}
-        ListEmptyComponent={() => <Text style={styles.emptyListText}>No items</Text>}
-        contentContainerStyle={{ paddingBottom: 100 }}
-        onRefresh={fetchAllPayments}
-        refreshing={isRefreshing}
+      <AddPaymentButton onPress={() => router.push({ pathname: "/payment-modal", params: { kind: "add" } })} />
+      <PaymentList
+        payments={payments}
+        isRefreshing={isRefreshing}
+        fetchAllPayments={fetchAllPayments}
+        deletePayment={deletePayment}
+        routerPush={router.push}
       />
     </View>
   );
-}
+};
 
-type PaymentProps = {
-  deletePayment: (id: number) => Promise<void>;
+type AddPaymentButtonProps = {
+  onPress: () => void;
+};
+
+const AddPaymentButton: FC<AddPaymentButtonProps> = ({ onPress }) => (
+  <TouchableOpacity style={styles.addButton} onPress={onPress}>
+    <AntDesign name="pluscircleo" size={24} color="white" />
+    <Text style={styles.addButtonText}>追加</Text>
+  </TouchableOpacity>
+);
+
+type PaymentListProps = {
+  payments: PaymentRow[];
+  isRefreshing: boolean;
+  fetchAllPayments: () => void;
+  deletePayment: (id: PaymentRow["id"]) => Promise<void>;
   routerPush: (href: ExpoRouter.Href) => void;
-  payment: Payment;
 };
 
-const Payment: FC<PaymentProps> = ({ deletePayment, routerPush, payment }) => {
-  return (
-    <TouchableOpacity style={styles.paymentContainer}>
-      <View style={styles.paymentInfoContainer}>
-        <Text style={styles.itemTitle}>{payment.name}</Text>
-        <View style={styles.row}>
-          <Text style={styles.label}>金額:</Text>
-          <Text style={styles.value}>{payment.amount}円</Text>
-        </View>
-      </View>
-      <View style={styles.actions}>
-        <TouchableOpacity
-          style={styles.iconButton}
-          onPress={() =>
-            routerPush({
-              pathname: "/payment-modal",
-              params: {
-                kind: "edit",
-                id: payment.id,
-              },
-            })
-          }
-        >
-          <AntDesign name="edit" size={16} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.iconButton}
-          onPress={() => {
-            Alert.alert("Delete Item", "Are you sure you want to delete this item?", [
-              { text: "Cancel", style: "cancel" },
-              {
-                text: "OK",
-                onPress: () => {
-                  deletePayment(payment.id);
-                },
-              },
-            ]);
-          }}
-        >
-          <AntDesign name="delete" size={16} color="white" />
-        </TouchableOpacity>
-      </View>
-    </TouchableOpacity>
-  );
+const PaymentList: FC<PaymentListProps> = ({ payments, isRefreshing, fetchAllPayments, deletePayment, routerPush }) => (
+  <FlatList
+    data={payments.sort((a, b) => b.id - a.id)}
+    renderItem={({ item }) => <PaymentItem payment={item} routerPush={routerPush} deletePayment={deletePayment} />}
+    keyExtractor={(item) => item.id.toString()}
+    ItemSeparatorComponent={() => <View style={{ height: 4 }} />}
+    ListEmptyComponent={() => <Text style={styles.emptyListText}>No items</Text>}
+    contentContainerStyle={{ paddingBottom: 100 }}
+    onRefresh={fetchAllPayments}
+    refreshing={isRefreshing}
+  />
+);
+
+type PaymentItemProps = {
+  deletePayment: (id: PaymentRow["id"]) => Promise<void>;
+  routerPush: (href: ExpoRouter.Href) => void;
+  payment: PaymentRow;
 };
+
+const PaymentItem: FC<PaymentItemProps> = ({ deletePayment, routerPush, payment }) => (
+  <TouchableOpacity
+    style={styles.paymentContainer}
+    onPress={() => routerPush({ pathname: "/payment-modal", params: { kind: "edit", id: payment.id } })}
+  >
+    <View style={styles.paymentInfoContainer}>
+      <Text style={styles.itemTitle}>{payment.name}</Text>
+      <View style={styles.row}>
+        <Text style={styles.value}>{payment.amount.toLocaleString()}円</Text>
+      </View>
+    </View>
+    <TouchableOpacity
+      style={styles.iconButton}
+      onPress={() =>
+        Alert.alert("Delete Item", "Are you sure you want to delete this item?", [
+          { text: "Cancel", style: "cancel" },
+          { text: "OK", onPress: () => deletePayment(payment.id) },
+        ])
+      }
+    >
+      <AntDesign name="delete" size={16} color="white" />
+    </TouchableOpacity>
+  </TouchableOpacity>
+);
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#282c34",
     padding: 16,
   },
   headerText: {
-    color: "white",
+    color: "#333",
     fontSize: 24,
     marginBottom: 24,
   },
@@ -112,6 +107,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     width: 100,
     padding: 8,
+    elevation: 8,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
   addButtonText: {
     color: "white",
@@ -119,18 +118,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   emptyListText: {
-    color: "white",
+    color: "#888",
     fontSize: 16,
     textAlign: "center",
   },
   paymentContainer: {
-    backgroundColor: "#ffffff",
+    backgroundColor: "white",
     padding: 16,
     marginBottom: 12,
     borderRadius: 8,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    elevation: 2,
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -143,31 +143,27 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 8,
+    color: "#333",
   },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 4,
   },
-  label: {
-    fontSize: 14,
-    color: "#888",
-  },
   value: {
     fontSize: 14,
     fontWeight: "bold",
-  },
-  actions: {
-    alignItems: "center",
-    justifyContent: "space-between",
+    color: "#333",
   },
   iconButton: {
     width: 32,
     height: 32,
-    backgroundColor: Colors.primary,
+    backgroundColor: "#dc3545",
     borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",
     margin: 4,
   },
 });
+
+export default HomeScreen;
