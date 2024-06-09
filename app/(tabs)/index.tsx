@@ -1,29 +1,16 @@
 import { View, Text, FlatList, TouchableOpacity, Alert, StyleSheet } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import { useEffect, type FC } from "react";
+import type { FC } from "react";
 import type { Payment as PaymentRow } from "@/types/Row";
 import { usePayment } from "../hooks/usePayment";
 import { Colors } from "@/constants/Colors";
 import { useRouter } from "expo-router";
 import type { ExpoRouter } from "expo-router/types/expo-router";
 import { defaultFontSize, defaultShadowColor } from "@/style/defaultStyle";
-import { supabase } from "@/lib/supabase";
 
 const HomeScreen: FC = () => {
   const { payments, isRefreshing, fetchAllPayments, deletePayment } = usePayment();
   const router = useRouter();
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    const f = async () => {
-      const user = await supabase.auth.getUser();
-      console.log(user);
-      if (user.data.user === null) {
-        router.push({ pathname: "/sign-in" });
-      }
-    };
-    f();
-  }, []);
 
   return (
     <View style={styles.container}>
