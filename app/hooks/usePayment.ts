@@ -45,8 +45,8 @@ export const usePayment = () => {
     }
     const monthly_invoice_id = (await fetchInvoiceByCoupleId(coupleId))?.id;
 
-    if (!monthly_invoice_id) {
-      alert("An error occurred. Please try again.");
+    if (monthly_invoice_id === undefined) {
+      alert("monthly_invoice_id is not found");
       return;
     }
 
