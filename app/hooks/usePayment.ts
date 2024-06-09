@@ -138,7 +138,7 @@ export const usePayment = () => {
 
   const getTotalPayment = async (monthly_invoice_id: Payment["monthly_invoice_id"]) => {
     const { data, error } = await supabase
-      .from("dev_payments")
+      .from(dev_payments)
       .select("amount")
       .eq("monthly_invoice_id", monthly_invoice_id);
     if (error) {
@@ -149,7 +149,7 @@ export const usePayment = () => {
   };
 
   const getPaymentsByMonthlyInvoiceId = async (id: Invoice["id"]) => {
-    const { data, error } = await supabase.from("dev_payments").select("*").eq("monthly_invoice_id", id);
+    const { data, error } = await supabase.from(dev_payments).select("*").eq("monthly_invoice_id", id);
     if (error) {
       console.error(error);
       return;
