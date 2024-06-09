@@ -7,20 +7,20 @@ export type Database = {
         Row: {
           created_at: string;
           id: number;
-          user1_id: number;
-          user2_id: number;
+          user1_id: string;
+          user2_id: string;
         };
         Insert: {
           created_at?: string;
           id?: number;
-          user1_id: number;
-          user2_id: number;
+          user1_id: string;
+          user2_id: string;
         };
         Update: {
           created_at?: string;
           id?: number;
-          user1_id?: number;
-          user2_id?: number;
+          user1_id?: string;
+          user2_id?: string;
         };
         Relationships: [];
       };
@@ -30,21 +30,21 @@ export type Database = {
           created_at: string;
           id: number;
           is_paid: boolean;
-          updated_at: string | null;
+          updated_at: string;
         };
         Insert: {
           couple_id: number;
           created_at?: string;
           id?: number;
-          is_paid?: boolean;
-          updated_at?: string | null;
+          is_paid: boolean;
+          updated_at?: string;
         };
         Update: {
           couple_id?: number;
           created_at?: string;
           id?: number;
           is_paid?: boolean;
-          updated_at?: string | null;
+          updated_at?: string;
         };
         Relationships: [
           {

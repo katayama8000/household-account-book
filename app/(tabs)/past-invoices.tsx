@@ -9,7 +9,7 @@ import type { ExpoRouter } from "expo-router/types/expo-router";
 import type { Invoice } from "@/types/Row";
 import { defaultFontSize, defaultShadowColor } from "@/style/defaultStyle";
 
-export default function PastInvoicesScreen() {
+const PastInvoicesScreen = () => {
   const { invoices, isRefreshing, fetchInvoices } = useInvoice();
   const { push } = useRouter();
 
@@ -37,7 +37,7 @@ export default function PastInvoicesScreen() {
       />
     </View>
   );
-}
+};
 
 type MonthlyInvoiceProps = {
   invoice: Invoice;
@@ -107,3 +107,5 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+
+export default PastInvoicesScreen;

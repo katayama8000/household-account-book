@@ -1,38 +1,74 @@
 import { supabase } from "@/lib/supabase";
 import { useAtom } from "jotai";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { invoiceAtom } from "../state/invoice.state";
 import type { Invoice } from "@/types/Row";
+import { dev_monthly_invoices } from "@/constants/Table";
+import dayjs from "dayjs";
 
 export const useInvoice = () => {
   const [invoices, setInvoices] = useAtom(invoiceAtom);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
-  const fetchInvoiceByCoupleId = async (couple_id: Invoice["couple_id"]) => {
-    const { data, error } = await supabase.from("dev_monthly_invoices").select("*").eq("couple_id", couple_id);
+  const getCurrentMonthInvoice = useCallback((invoices: Invoice[]): Invoice | undefined => {
+    return invoices.find(
+      (invoice) =>
+        dayjs(invoice.created_at).month() === dayjs().month() && dayjs(invoice.created_at).year() === dayjs().year(),
+    );
+  }, []);
 
-    if (error) {
-      console.error(error);
-      return;
-    }
-    if (data) {
-      return data[0];
-    }
-  };
+  const fetchInvoiceByCoupleId = useCallback(
+    async (coupleId: Invoice["couple_id"]) => {
+      try {
+        const { data: invoices, error } = await supabase
+          .from(dev_monthly_invoices)
+          .select("*")
+          .eq("couple_id", coupleId);
 
-  const fetchInvoices = async () => {
+        if (error) throw error;
+
+        return getCurrentMonthInvoice(invoices);
+      } catch (error) {
+        console.error(error);
+        return undefined;
+      }
+    },
+    [getCurrentMonthInvoice],
+  );
+
+  const fetchAllInvoices = useCallback(async () => {
     setIsRefreshing(true);
-    const { data, error } = await supabase.from("dev_monthly_invoices").select("*");
+    try {
+      const { data: invoices, error } = await supabase.from(dev_monthly_invoices).select("*");
 
-    if (error) {
+      if (error) throw error;
+
+      if (invoices) {
+        setInvoices(invoices);
+      }
+    } catch (error) {
       console.error(error);
-      return;
+    } finally {
+      setIsRefreshing(false);
     }
-    if (data) {
-      setInvoices(data);
+  }, [setInvoices]);
+
+  const addInvoice = async (couple_id: Invoice["couple_id"]) => {
+    try {
+      const { error } = await supabase.from(dev_monthly_invoices).insert([
+        {
+          couple_id,
+          is_paid: false,
+        },
+      ]);
+
+      if (error) throw error;
+
+      await fetchAllInvoices();
+    } catch (error) {
+      console.error(error);
     }
-    setIsRefreshing(false);
   };
 
-  return { invoices, isRefreshing, fetchInvoices, fetchInvoiceByCoupleId };
+  return { invoices, isRefreshing, fetchAllInvoices, fetchInvoiceByCoupleId, addInvoice };
 };
