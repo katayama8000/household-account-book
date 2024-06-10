@@ -26,6 +26,7 @@ export type Database = {
       };
       dev_monthly_invoices: {
         Row: {
+          active: boolean;
           couple_id: number;
           created_at: string;
           id: number;
@@ -33,6 +34,7 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
+          active?: boolean;
           couple_id: number;
           created_at?: string;
           id?: number;
@@ -40,6 +42,7 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
+          active?: boolean;
           couple_id?: number;
           created_at?: string;
           id?: number;
