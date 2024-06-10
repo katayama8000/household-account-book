@@ -61,6 +61,7 @@ export const useInvoice = () => {
 
   const addInvoice = async (couple_id: Invoice["couple_id"]) => {
     try {
+      await unActiveInvoicesAll(couple_id);
       const { error } = await supabase.from(dev_monthly_invoices).insert([
         {
           couple_id,
