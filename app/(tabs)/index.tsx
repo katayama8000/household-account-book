@@ -1,20 +1,60 @@
 import { View, Text, FlatList, TouchableOpacity, Alert, StyleSheet } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import type { FC } from "react";
-import type { Payment as PaymentRow } from "@/types/Row";
+import type { Couple, Payment as PaymentRow } from "@/types/Row";
 import { usePayment } from "../hooks/usePayment";
 import { Colors } from "@/constants/Colors";
 import { useRouter } from "expo-router";
 import type { ExpoRouter } from "expo-router/types/expo-router";
 import { defaultFontSize, defaultShadowColor } from "@/style/defaultStyle";
+import dayjs from "dayjs";
+import { useInvoice } from "../hooks/useInvoice";
+import { supabase } from "@/lib/supabase";
+import { useCouple } from "../hooks/useCouple";
 
 const HomeScreen: FC = () => {
   const { payments, isRefreshing, fetchAllPayments, deletePayment } = usePayment();
+  const { addInvoice, unActiveInvoice, getActiveInvoice } = useInvoice();
+  const { fetchCoupleIdByUserId } = useCouple();
   const router = useRouter();
+  const showCloseMonthButton = true;
+  // dayjs().date() >= 25 || dayjs().date() <= 5;
+
+  const handleCloseMonth = async (coupleId: Couple["id"]) => {
+    Alert.alert("締める", "よろしいですか？", [
+      { text: "いいえ", style: "cancel" },
+      {
+        text: "はい",
+        onPress: () => {
+          addInvoice(coupleId);
+          unActiveInvoice(coupleId);
+        },
+      },
+    ]);
+  };
 
   return (
     <View style={styles.container}>
-      <AddPaymentButton onPress={() => router.push({ pathname: "/payment-modal", params: { kind: "add" } })} />
+      <View style={styles.buttonWrapper}>
+        <AddPaymentButton onPress={() => router.push({ pathname: "/payment-modal", params: { kind: "add" } })} />
+        {showCloseMonthButton && (
+          <CloseMonthButton
+            onPress={async () => {
+              const userId = (await supabase.auth.getUser()).data.user?.id;
+              if (!userId) {
+                alert("userId is not found");
+                return;
+              }
+              const coupleId = await fetchCoupleIdByUserId(userId);
+              if (!coupleId) {
+                alert("coupleId is not found");
+                return;
+              }
+              handleCloseMonth(coupleId);
+            }}
+          />
+        )}
+      </View>
       <PaymentList
         payments={payments}
         isRefreshing={isRefreshing}
@@ -36,6 +76,19 @@ const AddPaymentButton: FC<AddPaymentButtonProps> = ({ onPress }) => (
     <Text style={styles.addButtonText}>追加</Text>
   </TouchableOpacity>
 );
+
+type CloseMonthButtonProps = {
+  onPress: () => void;
+};
+
+const CloseMonthButton: FC<CloseMonthButtonProps> = ({ onPress }) => {
+  return (
+    <TouchableOpacity style={styles.addButton} onPress={onPress}>
+      <AntDesign name="checkcircleo" size={24} color="white" />
+      <Text style={styles.addButtonText}>締める</Text>
+    </TouchableOpacity>
+  );
+};
 
 type PaymentListProps = {
   payments: PaymentRow[];
@@ -93,6 +146,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+  },
+  buttonWrapper: {
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   addButton: {
     borderRadius: 50,

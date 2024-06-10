@@ -17,24 +17,30 @@ export const useInvoice = () => {
     );
   }, []);
 
-  const fetchInvoiceByCoupleId = useCallback(
-    async (coupleId: Invoice["couple_id"]) => {
-      try {
-        const { data: invoices, error } = await supabase
-          .from(dev_monthly_invoices)
-          .select("*")
-          .eq("couple_id", coupleId);
+  const getActiveInvoice = async () => {
+    const { data, error } = await supabase.from(dev_monthly_invoices).select("*").eq("active", true);
 
-        if (error) throw error;
+    if (error) throw error;
 
-        return getCurrentMonthInvoice(invoices);
-      } catch (error) {
-        console.error(error);
-        return undefined;
-      }
-    },
-    [getCurrentMonthInvoice],
-  );
+    return data[0];
+  };
+
+  const fetchInvoiceByCoupleId = useCallback(async (coupleId: Invoice["couple_id"]) => {
+    try {
+      const { data, error } = await supabase
+        .from(dev_monthly_invoices)
+        .select("*")
+        .eq("couple_id", coupleId)
+        .eq("active", true);
+
+      if (error) throw error;
+
+      return data[0];
+    } catch (error) {
+      console.error(error);
+      return undefined;
+    }
+  }, []);
 
   const fetchAllInvoices = useCallback(async () => {
     setIsRefreshing(true);
@@ -55,10 +61,12 @@ export const useInvoice = () => {
 
   const addInvoice = async (couple_id: Invoice["couple_id"]) => {
     try {
+      await unActiveInvoice(couple_id);
       const { error } = await supabase.from(dev_monthly_invoices).insert([
         {
           couple_id,
           is_paid: false,
+          active: true,
         },
       ]);
 
@@ -70,5 +78,25 @@ export const useInvoice = () => {
     }
   };
 
-  return { invoices, isRefreshing, fetchAllInvoices, fetchInvoiceByCoupleId, addInvoice };
+  const unActiveInvoice = async (couple_id: Invoice["couple_id"]) => {
+    try {
+      const { error } = await supabase.from(dev_monthly_invoices).update({ active: false }).eq("couple_id", couple_id);
+
+      if (error) throw error;
+
+      await fetchAllInvoices();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return {
+    invoices,
+    isRefreshing,
+    fetchAllInvoices,
+    fetchInvoiceByCoupleId,
+    addInvoice,
+    getActiveInvoice,
+    unActiveInvoice,
+  };
 };
