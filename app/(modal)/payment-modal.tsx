@@ -6,7 +6,7 @@ import { Colors } from "@/constants/Colors";
 import { defaultFontSize } from "@/style/defaultStyle";
 
 export default function PaymentModalScreen() {
-  const { payments, addPayment, updatePayment, setName, setAmount, name, amount } = usePayment();
+  const { payments, addPayment, updatePayment, setName, setAmount, name, amount, fetchPaymentsAll } = usePayment();
   const { kind, id } = useLocalSearchParams();
   const { setOptions } = useNavigation();
 
@@ -26,16 +26,17 @@ export default function PaymentModalScreen() {
     }
   }, [kind, id, setName, setAmount, payments, setOptions]);
 
-  const handlePayment = () => {
+  const handlePayment = async () => {
     if (kind === "edit" && id) {
       if (!name || !amount) {
         alert("入力してください");
         return;
       }
-      updatePayment(Number(id), { name, amount });
+      await updatePayment(Number(id), { name, amount });
     } else {
-      addPayment();
+      await addPayment();
     }
+    await fetchPaymentsAll();
   };
 
   return (

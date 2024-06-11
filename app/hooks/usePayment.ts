@@ -19,7 +19,7 @@ export const usePayment = () => {
   const router = useRouter();
 
   useEffect(() => {
-    fetchAllPayments();
+    fetchPaymentsAll();
   }, []);
 
   const resetForm = () => {
@@ -69,7 +69,6 @@ export const usePayment = () => {
 
       alert("Success");
       resetForm();
-      fetchAllPayments();
       router.back();
     } catch (error) {
       console.error(error);
@@ -77,7 +76,7 @@ export const usePayment = () => {
     }
   }, [name, amount, router, resetForm, fetchInvoiceByCoupleId, fetchCoupleIdByUserId]);
 
-  const fetchAllPayments = useCallback(async (): Promise<void> => {
+  const fetchPaymentsAll = useCallback(async (): Promise<void> => {
     setIsRefreshing(true);
     try {
       const { data, error } = await supabase.from(dev_payments).select("*");
@@ -120,14 +119,14 @@ export const usePayment = () => {
           alert("An error occurred. Please try again.");
           return;
         }
-        fetchAllPayments();
+        fetchPaymentsAll();
         router.back();
       } catch (error) {
         console.error(error);
         alert("An error occurred. Please try again.");
       }
     },
-    [fetchAllPayments, router],
+    [fetchPaymentsAll, router],
   );
 
   const deletePayment = useCallback(
@@ -139,16 +138,16 @@ export const usePayment = () => {
           alert("An error occurred. Please try again.");
           return;
         }
-        fetchAllPayments();
+        fetchPaymentsAll();
       } catch (error) {
         console.error(error);
         alert("An error occurred. Please try again.");
       }
     },
-    [fetchAllPayments],
+    [fetchPaymentsAll],
   );
 
-  const getTotalPayment = async (monthly_invoice_id: Payment["monthly_invoice_id"]) => {
+  const fetchPaymentToal = async (monthly_invoice_id: Payment["monthly_invoice_id"]) => {
     const { data, error } = await supabase
       .from(dev_payments)
       .select("amount")
@@ -160,7 +159,7 @@ export const usePayment = () => {
     return data.reduce((acc, cur) => acc + cur.amount, 0);
   };
 
-  const getPaymentsByMonthlyInvoiceId = async (id: Invoice["id"]) => {
+  const fetchPaymentsByMonthlyInvoiceId = async (id: Invoice["id"]) => {
     const { data, error } = await supabase.from(dev_payments).select("*").eq("monthly_invoice_id", id);
     if (error) {
       console.error(error);
@@ -177,11 +176,11 @@ export const usePayment = () => {
     setName,
     setAmount,
     addPayment,
-    fetchAllPayments,
+    fetchPaymentsAll,
     fetchPaymentById,
     updatePayment,
     deletePayment,
-    getTotalPayment,
-    getPaymentsByMonthlyInvoiceId,
+    fetchPaymentToal,
+    fetchPaymentsByMonthlyInvoiceId,
   };
 };
