@@ -61,7 +61,6 @@ export const useInvoice = () => {
 
   const addInvoice = async (couple_id: Invoice["couple_id"]) => {
     try {
-      await unActiveInvoice(couple_id);
       const { error } = await supabase.from(dev_monthly_invoices).insert([
         {
           couple_id,
@@ -69,22 +68,16 @@ export const useInvoice = () => {
           active: true,
         },
       ]);
-
       if (error) throw error;
-
-      await fetchAllInvoices();
     } catch (error) {
       console.error(error);
     }
   };
 
-  const unActiveInvoice = async (couple_id: Invoice["couple_id"]) => {
+  const unActiveAllInvoices = async (couple_id: Invoice["couple_id"]) => {
     try {
       const { error } = await supabase.from(dev_monthly_invoices).update({ active: false }).eq("couple_id", couple_id);
-
       if (error) throw error;
-
-      await fetchAllInvoices();
     } catch (error) {
       console.error(error);
     }
@@ -97,6 +90,6 @@ export const useInvoice = () => {
     fetchInvoiceByCoupleId,
     addInvoice,
     getActiveInvoice,
-    unActiveInvoice,
+    unActiveAllInvoices,
   };
 };

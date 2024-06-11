@@ -7,9 +7,9 @@ export const useCouple = () => {
     const user1 = await supabase.from(dev_couples).select("id").eq("user1_id", user_id).single();
     const user2 = await supabase.from(dev_couples).select("id").eq("user2_id", user_id).single();
 
-    console.log("user1", user1);
-    console.log("user2", user2);
-
+    if (user1.error || user2.error) {
+      throw new Error("Failed to fetch couple id");
+    }
     return user1.data?.id || user2.data?.id;
   };
 
