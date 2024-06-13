@@ -13,8 +13,8 @@ import { supabase } from "@/lib/supabase";
 import { useCouple } from "../hooks/useCouple";
 
 const HomeScreen: FC = () => {
-  const { payments, isRefreshing, fetchAllPayments, deletePayment } = usePayment();
-  const { addInvoice, unActiveInvoice, getActiveInvoice } = useInvoice();
+  const { payments, isRefreshing, fetchPaymentsAll, deletePayment } = usePayment();
+  const { addInvoice, unActiveInvoicesAll, getActiveInvoice } = useInvoice();
   const { fetchCoupleIdByUserId } = useCouple();
   const router = useRouter();
   const showCloseMonthButton = true;
@@ -27,7 +27,7 @@ const HomeScreen: FC = () => {
         text: "はい",
         onPress: () => {
           addInvoice(coupleId);
-          unActiveInvoice(coupleId);
+          unActiveInvoicesAll(coupleId);
         },
       },
     ]);
@@ -58,7 +58,7 @@ const HomeScreen: FC = () => {
       <PaymentList
         payments={payments}
         isRefreshing={isRefreshing}
-        fetchAllPayments={fetchAllPayments}
+        fetchAllPayments={fetchPaymentsAll}
         deletePayment={deletePayment}
         routerPush={router.push}
       />
