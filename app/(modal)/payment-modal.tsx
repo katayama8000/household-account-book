@@ -29,7 +29,7 @@ export default function PaymentModalScreen() {
   const handlePayment = async () => {
     if (kind === "edit" && id) {
       if (!name || !amount) {
-        alert("入力してください");
+        alert("Please enter both name and amount.");
         return;
       }
       await updatePayment(Number(id), { name, amount });

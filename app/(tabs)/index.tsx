@@ -14,20 +14,21 @@ import { useCouple } from "../hooks/useCouple";
 
 const HomeScreen: FC = () => {
   const { payments, isRefreshing, fetchPaymentsAll, deletePayment } = usePayment();
-  const { addInvoice, unActiveInvoicesAll, getActiveInvoice } = useInvoice();
+  const { addInvoice, unActiveInvoicesAll, turnInvoicePaid } = useInvoice();
   const { fetchCoupleIdByUserId } = useCouple();
   const router = useRouter();
   const showCloseMonthButton = true;
   // dayjs().date() >= 25 || dayjs().date() <= 5;
 
   const handleCloseMonth = async (coupleId: Couple["id"]) => {
-    Alert.alert("締める", "よろしいですか？", [
+    Alert.alert("今月の精算を完了します", "よろしいですか？", [
       { text: "いいえ", style: "cancel" },
       {
         text: "はい",
         onPress: () => {
-          addInvoice(coupleId);
           unActiveInvoicesAll(coupleId);
+          turnInvoicePaid(coupleId);
+          addInvoice(coupleId);
         },
       },
     ]);

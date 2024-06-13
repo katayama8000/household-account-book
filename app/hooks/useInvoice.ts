@@ -83,6 +83,15 @@ export const useInvoice = () => {
     }
   };
 
+  const turnInvoicePaid = async (invoice_id: Invoice["id"]) => {
+    try {
+      const { error } = await supabase.from(dev_monthly_invoices).update({ is_paid: true }).eq("id", invoice_id);
+      if (error) throw error;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return {
     invoices,
     isRefreshing,
@@ -91,5 +100,6 @@ export const useInvoice = () => {
     addInvoice,
     getActiveInvoice,
     unActiveInvoicesAll,
+    turnInvoicePaid,
   };
 };
