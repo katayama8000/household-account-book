@@ -30,9 +30,9 @@ const SignInScreen = () => {
     });
 
     if (error) {
-      Alert.alert(error.message);
+      alert(error.message);
     } else {
-      Alert.alert("サインインしました");
+      alert("サインインしました");
     }
     setLoading(false);
   };
