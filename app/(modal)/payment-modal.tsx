@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
-import { Platform, StyleSheet, Text, TextInput, View, SafeAreaView, TouchableOpacity } from "react-native";
-import { usePayment } from "../hooks/usePayment";
-import { useLocalSearchParams, useNavigation } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import { defaultFontSize } from "@/style/defaultStyle";
+import { useLocalSearchParams, useNavigation } from "expo-router";
+import React, { useEffect } from "react";
+import { Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { usePayment } from "../hooks/usePayment";
 
 export default function PaymentModalScreen() {
   const { payments, addPayment, updatePayment, setName, setAmount, name, amount, fetchPaymentsAll } = usePayment();

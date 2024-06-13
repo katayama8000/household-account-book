@@ -1,13 +1,13 @@
 import { dev_payments } from "@/constants/Table";
 import { supabase } from "@/lib/supabase";
+import type { Invoice, Payment } from "@/types/Row";
 import dayjs from "dayjs";
 import { useRouter } from "expo-router";
 import { useAtom } from "jotai";
-import { useEffect, useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { paymentsAtom } from "../state/payment.state";
-import type { Invoice, Payment } from "@/types/Row";
-import { useInvoice } from "./useInvoice";
 import { useCouple } from "./useCouple";
+import { useInvoice } from "./useInvoice";
 
 export const usePayment = () => {
   const [payments, setPayments] = useAtom(paymentsAtom);
@@ -147,7 +147,7 @@ export const usePayment = () => {
     [fetchPaymentsAll],
   );
 
-  const fetchPaymentToal = async (monthly_invoice_id: Payment["monthly_invoice_id"]) => {
+  const fetchPaymentTotal = async (monthly_invoice_id: Payment["monthly_invoice_id"]) => {
     const { data, error } = await supabase
       .from(dev_payments)
       .select("amount")
@@ -180,7 +180,7 @@ export const usePayment = () => {
     fetchPaymentById,
     updatePayment,
     deletePayment,
-    fetchPaymentToal,
+    fetchPaymentTotal,
     fetchPaymentsByMonthlyInvoiceId,
   };
 };

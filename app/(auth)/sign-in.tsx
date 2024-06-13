@@ -4,23 +4,21 @@ import { defaultFontSize, defaultFontWeight } from "@/style/defaultStyle";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-  Alert,
+  ActivityIndicator,
   KeyboardAvoidingView,
+  Platform,
   ScrollView,
   StyleSheet,
-  TextInput,
-  View,
   Text,
-  Platform,
+  TextInput,
   TouchableOpacity,
-  ActivityIndicator,
+  View,
 } from "react-native";
 
 const SignInScreen = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const { push } = useRouter();
 
   const signInWithEmail = async () => {
     setLoading(true);

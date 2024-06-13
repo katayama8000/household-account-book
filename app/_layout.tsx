@@ -24,7 +24,7 @@ export default function RootLayout() {
   }, [loaded]);
 
   const authState = () => {
-    supabase.auth.onAuthStateChange((event, session) => {
+    supabase.auth.onAuthStateChange((event, _session) => {
       switch (event) {
         case "SIGNED_IN":
           push({ pathname: "/" });

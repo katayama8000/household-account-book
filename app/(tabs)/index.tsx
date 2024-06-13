@@ -1,16 +1,16 @@
-import { View, Text, FlatList, TouchableOpacity, Alert, StyleSheet } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
-import type { FC } from "react";
-import type { Couple, Payment as PaymentRow } from "@/types/Row";
-import { usePayment } from "../hooks/usePayment";
 import { Colors } from "@/constants/Colors";
+import { supabase } from "@/lib/supabase";
+import { defaultFontSize, defaultShadowColor } from "@/style/defaultStyle";
+import type { Couple, Payment as PaymentRow } from "@/types/Row";
+import { AntDesign } from "@expo/vector-icons";
+import dayjs from "dayjs";
 import { useRouter } from "expo-router";
 import type { ExpoRouter } from "expo-router/types/expo-router";
-import { defaultFontSize, defaultShadowColor } from "@/style/defaultStyle";
-import dayjs from "dayjs";
-import { useInvoice } from "../hooks/useInvoice";
-import { supabase } from "@/lib/supabase";
+import type { FC } from "react";
+import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useCouple } from "../hooks/useCouple";
+import { useInvoice } from "../hooks/useInvoice";
+import { usePayment } from "../hooks/usePayment";
 
 const HomeScreen: FC = () => {
   const { payments, isRefreshing, fetchPaymentsAll, deletePayment } = usePayment();
