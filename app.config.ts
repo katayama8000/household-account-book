@@ -20,7 +20,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
 
   return {
     ...config,
-    slug: "my-app",
+    slug: "household-account-book",
     name: "家計簿forほのか",
     extra: {
       ...config.extra,
