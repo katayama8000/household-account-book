@@ -29,6 +29,18 @@
     "plugins": ["expo-router", "expo-font"],
     "experiments": {
       "typedRoutes": true
+    },
+    "build": {
+      "dev": {
+        "env": {
+          "APP_ENV": "development"
+        }
+      },
+      "production": {
+        "env": {
+          "APP_ENV": "production"
+        }
+      }
     }
   }
 }

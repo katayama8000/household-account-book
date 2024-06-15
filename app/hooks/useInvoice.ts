@@ -5,10 +5,14 @@ import dayjs from "dayjs";
 import { useAtom } from "jotai";
 import { useCallback, useState } from "react";
 import { invoiceAtom } from "../state/invoice.state";
+import Constants from "expo-constants";
 
 export const useInvoice = () => {
   const [invoices, setInvoices] = useAtom(invoiceAtom);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+
+  const _dev_monthly_invoices = Constants.easConfig;
+  console.log(_dev_monthly_invoices);
 
   const fetchCurrentMonthInvoice = useCallback((invoices: Invoice[]): Invoice | undefined => {
     return invoices.find(
