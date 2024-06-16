@@ -23,8 +23,8 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     slug: "household-account-book",
     name: "家計簿forほのか",
     extra: {
-      ...config.extra,
-      ...extraConfig,
+      // ...config.extra,
+      extraConfig,
     },
   };
 };

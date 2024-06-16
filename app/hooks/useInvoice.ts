@@ -11,9 +11,6 @@ export const useInvoice = () => {
   const [invoices, setInvoices] = useAtom(invoiceAtom);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
-  const _dev_monthly_invoices = Constants.easConfig;
-  console.log(_dev_monthly_invoices);
-
   const fetchCurrentMonthInvoice = useCallback((invoices: Invoice[]): Invoice | undefined => {
     return invoices.find(
       (invoice) =>
