@@ -5,7 +5,6 @@ import dayjs from "dayjs";
 import { useAtom } from "jotai";
 import { useCallback, useState } from "react";
 import { invoiceAtom } from "../state/invoice.state";
-import Constants from "expo-constants";
 
 export const useInvoice = () => {
   const [invoices, setInvoices] = useAtom(invoiceAtom);
@@ -18,12 +17,22 @@ export const useInvoice = () => {
     );
   }, []);
 
-  const fetchActiveInvoice = async () => {
-    const { data, error } = await supabase.from(dev_monthly_invoices).select("*").eq("active", true);
+  const fetchActiveInvoiceByCoupleId = async (coupleId: Invoice["couple_id"]) => {
+    try {
+      const { data, error } = await supabase
+        .from(dev_monthly_invoices)
+        .select("*")
+        .eq("couple_id", coupleId)
+        .eq("active", true)
+        .single();
 
-    if (error) throw error;
+      if (error) throw error;
 
-    return data[0];
+      return data;
+    } catch (error) {
+      console.error(error);
+      return undefined;
+    }
   };
 
   const fetchInvoiceByCoupleId = useCallback(async (coupleId: Invoice["couple_id"]) => {
@@ -99,7 +108,7 @@ export const useInvoice = () => {
     fetchInvoicesAll,
     fetchInvoiceByCoupleId,
     addInvoice,
-    fetchActiveInvoice,
+    fetchActiveInvoiceByCoupleId,
     unActiveInvoicesAll,
     turnInvoicePaid,
   };
