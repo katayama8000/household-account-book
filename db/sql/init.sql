@@ -10,7 +10,8 @@ create table dev_monthly_invoices (
   created_at timestamp default now() not null,
   couple_id bigint references dev_couples (id),
   is_paid boolean not null,
-  updated_at timestamp default now() not null
+  updated_at timestamp default now() not null,
+  active boolean not null
 );
 
 create table dev_payments (

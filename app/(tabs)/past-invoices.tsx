@@ -1,21 +1,21 @@
-import { useRouter } from "expo-router";
-import { useEffect, useState, type FC } from "react";
-import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, StyleSheet } from "react-native";
-import dayjs from "dayjs";
+import { defaultFontSize, defaultShadowColor } from "@/style/defaultStyle";
+import type { Invoice } from "@/types/Row";
 import { MaterialIcons } from "@expo/vector-icons";
+import dayjs from "dayjs";
+import { useRouter } from "expo-router";
+import type { ExpoRouter } from "expo-router/types/expo-router";
+import { type FC, useEffect, useState } from "react";
+import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useInvoice } from "../hooks/useInvoice";
 import { usePayment } from "../hooks/usePayment";
-import type { ExpoRouter } from "expo-router/types/expo-router";
-import type { Invoice } from "@/types/Row";
-import { defaultFontSize, defaultShadowColor } from "@/style/defaultStyle";
 
 const PastInvoicesScreen = () => {
-  const { invoices, isRefreshing, fetchInvoices } = useInvoice();
+  const { invoices, isRefreshing, fetchInvoicesAll } = useInvoice();
   const { push } = useRouter();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    fetchInvoices();
+    fetchInvoicesAll();
   }, []);
 
   return (
@@ -32,7 +32,7 @@ const PastInvoicesScreen = () => {
         ItemSeparatorComponent={() => <View style={{ height: 4 }} />}
         ListEmptyComponent={() => <Text>No items</Text>}
         contentContainerStyle={{ paddingBottom: 100 }}
-        onRefresh={fetchInvoices}
+        onRefresh={fetchInvoicesAll}
         refreshing={isRefreshing}
       />
     </View>
@@ -46,12 +46,12 @@ type MonthlyInvoiceProps = {
 
 const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ invoice, routerPush }) => {
   const [totalAmount, setTotalAmount] = useState<number | null>(null);
-  const { getTotalPayment } = usePayment();
+  const { fetchPaymentTotal } = usePayment();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     const fetchData = async () => {
-      const totalAmount = await getTotalPayment(invoice.id);
+      const totalAmount = await fetchPaymentTotal(invoice.id);
       setTotalAmount(totalAmount);
     };
     fetchData();

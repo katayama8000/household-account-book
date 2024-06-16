@@ -1,16 +1,16 @@
+import { Colors } from "@/constants/Colors";
+import { defaultFontSize, defaultShadowColor } from "@/style/defaultStyle";
+import type { Payment } from "@/types/Row";
+import dayjs from "dayjs";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
-import { StyleSheet, View, Text, FlatList } from "react-native";
-import dayjs from "dayjs";
-import { Colors } from "@/constants/Colors";
-import type { Payment } from "@/types/Row";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import { usePayment } from "./hooks/usePayment";
-import { defaultFontSize, defaultShadowColor } from "@/style/defaultStyle";
 
 export default function PastInvoiceDetailsScreen() {
   const [payments, setPayments] = useState<Payment[]>([]);
   const { id, date } = useLocalSearchParams();
-  const { getPaymentsByMonthlyInvoiceId } = usePayment();
+  const { fetchPaymentsByMonthlyInvoiceId } = usePayment();
   const { setOptions } = useNavigation();
   useEffect(() => {
     if (typeof date === "string") {
@@ -22,7 +22,7 @@ export default function PastInvoiceDetailsScreen() {
   useEffect(() => {
     (async () => {
       if (typeof id === "string") {
-        const data = await getPaymentsByMonthlyInvoiceId(Number(id));
+        const data = await fetchPaymentsByMonthlyInvoiceId(Number(id));
         if (data) {
           setPayments(data);
         }

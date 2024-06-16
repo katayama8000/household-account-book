@@ -4,7 +4,7 @@
     "slug": "household-account-book",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/moufu.jpg",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.katayama9000.householdaccountbook"
     },
     "web": {
       "bundler": "metro",
@@ -29,6 +30,15 @@
     "plugins": ["expo-router", "expo-font"],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "018a6711-ac8c-41b8-830c-279089162afa"
+      }
+    },
+    "owner": "katayama9000"
   }
 }
