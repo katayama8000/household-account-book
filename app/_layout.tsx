@@ -40,6 +40,7 @@ export default function RootLayout() {
   useEffect(() => {
     const checkAuth = async () => {
       const { data, error } = await supabase.auth.getUser();
+      console.log("user", data);
       if (error || !data) {
         push({ pathname: "/sign-in" });
       }
