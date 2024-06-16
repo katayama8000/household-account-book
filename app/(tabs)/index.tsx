@@ -25,10 +25,11 @@ const HomeScreen: FC = () => {
       { text: "いいえ", style: "cancel" },
       {
         text: "はい",
-        onPress: () => {
-          unActiveInvoicesAll(coupleId);
-          turnInvoicePaid(coupleId);
-          addInvoice(coupleId);
+        onPress: async () => {
+          await unActiveInvoicesAll(coupleId);
+          await turnInvoicePaid(coupleId);
+          await addInvoice(coupleId);
+          Alert.alert("精算が完了しました", "今月もパートナーを大事にね！");
         },
       },
     ]);
