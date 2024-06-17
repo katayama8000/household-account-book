@@ -31,7 +31,7 @@ export const useInvoice = () => {
       return data;
     } catch (error) {
       console.error(error);
-      return undefined;
+      throw error;
     }
   };
 
@@ -76,6 +76,9 @@ export const useInvoice = () => {
           couple_id,
           is_paid: false,
           active: true,
+          // FIXME: dayjs().month() + 1 is not correct
+          month: dayjs().month() + 1,
+          year: dayjs().year(),
         },
       ]);
       if (error) throw error;
