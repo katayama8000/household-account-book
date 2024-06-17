@@ -4,10 +4,11 @@ import type { Invoice } from "@/types/Row";
 import dayjs from "dayjs";
 import { useAtom } from "jotai";
 import { useCallback, useState } from "react";
-import { invoiceAtom } from "../state/invoice.state";
+import { activeInvoiceAtom, invoicesAllAtom } from "../state/invoice.state";
 
 export const useInvoice = () => {
-  const [invoices, setInvoices] = useAtom(invoiceAtom);
+  const [invoices, setInvoices] = useAtom(invoicesAllAtom);
+  const [invoice] = useAtom(activeInvoiceAtom);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
   const fetchCurrentMonthInvoice = useCallback((invoices: Invoice[]): Invoice | undefined => {
@@ -70,15 +71,15 @@ export const useInvoice = () => {
   }, [setInvoices]);
 
   const addInvoice = async (couple_id: Invoice["couple_id"]) => {
+    if (!invoice) return;
     try {
       const { error } = await supabase.from(dev_monthly_invoices).insert([
         {
           couple_id,
           is_paid: false,
           active: true,
-          // FIXME: dayjs().month() + 1 is not correct
-          month: dayjs().month() + 1,
-          year: dayjs().year(),
+          month: invoice?.month === 12 ? 1 : invoice?.month + 1,
+          year: invoice?.month === 12 ? invoice?.year + 1 : invoice?.year,
         },
       ]);
       if (error) throw error;

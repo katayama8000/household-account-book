@@ -1,16 +1,18 @@
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/Colors";
-import dayjs from "dayjs";
 import { Tabs } from "expo-router";
 import { useInvoice } from "../hooks/useInvoice";
 import { useCouple } from "../hooks/useCouple";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { useAtom } from "jotai";
+import { activeInvoiceAtom } from "../state/invoice.state";
+import { ActivityIndicator } from "react-native";
 
 export default function TabLayout() {
   const { fetchCoupleIdByUserId } = useCouple();
   const { fetchActiveInvoiceByCoupleId } = useInvoice();
-  const [month, setMonth] = useState<number | null>(null);
+  const [activeInvoice, setActiveInvoice] = useAtom(activeInvoiceAtom);
 
   useEffect(() => {
     (async () => {
@@ -25,9 +27,9 @@ export default function TabLayout() {
         return;
       }
       const invoice = await fetchActiveInvoiceByCoupleId(coupleId);
-      setMonth(invoice.month);
+      setActiveInvoice(invoice);
     })();
-  }, [fetchActiveInvoiceByCoupleId, fetchCoupleIdByUserId]);
+  }, [fetchActiveInvoiceByCoupleId, fetchCoupleIdByUserId, setActiveInvoice]);
   return (
     <Tabs
       screenOptions={{
@@ -38,7 +40,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: `${month}月`,
+          title: `${activeInvoice === undefined ? <ActivityIndicator /> : activeInvoice?.month}月`,
           tabBarIcon: ({ color, focused }) => <TabBarIcon name={focused ? "today" : "today-outline"} color={color} />,
         }}
       />
