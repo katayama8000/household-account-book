@@ -5,6 +5,9 @@ import { Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import "react-native-reanimated";
+import { useCouple } from "./hooks/useCouple";
+import { useAtom } from "jotai";
+import { coupleIdAtom } from "./state/couple.state";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -16,6 +19,8 @@ export default function RootLayout() {
 
   const [isCheckingAuth, setIsCheckingAuth] = useState<boolean>(true);
   const { push } = useRouter();
+  const { fetchCoupleIdByUserId } = useCouple();
+  const [coupleId, setCoupleId] = useAtom(coupleIdAtom);
 
   useEffect(() => {
     if (loaded) {
@@ -44,6 +49,17 @@ export default function RootLayout() {
       if (error || !data) {
         push({ pathname: "/sign-in" });
       }
+
+      if (!data.user) {
+        return;
+      }
+
+      const coupleId = await fetchCoupleIdByUserId(data.user?.id);
+      if (!coupleId) {
+        throw new Error("coupleId is not found");
+      }
+      setCoupleId(coupleId);
+
       setIsCheckingAuth(false);
     };
 

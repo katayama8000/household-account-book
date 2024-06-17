@@ -8,6 +8,7 @@ import { useCallback, useEffect, useState } from "react";
 import { paymentsAtom } from "../state/payment.state";
 import { useCouple } from "./useCouple";
 import { useInvoice } from "./useInvoice";
+import { coupleIdAtom } from "../state/couple.state";
 
 export const usePayment = () => {
   const [payments, setPayments] = useAtom(paymentsAtom);
@@ -15,7 +16,7 @@ export const usePayment = () => {
   const [name, setName] = useState<string | null>(null);
   const [amount, setAmount] = useState<number | null>(null);
   const { fetchInvoiceByCoupleId } = useInvoice();
-  const { fetchCoupleIdByUserId } = useCouple();
+  const [coupleId] = useAtom(coupleIdAtom);
   const router = useRouter();
 
   useEffect(() => {
@@ -38,7 +39,7 @@ export const usePayment = () => {
       alert("userId is not found");
       return;
     }
-    const coupleId = await fetchCoupleIdByUserId(userId);
+
     if (!coupleId) {
       alert("coupleId is not found");
       return;
@@ -74,7 +75,7 @@ export const usePayment = () => {
       console.error(error);
       alert("An error occurred. Please try again.");
     }
-  }, [name, amount, router, resetForm, fetchInvoiceByCoupleId, fetchCoupleIdByUserId]);
+  }, [name, amount, router, resetForm, fetchInvoiceByCoupleId, coupleId]);
 
   const fetchPaymentsAll = useCallback(async (): Promise<void> => {
     setIsRefreshing(true);

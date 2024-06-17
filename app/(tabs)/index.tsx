@@ -11,11 +11,13 @@ import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react
 import { useCouple } from "../hooks/useCouple";
 import { useInvoice } from "../hooks/useInvoice";
 import { usePayment } from "../hooks/usePayment";
+import { coupleIdAtom } from "../state/couple.state";
+import { useAtom } from "jotai";
 
 const HomeScreen: FC = () => {
   const { payments, isRefreshing, fetchPaymentsAll, deletePayment } = usePayment();
   const { addInvoice, unActiveInvoicesAll, turnInvoicePaid } = useInvoice();
-  const { fetchCoupleIdByUserId } = useCouple();
+  const [coupleId] = useAtom(coupleIdAtom);
   const router = useRouter();
   const showCloseMonthButton = true;
   // dayjs().date() >= 25 || dayjs().date() <= 5;
@@ -47,7 +49,6 @@ const HomeScreen: FC = () => {
                 alert("userId is not found");
                 return;
               }
-              const coupleId = await fetchCoupleIdByUserId(userId);
               if (!coupleId) {
                 alert("coupleId is not found");
                 return;

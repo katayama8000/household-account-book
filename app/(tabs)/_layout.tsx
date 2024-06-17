@@ -8,11 +8,12 @@ import { supabase } from "@/lib/supabase";
 import { useAtom } from "jotai";
 import { activeInvoiceAtom } from "../state/invoice.state";
 import { ActivityIndicator } from "react-native";
+import { coupleIdAtom } from "../state/couple.state";
 
 export default function TabLayout() {
-  const { fetchCoupleIdByUserId } = useCouple();
   const { fetchActiveInvoiceByCoupleId } = useInvoice();
   const [activeInvoice, setActiveInvoice] = useAtom(activeInvoiceAtom);
+  const [coupleId] = useAtom(coupleIdAtom);
 
   useEffect(() => {
     (async () => {
@@ -21,7 +22,6 @@ export default function TabLayout() {
         alert("userId is not found");
         return;
       }
-      const coupleId = await fetchCoupleIdByUserId(userId);
       if (!coupleId) {
         alert("coupleId is not found");
         return;
@@ -29,7 +29,7 @@ export default function TabLayout() {
       const invoice = await fetchActiveInvoiceByCoupleId(coupleId);
       setActiveInvoice(invoice);
     })();
-  }, [fetchActiveInvoiceByCoupleId, fetchCoupleIdByUserId, setActiveInvoice]);
+  }, [fetchActiveInvoiceByCoupleId, setActiveInvoice, coupleId]);
   return (
     <Tabs
       screenOptions={{
