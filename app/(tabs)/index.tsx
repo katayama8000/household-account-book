@@ -1,5 +1,4 @@
 import { Colors } from "@/constants/Colors";
-import { supabase } from "@/lib/supabase";
 import { defaultFontSize, defaultShadowColor } from "@/style/defaultStyle";
 import type { Couple, Invoice, Payment, Payment as PaymentRow } from "@/types/Row";
 import { AntDesign } from "@expo/vector-icons";
