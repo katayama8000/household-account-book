@@ -51,6 +51,7 @@ export default function RootLayout() {
       const { data, error } = await supabase.auth.getUser();
       console.log("user", data);
       if (error || !data) {
+        // error defore mounting the root layout
         push({ pathname: "/sign-in" });
       }
 
