@@ -1,9 +1,12 @@
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/Colors";
 import { Tabs } from "expo-router";
-import React from "react";
+import { useAtom } from "jotai";
+import { activeInvoiceAtom } from "../state/invoice.state";
 
 export default function TabLayout() {
+  const [activeInvoice] = useAtom(activeInvoiceAtom);
+
   return (
     <Tabs
       screenOptions={{
@@ -14,7 +17,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "今月",
+          title: activeInvoice === undefined ? "...loading" : `${activeInvoice?.month}月`,
           tabBarIcon: ({ color, focused }) => <TabBarIcon name={focused ? "today" : "today-outline"} color={color} />,
         }}
       />

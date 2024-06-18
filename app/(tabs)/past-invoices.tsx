@@ -1,7 +1,6 @@
 import { defaultFontSize, defaultShadowColor } from "@/style/defaultStyle";
 import type { Invoice } from "@/types/Row";
 import { MaterialIcons } from "@expo/vector-icons";
-import dayjs from "dayjs";
 import { useRouter } from "expo-router";
 import type { ExpoRouter } from "expo-router/types/expo-router";
 import { type FC, useEffect, useState } from "react";
@@ -63,13 +62,13 @@ const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ invoice, routerPush }) => {
       onPress={() =>
         routerPush({
           pathname: "/past-invoice-details",
-          params: { id: invoice.id, date: dayjs(invoice.created_at).format("YYYY年MM月") },
+          params: { id: invoice.id, date: `${invoice.year}年 ${invoice.month}月` },
         })
       }
     >
       <View style={styles.container}>
         <View style={{}}>
-          <Text style={styles.date}>{dayjs(invoice.created_at).format("YYYY年MM月")}</Text>
+          <Text style={styles.date}>{`${invoice.year}年 ${invoice.month}月`}</Text>
           <Text style={styles.amount}>
             {totalAmount !== null ? `${totalAmount.toLocaleString()}円` : <ActivityIndicator color="#fff" />}
           </Text>

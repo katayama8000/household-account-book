@@ -4,11 +4,11 @@ import type { Invoice } from "@/types/Row";
 import dayjs from "dayjs";
 import { useAtom } from "jotai";
 import { useCallback, useState } from "react";
-import { invoiceAtom } from "../state/invoice.state";
-import Constants from "expo-constants";
+import { activeInvoiceAtom, invoicesAllAtom } from "../state/invoice.state";
 
 export const useInvoice = () => {
-  const [invoices, setInvoices] = useAtom(invoiceAtom);
+  const [invoices, setInvoices] = useAtom(invoicesAllAtom);
+  const [invoice] = useAtom(activeInvoiceAtom);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
   const fetchCurrentMonthInvoice = useCallback((invoices: Invoice[]): Invoice | undefined => {
@@ -18,12 +18,21 @@ export const useInvoice = () => {
     );
   }, []);
 
-  const fetchActiveInvoice = async () => {
-    const { data, error } = await supabase.from(dev_monthly_invoices).select("*").eq("active", true);
+  const fetchActiveInvoiceByCoupleId = async (coupleId: Invoice["couple_id"]) => {
+    try {
+      const { data, error } = await supabase
+        .from(dev_monthly_invoices)
+        .select("*")
+        .eq("couple_id", coupleId)
+        .eq("active", true)
+        .single();
 
-    if (error) throw error;
-
-    return data[0];
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   };
 
   const fetchInvoiceByCoupleId = useCallback(async (coupleId: Invoice["couple_id"]) => {
@@ -61,12 +70,15 @@ export const useInvoice = () => {
   }, [setInvoices]);
 
   const addInvoice = async (couple_id: Invoice["couple_id"]) => {
+    if (!invoice) return;
     try {
       const { error } = await supabase.from(dev_monthly_invoices).insert([
         {
           couple_id,
           is_paid: false,
           active: true,
+          month: invoice?.month === 12 ? 1 : invoice?.month + 1,
+          year: invoice?.month === 12 ? invoice?.year + 1 : invoice?.year,
         },
       ]);
       if (error) throw error;
@@ -99,7 +111,7 @@ export const useInvoice = () => {
     fetchInvoicesAll,
     fetchInvoiceByCoupleId,
     addInvoice,
-    fetchActiveInvoice,
+    fetchActiveInvoiceByCoupleId,
     unActiveInvoicesAll,
     turnInvoicePaid,
   };
