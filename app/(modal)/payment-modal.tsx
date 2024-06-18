@@ -4,11 +4,15 @@ import { useLocalSearchParams, useNavigation } from "expo-router";
 import React, { useEffect } from "react";
 import { Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { usePayment } from "../hooks/usePayment";
+import { activeInvoiceAtom } from "../state/invoice.state";
+import { useAtom } from "jotai";
 
 export default function PaymentModalScreen() {
-  const { payments, addPayment, updatePayment, setName, setAmount, name, amount, fetchPaymentsAll } = usePayment();
+  const { payments, addPayment, updatePayment, setName, setAmount, name, amount, fetchPaymentsAllByMonthlyInvoiceId } =
+    usePayment();
   const { kind, id } = useLocalSearchParams();
   const { setOptions } = useNavigation();
+  const [activeInvoce] = useAtom(activeInvoiceAtom);
 
   useEffect(() => {
     setOptions({
@@ -36,7 +40,7 @@ export default function PaymentModalScreen() {
     } else {
       await addPayment();
     }
-    await fetchPaymentsAll();
+    activeInvoce && (await fetchPaymentsAllByMonthlyInvoiceId(activeInvoce.id));
   };
 
   return (

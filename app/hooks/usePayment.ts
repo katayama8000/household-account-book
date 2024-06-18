@@ -9,6 +9,7 @@ import { paymentsAtom } from "../state/payment.state";
 import { useCouple } from "./useCouple";
 import { useInvoice } from "./useInvoice";
 import { coupleIdAtom } from "../state/couple.state";
+import { activeInvoiceAtom } from "../state/invoice.state";
 
 export const usePayment = () => {
   const [payments, setPayments] = useAtom(paymentsAtom);
@@ -18,10 +19,14 @@ export const usePayment = () => {
   const { fetchInvoiceByCoupleId } = useInvoice();
   const [coupleId] = useAtom(coupleIdAtom);
   const router = useRouter();
+  const [activeInvoice] = useAtom(activeInvoiceAtom);
 
   useEffect(() => {
-    fetchPaymentsAll();
-  }, []);
+    if (activeInvoice === null) {
+      return;
+    }
+    fetchPaymentsAllByMonthlyInvoiceId(activeInvoice.id);
+  }, [activeInvoice]);
 
   const resetForm = () => {
     setName(null);
@@ -31,12 +36,6 @@ export const usePayment = () => {
   const addPayment = useCallback(async (): Promise<void> => {
     if (!name || !amount) {
       alert("Please enter both name and amount.");
-      return;
-    }
-
-    const userId = (await supabase.auth.getUser()).data.user?.id;
-    if (!userId) {
-      alert("userId is not found");
       return;
     }
 
@@ -77,23 +76,29 @@ export const usePayment = () => {
     }
   }, [name, amount, router, resetForm, fetchInvoiceByCoupleId, coupleId]);
 
-  const fetchPaymentsAll = useCallback(async (): Promise<void> => {
-    setIsRefreshing(true);
-    try {
-      const { data, error } = await supabase.from(dev_payments).select("*");
-      if (error) {
+  const fetchPaymentsAllByMonthlyInvoiceId = useCallback(
+    async (monthlyInvoiceId: Payment["monthly_invoice_id"]): Promise<void> => {
+      setIsRefreshing(true);
+      try {
+        const { data, error } = await supabase
+          .from(dev_payments)
+          .select("*")
+          .eq("monthly_invoice_id", monthlyInvoiceId);
+        if (error) {
+          console.error(error);
+          alert("An error occurred. Please try again.");
+          return;
+        }
+        setPayments(data);
+      } catch (error) {
         console.error(error);
         alert("An error occurred. Please try again.");
-        return;
+      } finally {
+        setIsRefreshing(false);
       }
-      setPayments(data);
-    } catch (error) {
-      console.error(error);
-      alert("An error occurred. Please try again.");
-    } finally {
-      setIsRefreshing(false);
-    }
-  }, [setPayments]);
+    },
+    [setPayments],
+  );
 
   const fetchPaymentById = useCallback(async (id: Payment["id"]): Promise<Payment | null> => {
     try {
@@ -120,33 +125,28 @@ export const usePayment = () => {
           alert("An error occurred. Please try again.");
           return;
         }
-        fetchPaymentsAll();
         router.back();
       } catch (error) {
         console.error(error);
         alert("An error occurred. Please try again.");
       }
     },
-    [fetchPaymentsAll, router],
+    [router],
   );
 
-  const deletePayment = useCallback(
-    async (id: Payment["id"]): Promise<void> => {
-      try {
-        const { error } = await supabase.from(dev_payments).delete().match({ id });
-        if (error) {
-          console.error(error);
-          alert("An error occurred. Please try again.");
-          return;
-        }
-        fetchPaymentsAll();
-      } catch (error) {
+  const deletePayment = useCallback(async (id: Payment["id"]): Promise<void> => {
+    try {
+      const { error } = await supabase.from(dev_payments).delete().match({ id });
+      if (error) {
         console.error(error);
         alert("An error occurred. Please try again.");
+        return;
       }
-    },
-    [fetchPaymentsAll],
-  );
+    } catch (error) {
+      console.error(error);
+      alert("An error occurred. Please try again.");
+    }
+  }, []);
 
   const fetchPaymentTotal = async (monthly_invoice_id: Payment["monthly_invoice_id"]) => {
     const { data, error } = await supabase
@@ -177,7 +177,7 @@ export const usePayment = () => {
     setName,
     setAmount,
     addPayment,
-    fetchPaymentsAll,
+    fetchPaymentsAllByMonthlyInvoiceId,
     fetchPaymentById,
     updatePayment,
     deletePayment,
