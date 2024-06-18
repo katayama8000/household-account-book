@@ -3,21 +3,22 @@ import { supabase } from "@/lib/supabase";
 import { defaultFontSize, defaultShadowColor } from "@/style/defaultStyle";
 import type { Couple, Payment as PaymentRow } from "@/types/Row";
 import { AntDesign } from "@expo/vector-icons";
-import dayjs from "dayjs";
 import { useRouter } from "expo-router";
 import type { ExpoRouter } from "expo-router/types/expo-router";
 import type { FC } from "react";
 import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useCouple } from "../hooks/useCouple";
 import { useInvoice } from "../hooks/useInvoice";
 import { usePayment } from "../hooks/usePayment";
 import { coupleIdAtom } from "../state/couple.state";
 import { useAtom } from "jotai";
+import { activeInvoiceAtom } from "../state/invoice.state";
 
 const HomeScreen: FC = () => {
   const { payments, isRefreshing, fetchPaymentsAll, deletePayment } = usePayment();
   const { addInvoice, unActiveInvoicesAll, turnInvoicePaid } = useInvoice();
+  const { fetchActiveInvoiceByCoupleId } = useInvoice();
   const [coupleId] = useAtom(coupleIdAtom);
+  const [_, setActiveInvoice] = useAtom(activeInvoiceAtom);
   const router = useRouter();
   const showCloseMonthButton = true;
   // dayjs().date() >= 25 || dayjs().date() <= 5;
@@ -31,6 +32,8 @@ const HomeScreen: FC = () => {
           await unActiveInvoicesAll(coupleId);
           await turnInvoicePaid(coupleId);
           await addInvoice(coupleId);
+          const activeInvoice = await fetchActiveInvoiceByCoupleId(coupleId);
+          setActiveInvoice(activeInvoice);
           Alert.alert("精算が完了しました", "今月もパートナーを大事にね！");
         },
       },

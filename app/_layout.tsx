@@ -8,6 +8,8 @@ import "react-native-reanimated";
 import { useCouple } from "./hooks/useCouple";
 import { useAtom } from "jotai";
 import { coupleIdAtom } from "./state/couple.state";
+import { activeInvoiceAtom } from "./state/invoice.state";
+import { useInvoice } from "./hooks/useInvoice";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -20,7 +22,9 @@ export default function RootLayout() {
   const [isCheckingAuth, setIsCheckingAuth] = useState<boolean>(true);
   const { push } = useRouter();
   const { fetchCoupleIdByUserId } = useCouple();
-  const [coupleId, setCoupleId] = useAtom(coupleIdAtom);
+  const [_coupleId, setCoupleId] = useAtom(coupleIdAtom);
+  const { fetchActiveInvoiceByCoupleId } = useInvoice();
+  const [_activeInvoice, setActiveInvoice] = useAtom(activeInvoiceAtom);
 
   useEffect(() => {
     if (loaded) {
@@ -59,6 +63,9 @@ export default function RootLayout() {
         throw new Error("coupleId is not found");
       }
       setCoupleId(coupleId);
+
+      const activeInvoice = await fetchActiveInvoiceByCoupleId(coupleId);
+      setActiveInvoice(activeInvoice);
 
       setIsCheckingAuth(false);
     };

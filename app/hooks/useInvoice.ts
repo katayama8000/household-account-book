@@ -28,7 +28,6 @@ export const useInvoice = () => {
         .single();
 
       if (error) throw error;
-
       return data;
     } catch (error) {
       console.error(error);
