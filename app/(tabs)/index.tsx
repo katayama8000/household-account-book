@@ -114,7 +114,7 @@ const PaymentList: FC<PaymentListProps> = ({
     renderItem={({ item }) => <PaymentItem payment={item} routerPush={routerPush} deletePayment={deletePayment} />}
     keyExtractor={(item) => item.id.toString()}
     ItemSeparatorComponent={() => <View style={{ height: 4 }} />}
-    ListEmptyComponent={() => <Text style={styles.emptyListText}>No items</Text>}
+    ListEmptyComponent={() => <Text style={styles.emptyListText}>支払いがまだありません</Text>}
     contentContainerStyle={{ paddingBottom: 100 }}
     onRefresh={() => {
       if (activeInvoiceId === null) {
