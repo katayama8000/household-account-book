@@ -1,17 +1,11 @@
 import { supabase } from "@/lib/supabase";
 import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Slot, Stack, useRootNavigationState, useRouter, useSegments } from "expo-router";
+import { Slot, Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import "react-native-reanimated";
-import { useCouple } from "./hooks/useCouple";
-import { useAtom } from "jotai";
-import { coupleIdAtom } from "./state/couple.state";
-import { activeInvoiceAtom } from "./state/invoice.state";
-import { useInvoice } from "./hooks/useInvoice";
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
