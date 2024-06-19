@@ -4,23 +4,54 @@ import type { Couple, Invoice, Payment, Payment as PaymentRow } from "@/types/Ro
 import { AntDesign } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import type { ExpoRouter } from "expo-router/types/expo-router";
-import type { FC } from "react";
-import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useEffect, type FC } from "react";
+import { Alert, Button, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useInvoice } from "../hooks/useInvoice";
 import { usePayment } from "../hooks/usePayment";
 import { coupleIdAtom } from "../state/couple.state";
 import { useAtom } from "jotai";
 import { activeInvoiceAtom } from "../state/invoice.state";
+import { useCouple } from "../hooks/useCouple";
+import { supabase } from "@/lib/supabase";
 
 const HomeScreen: FC = () => {
   const { payments, isRefreshing, deletePayment } = usePayment();
   const { addInvoice, unActiveInvoicesAll, turnInvoicePaid, fetchActiveInvoiceByCoupleId } = useInvoice();
+  const { fetchCoupleIdByUserId } = useCouple();
   const { fetchPaymentsAllByMonthlyInvoiceId } = usePayment();
-  const [coupleId] = useAtom(coupleIdAtom);
+  const [coupleId, setCoupleId] = useAtom(coupleIdAtom);
   const [activeInvoce, setActiveInvoice] = useAtom(activeInvoiceAtom);
   const router = useRouter();
   const showCloseMonthButton = true;
   // dayjs().date() >= 25 || dayjs().date() <= 5;
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    const fetch = async () => {
+      const uid = (await supabase.auth.getSession())?.data.session?.user?.id;
+      if (!uid) {
+        throw new Error("uid is not found");
+      }
+      const coupleId = await fetchCoupleIdByUserId(uid);
+      if (!coupleId) {
+        throw new Error("coupleId is not found");
+      }
+      setCoupleId(coupleId);
+
+      const activeInvoice = await fetchActiveInvoiceByCoupleId(coupleId);
+      setActiveInvoice(activeInvoice);
+    };
+    fetch();
+  }, []);
+
+  //  const coupleId = await fetchCoupleIdByUserId(data.user?.id);
+  //     if (!coupleId) {
+  //       throw new Error("coupleId is not found");
+  //     }
+  //     setCoupleId(coupleId);
+
+  //     const activeInvoice = await fetchActiveInvoiceByCoupleId(coupleId);
+  //     setActiveInvoice(activeInvoice);
 
   const handleCloseMonth = async (coupleId: Couple["id"]) => {
     Alert.alert("今月の精算を完了します", "よろしいですか？", [
@@ -55,6 +86,13 @@ const HomeScreen: FC = () => {
           />
         )}
       </View>
+      <Button
+        onPress={() => {
+          supabase.auth.signOut();
+        }}
+        title="Sign Out"
+      />
+
       <PaymentList
         activeInvoiceId={activeInvoce?.id ?? null}
         payments={payments}

@@ -28,6 +28,7 @@ const SignInScreen = () => {
     });
 
     if (error) {
+      // console.error("サインインエラー", error);
       alert(error.message);
     } else {
       alert("サインインしました");
@@ -53,7 +54,7 @@ const SignInScreen = () => {
           <TextInput
             onChangeText={(text) => setPassword(text)}
             value={password}
-            secureTextEntry={true}
+            // secureTextEntry={true}
             placeholder="Password"
             placeholderTextColor="#aaa"
             autoCapitalize="none"
