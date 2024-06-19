@@ -51,15 +51,6 @@ export default function RootLayout() {
         return;
       }
 
-      // const coupleId = await fetchCoupleIdByUserId(data.user?.id);
-      // if (!coupleId) {
-      //   throw new Error("coupleId is not found");
-      // }
-      // setCoupleId(coupleId);
-
-      // const activeInvoice = await fetchActiveInvoiceByCoupleId(coupleId);
-      // setActiveInvoice(activeInvoice);
-
       setIsCheckingAuth(false);
     };
 
