@@ -38,7 +38,7 @@ const SignInScreen = () => {
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>Sign In</Text>
+        <Text style={styles.title}>もうふといくら</Text>
         <View style={[styles.inputContainer, styles.mt20]}>
           <TextInput
             onChangeText={(text) => setEmail(text)}
@@ -53,7 +53,7 @@ const SignInScreen = () => {
           <TextInput
             onChangeText={(text) => setPassword(text)}
             value={password}
-            secureTextEntry={true}
+            // secureTextEntry={true}
             placeholder="Password"
             placeholderTextColor="#aaa"
             autoCapitalize="none"
@@ -65,7 +65,7 @@ const SignInScreen = () => {
           onPress={() => signInWithEmail()}
           disabled={loading}
         >
-          {loading ? <ActivityIndicator color="white" /> : <Text style={styles.buttonText}>Sign in</Text>}
+          {loading ? <ActivityIndicator color="white" /> : <Text style={styles.buttonText}>ログイン</Text>}
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
