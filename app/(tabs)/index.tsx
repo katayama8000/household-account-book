@@ -23,15 +23,15 @@ const HomeScreen: FC = () => {
   const [activeInvoce, setActiveInvoice] = useAtom(activeInvoiceAtom);
   const router = useRouter();
   const showCloseMonthButton = true;
-  // dayjs().date() >= 25 || dayjs().date() <= 5;
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    const fetch = async () => {
+    (async () => {
       const uid = (await supabase.auth.getSession())?.data.session?.user?.id;
       if (!uid) {
         throw new Error("uid is not found");
       }
+
       const coupleId = await fetchCoupleIdByUserId(uid);
       if (!coupleId) {
         throw new Error("coupleId is not found");
@@ -40,8 +40,7 @@ const HomeScreen: FC = () => {
 
       const activeInvoice = await fetchActiveInvoiceByCoupleId(coupleId);
       setActiveInvoice(activeInvoice);
-    };
-    fetch();
+    })();
   }, []);
 
   //  const coupleId = await fetchCoupleIdByUserId(data.user?.id);
