@@ -1,7 +1,6 @@
 import { Colors } from "@/constants/Colors";
 import { supabase } from "@/lib/supabase";
 import { defaultFontSize, defaultFontWeight } from "@/style/defaultStyle";
-import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
@@ -53,7 +52,7 @@ const SignInScreen = () => {
           <TextInput
             onChangeText={(text) => setPassword(text)}
             value={password}
-            // secureTextEntry={true}
+            secureTextEntry={true}
             placeholder="Password"
             placeholderTextColor="#aaa"
             autoCapitalize="none"

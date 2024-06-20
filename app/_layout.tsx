@@ -20,19 +20,6 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
-  const authState = () => {
-    supabase.auth.onAuthStateChange((event, _session) => {
-      switch (event) {
-        case "SIGNED_IN":
-          push({ pathname: "/" });
-          break;
-        case "SIGNED_OUT":
-          push({ pathname: "/sign-in" });
-          break;
-      }
-    });
-  };
-
   useEffect(() => {
     (async () => {
       const { data, error } = await supabase.auth.getUser();

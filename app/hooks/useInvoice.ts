@@ -1,22 +1,14 @@
 import { dev_monthly_invoices } from "@/constants/Table";
 import { supabase } from "@/lib/supabase";
 import type { Invoice } from "@/types/Row";
-import dayjs from "dayjs";
 import { useAtom } from "jotai";
 import { useCallback, useState } from "react";
-import { activeInvoiceAtom, invoicesAllAtom } from "../state/invoice.state";
+import { activeInvoiceAtom, invoicesAtom } from "../state/invoice.state";
 
 export const useInvoice = () => {
-  const [invoices, setInvoices] = useAtom(invoicesAllAtom);
+  const [invoices, setInvoices] = useAtom(invoicesAtom);
   const [invoice] = useAtom(activeInvoiceAtom);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
-
-  const fetchCurrentMonthInvoice = useCallback((invoices: Invoice[]): Invoice | undefined => {
-    return invoices.find(
-      (invoice) =>
-        dayjs(invoice.created_at).month() === dayjs().month() && dayjs(invoice.created_at).year() === dayjs().year(),
-    );
-  }, []);
 
   const fetchActiveInvoiceByCoupleId = async (coupleId: Invoice["couple_id"]) => {
     try {
@@ -41,11 +33,12 @@ export const useInvoice = () => {
         .from(dev_monthly_invoices)
         .select("*")
         .eq("couple_id", coupleId)
-        .eq("active", true);
+        .eq("active", true)
+        .single();
 
       if (error) throw error;
 
-      return data[0];
+      return data;
     } catch (error) {
       console.error(error);
       return undefined;
