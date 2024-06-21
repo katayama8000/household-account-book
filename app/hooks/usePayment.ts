@@ -6,7 +6,6 @@ import { useRouter } from "expo-router";
 import { useAtom } from "jotai";
 import { useCallback, useEffect, useState } from "react";
 import { paymentsAtom } from "../state/payment.state";
-import { useCouple } from "./useCouple";
 import { useInvoice } from "./useInvoice";
 import { coupleIdAtom } from "../state/couple.state";
 import { activeInvoiceAtom } from "../state/invoice.state";

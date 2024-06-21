@@ -43,15 +43,6 @@ const HomeScreen: FC = () => {
     })();
   }, []);
 
-  //  const coupleId = await fetchCoupleIdByUserId(data.user?.id);
-  //     if (!coupleId) {
-  //       throw new Error("coupleId is not found");
-  //     }
-  //     setCoupleId(coupleId);
-
-  //     const activeInvoice = await fetchActiveInvoiceByCoupleId(coupleId);
-  //     setActiveInvoice(activeInvoice);
-
   const handleCloseMonth = async (coupleId: Couple["id"]) => {
     Alert.alert("今月の精算を完了します", "よろしいですか？", [
       { text: "いいえ", style: "cancel" },
