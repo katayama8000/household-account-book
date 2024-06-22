@@ -19,5 +19,5 @@ npx expo config --type public
 ### Build
 - eas build
 ```bash
-eas build --platform android --profile development --non-interactive
+eas build --platform android --profile development --non-interactive --no-wait
 ```
