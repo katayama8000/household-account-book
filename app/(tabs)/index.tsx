@@ -5,7 +5,7 @@ import { AntDesign } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import type { ExpoRouter } from "expo-router/types/expo-router";
 import { useEffect, type FC } from "react";
-import { Alert, Button, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useInvoice } from "../hooks/useInvoice";
 import { usePayment } from "../hooks/usePayment";
 import { coupleIdAtom } from "../state/couple.state";
@@ -76,12 +76,6 @@ const HomeScreen: FC = () => {
           />
         )}
       </View>
-      <Button
-        onPress={() => {
-          supabase.auth.signOut();
-        }}
-        title="Sign Out"
-      />
 
       <PaymentList
         activeInvoiceId={activeInvoce?.id ?? null}

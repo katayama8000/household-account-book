@@ -1,5 +1,5 @@
 import { Colors } from "@/constants/Colors";
-import { defaultFontSize } from "@/style/defaultStyle";
+import { defaultFontSize, defaultFontWeight } from "@/style/defaultStyle";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import React, { useEffect } from "react";
 import { Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderColor: Colors.primary,
     paddingHorizontal: 10,
-    fontWeight: 600,
+    fontWeight: defaultFontWeight,
   },
   submitWrapper: {
     width: "100%",
