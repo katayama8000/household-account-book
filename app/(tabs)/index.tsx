@@ -139,9 +139,7 @@ const PaymentList: FC<PaymentListProps> = ({
     ListEmptyComponent={() => <Text style={styles.emptyListText}>支払いがまだありません</Text>}
     contentContainerStyle={{ paddingBottom: 100 }}
     onRefresh={() => {
-      if (activeInvoiceId === null) {
-        return;
-      }
+      if (activeInvoiceId === null) return;
       fetchAllPaymentsByMonthlyInvoiceId(activeInvoiceId);
     }}
     refreshing={isRefreshing}
@@ -177,9 +175,7 @@ const PaymentItem: FC<PaymentItemProps> = ({ deletePayment, routerPush, payment 
               text: "はい",
               onPress: async () => {
                 deletePayment(payment.id);
-                if (activeInvoce === null) {
-                  return;
-                }
+                if (activeInvoce === null) return;
                 await fetchPaymentsAllByMonthlyInvoiceId(activeInvoce.id);
               },
             },

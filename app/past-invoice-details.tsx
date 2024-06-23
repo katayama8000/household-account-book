@@ -8,7 +8,7 @@ import { FlatList, StyleSheet, Text, View } from "react-native";
 import { usePayment } from "./hooks/usePayment";
 
 export default function PastInvoiceDetailsScreen() {
-  const [payments, setPayments] = useState<Payment[]>([]);
+  const [monthlyPayments, setMonthlyPayments] = useState<Payment[]>([]);
   const { id, date } = useLocalSearchParams();
   const { fetchPaymentsAllByMonthlyInvoiceId } = usePayment();
   const { setOptions } = useNavigation();
@@ -22,10 +22,8 @@ export default function PastInvoiceDetailsScreen() {
   useEffect(() => {
     (async () => {
       if (typeof id === "string") {
-        const data = await fetchPaymentsAllByMonthlyInvoiceId(Number(id));
-        if (data) {
-          setPayments(data);
-        }
+        const payment = await fetchPaymentsAllByMonthlyInvoiceId(Number(id));
+        if (payment) setMonthlyPayments(payment);
       }
     })();
   }, [id]);
@@ -40,11 +38,11 @@ export default function PastInvoiceDetailsScreen() {
 
   return (
     <View style={styles.container}>
-      {payments.length === 0 ? (
+      {monthlyPayments.length === 0 ? (
         <Text style={styles.noData}>支払い情報がありません。</Text>
       ) : (
         <FlatList
-          data={payments}
+          data={monthlyPayments}
           renderItem={renderItem}
           keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={styles.listContent}
