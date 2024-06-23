@@ -1,4 +1,4 @@
-import { defaultFontSize, defaultShadowColor } from "@/style/defaultStyle";
+import { defaultFontSize, defaultFontWeight, defaultShadowColor } from "@/style/defaultStyle";
 import type { Invoice } from "@/types/Row";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -98,12 +98,12 @@ const styles = StyleSheet.create({
   },
   date: {
     fontSize: defaultFontSize,
-    fontWeight: "bold",
+    fontWeight: defaultFontWeight,
     marginBottom: 4,
   },
   amount: {
     fontSize: defaultFontSize,
-    fontWeight: "bold",
+    fontWeight: defaultFontWeight,
   },
 });
 

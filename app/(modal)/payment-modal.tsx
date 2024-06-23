@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     fontSize: defaultFontSize,
-    fontWeight: "bold",
+    fontWeight: defaultFontWeight,
     marginBottom: 5,
   },
   input: {
@@ -106,6 +106,6 @@ const styles = StyleSheet.create({
   submitButtonText: {
     color: "#fff",
     fontSize: defaultFontSize,
-    fontWeight: "bold",
+    fontWeight: defaultFontWeight,
   },
 });

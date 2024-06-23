@@ -1,6 +1,6 @@
 import { Colors } from "@/constants/Colors";
 import { supabase } from "@/lib/supabase";
-import { defaultFontSize, defaultShadowColor } from "@/style/defaultStyle";
+import { defaultFontSize, defaultFontWeight, defaultShadowColor } from "@/style/defaultStyle";
 import type { Couple, Invoice, Payment, Payment as PaymentRow } from "@/types/Row";
 import { AntDesign } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: defaultFontSize,
     paddingLeft: 8,
-    fontWeight: "bold",
+    fontWeight: defaultFontWeight,
   },
   emptyListText: {
     color: "#888",
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
   },
   itemTitle: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: defaultFontWeight,
     marginBottom: 8,
     color: "#333",
   },
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
   },
   value: {
     fontSize: 14,
-    fontWeight: "bold",
+    fontWeight: defaultFontWeight,
     color: "#333",
   },
   iconButton: {

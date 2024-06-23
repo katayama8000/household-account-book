@@ -1,5 +1,5 @@
 import { Colors } from "@/constants/Colors";
-import { defaultFontSize, defaultShadowColor } from "@/style/defaultStyle";
+import { defaultFontSize, defaultFontWeight, defaultShadowColor } from "@/style/defaultStyle";
 import type { Payment } from "@/types/Row";
 import dayjs from "dayjs";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   },
   cardText: {
     fontSize: defaultFontSize,
-    fontWeight: "bold",
+    fontWeight: defaultFontWeight,
     color: "#444",
     marginBottom: 8,
   },
