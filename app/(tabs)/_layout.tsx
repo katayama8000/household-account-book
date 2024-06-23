@@ -17,7 +17,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: activeInvoice === undefined ? "...loading" : `${activeInvoice?.month}月`,
+          title: activeInvoice === null ? "...loading" : `${activeInvoice?.month}月`,
           tabBarIcon: ({ color, focused }) => <TabBarIcon name={focused ? "today" : "today-outline"} color={color} />,
         }}
       />
