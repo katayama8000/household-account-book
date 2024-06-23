@@ -17,7 +17,7 @@ export const usePayment = () => {
   const [amount, setAmount] = useState<number | null>(null);
   const { fetchInvoiceByCoupleId } = useInvoice();
   const [coupleId] = useAtom(coupleIdAtom);
-  const router = useRouter();
+  const { back } = useRouter();
   const [activeInvoice] = useAtom(activeInvoiceAtom);
 
   useEffect(() => {
@@ -68,46 +68,39 @@ export const usePayment = () => {
 
       alert("Success");
       resetForm();
-      router.back();
+      back();
     } catch (error) {
       console.error(error);
       alert("An error occurred. Please try again.");
     }
-  }, [name, amount, router, resetForm, fetchInvoiceByCoupleId, coupleId]);
+  }, [name, amount, back, resetForm, fetchInvoiceByCoupleId, coupleId]);
 
-  const fetchPaymentsAllByMonthlyInvoiceId = useCallback(async (monthlyInvoiceId: Payment["monthly_invoice_id"]) => {
-    setIsRefreshing(true);
-    try {
-      const { data, error } = await supabase.from(dev_payments).select("*").eq("monthly_invoice_id", monthlyInvoiceId);
-      if (error) {
+  const fetchPaymentsAllByMonthlyInvoiceId = useCallback(
+    async (monthlyInvoiceId: Payment["monthly_invoice_id"]) => {
+      setIsRefreshing(true);
+      try {
+        const { data, error } = await supabase
+          .from(dev_payments)
+          .select("*")
+          .eq("monthly_invoice_id", monthlyInvoiceId);
+        if (error) {
+          console.error(error);
+          alert("An error occurred. Please try again.");
+          return;
+        }
+        if (data) {
+          setPayments(data);
+        }
+        return data;
+      } catch (error) {
         console.error(error);
         alert("An error occurred. Please try again.");
-        return;
+      } finally {
+        setIsRefreshing(false);
       }
-      return data;
-    } catch (error) {
-      console.error(error);
-      alert("An error occurred. Please try again.");
-    } finally {
-      setIsRefreshing(false);
-    }
-  }, []);
-
-  const fetchPaymentById = useCallback(async (id: Payment["id"]): Promise<Payment | null> => {
-    try {
-      const { data, error } = await supabase.from(dev_payments).select("*").eq("id", id);
-      if (error) {
-        console.error(error);
-        alert("An error occurred. Please try again.");
-        return null;
-      }
-      return data ? data[0] : null;
-    } catch (error) {
-      console.error(error);
-      alert("An error occurred. Please try again.");
-      return null;
-    }
-  }, []);
+    },
+    [setPayments],
+  );
 
   const updatePayment = useCallback(
     async (id: Payment["id"], payment: Pick<Payment, "name" | "amount">): Promise<void> => {
@@ -118,13 +111,13 @@ export const usePayment = () => {
           alert("An error occurred. Please try again.");
           return;
         }
-        router.back();
+        back();
       } catch (error) {
         console.error(error);
         alert("An error occurred. Please try again.");
       }
     },
-    [router],
+    [back],
   );
 
   const deletePayment = useCallback(async (id: Payment["id"]): Promise<void> => {
@@ -153,15 +146,6 @@ export const usePayment = () => {
     return data.reduce((acc, cur) => acc + cur.amount, 0);
   };
 
-  // const fetchPaymentsByMonthlyInvoiceId = async (id: Invoice["id"]) => {
-  //   const { data, error } = await supabase.from(dev_payments).select("*").eq("monthly_invoice_id", id);
-  //   if (error) {
-  //     console.error(error);
-  //     return;
-  //   }
-  //   return data;
-  // };
-
   return {
     isRefreshing,
     payments,
@@ -171,7 +155,6 @@ export const usePayment = () => {
     setAmount,
     addPayment,
     fetchPaymentsAllByMonthlyInvoiceId,
-    fetchPaymentById,
     updatePayment,
     deletePayment,
     fetchPaymentTotal,
