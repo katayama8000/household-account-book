@@ -1,11 +1,11 @@
 import { Colors } from "@/constants/Colors";
 import { defaultFontSize, defaultFontWeight } from "@/style/defaultStyle";
 import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useAtom } from "jotai";
 import React, { useEffect } from "react";
 import { Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { usePayment } from "../hooks/usePayment";
 import { activeInvoiceAtom } from "../state/invoice.state";
-import { useAtom } from "jotai";
 
 export default function PaymentModalScreen() {
   const { payments, addPayment, updatePayment, setName, setAmount, name, amount, fetchPaymentsAllByMonthlyInvoiceId } =

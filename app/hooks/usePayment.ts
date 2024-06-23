@@ -5,10 +5,10 @@ import dayjs from "dayjs";
 import { useRouter } from "expo-router";
 import { useAtom } from "jotai";
 import { useCallback, useEffect, useState } from "react";
-import { paymentsAtom } from "../state/payment.state";
-import { useInvoice } from "./useInvoice";
 import { coupleIdAtom } from "../state/couple.state";
 import { activeInvoiceAtom } from "../state/invoice.state";
+import { paymentsAtom } from "../state/payment.state";
+import { useInvoice } from "./useInvoice";
 
 export const usePayment = () => {
   const [payments, setPayments] = useAtom(paymentsAtom);

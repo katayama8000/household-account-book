@@ -1,18 +1,18 @@
 import { Colors } from "@/constants/Colors";
+import { supabase } from "@/lib/supabase";
 import { defaultFontSize, defaultShadowColor } from "@/style/defaultStyle";
 import type { Couple, Invoice, Payment, Payment as PaymentRow } from "@/types/Row";
 import { AntDesign } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import type { ExpoRouter } from "expo-router/types/expo-router";
-import { useEffect, type FC } from "react";
+import { useAtom } from "jotai";
+import { type FC, useEffect } from "react";
 import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useCouple } from "../hooks/useCouple";
 import { useInvoice } from "../hooks/useInvoice";
 import { usePayment } from "../hooks/usePayment";
 import { coupleIdAtom } from "../state/couple.state";
-import { useAtom } from "jotai";
 import { activeInvoiceAtom } from "../state/invoice.state";
-import { useCouple } from "../hooks/useCouple";
-import { supabase } from "@/lib/supabase";
 
 const HomeScreen: FC = () => {
   const { payments, isRefreshing, deletePayment } = usePayment();
