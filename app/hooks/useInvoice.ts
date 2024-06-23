@@ -45,22 +45,25 @@ export const useInvoice = () => {
     }
   }, []);
 
-  const fetchInvoicesAll = useCallback(async () => {
-    setIsRefreshing(true);
-    try {
-      const { data: invoices, error } = await supabase.from(dev_monthly_invoices).select("*");
+  const fetchInvoicesAllByCoupleId = useCallback(
+    async (id: Invoice["couple_id"]) => {
+      setIsRefreshing(true);
+      try {
+        const { data: invoices, error } = await supabase.from(dev_monthly_invoices).select("*").eq("couple_id", id);
 
-      if (error) throw error;
+        if (error) throw error;
 
-      if (invoices) {
-        setInvoices(invoices);
+        if (invoices) {
+          setInvoices(invoices);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsRefreshing(false);
       }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsRefreshing(false);
-    }
-  }, [setInvoices]);
+    },
+    [setInvoices],
+  );
 
   const addInvoice = async (couple_id: Invoice["couple_id"]) => {
     if (!invoice) return;
@@ -101,7 +104,7 @@ export const useInvoice = () => {
   return {
     invoices,
     isRefreshing,
-    fetchInvoicesAll,
+    fetchInvoicesAllByCoupleId,
     fetchInvoiceByCoupleId,
     addInvoice,
     fetchActiveInvoiceByCoupleId,

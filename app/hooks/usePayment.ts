@@ -1,6 +1,6 @@
 import { dev_payments } from "@/constants/Table";
 import { supabase } from "@/lib/supabase";
-import type { Invoice, Payment } from "@/types/Row";
+import type { Payment } from "@/types/Row";
 import dayjs from "dayjs";
 import { useRouter } from "expo-router";
 import { useAtom } from "jotai";
@@ -75,29 +75,23 @@ export const usePayment = () => {
     }
   }, [name, amount, router, resetForm, fetchInvoiceByCoupleId, coupleId]);
 
-  const fetchPaymentsAllByMonthlyInvoiceId = useCallback(
-    async (monthlyInvoiceId: Payment["monthly_invoice_id"]): Promise<void> => {
-      setIsRefreshing(true);
-      try {
-        const { data, error } = await supabase
-          .from(dev_payments)
-          .select("*")
-          .eq("monthly_invoice_id", monthlyInvoiceId);
-        if (error) {
-          console.error(error);
-          alert("An error occurred. Please try again.");
-          return;
-        }
-        setPayments(data);
-      } catch (error) {
+  const fetchPaymentsAllByMonthlyInvoiceId = useCallback(async (monthlyInvoiceId: Payment["monthly_invoice_id"]) => {
+    setIsRefreshing(true);
+    try {
+      const { data, error } = await supabase.from(dev_payments).select("*").eq("monthly_invoice_id", monthlyInvoiceId);
+      if (error) {
         console.error(error);
         alert("An error occurred. Please try again.");
-      } finally {
-        setIsRefreshing(false);
+        return;
       }
-    },
-    [setPayments],
-  );
+      return data;
+    } catch (error) {
+      console.error(error);
+      alert("An error occurred. Please try again.");
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, []);
 
   const fetchPaymentById = useCallback(async (id: Payment["id"]): Promise<Payment | null> => {
     try {
@@ -159,14 +153,14 @@ export const usePayment = () => {
     return data.reduce((acc, cur) => acc + cur.amount, 0);
   };
 
-  const fetchPaymentsByMonthlyInvoiceId = async (id: Invoice["id"]) => {
-    const { data, error } = await supabase.from(dev_payments).select("*").eq("monthly_invoice_id", id);
-    if (error) {
-      console.error(error);
-      return;
-    }
-    return data;
-  };
+  // const fetchPaymentsByMonthlyInvoiceId = async (id: Invoice["id"]) => {
+  //   const { data, error } = await supabase.from(dev_payments).select("*").eq("monthly_invoice_id", id);
+  //   if (error) {
+  //     console.error(error);
+  //     return;
+  //   }
+  //   return data;
+  // };
 
   return {
     isRefreshing,
@@ -181,6 +175,5 @@ export const usePayment = () => {
     updatePayment,
     deletePayment,
     fetchPaymentTotal,
-    fetchPaymentsByMonthlyInvoiceId,
   };
 };

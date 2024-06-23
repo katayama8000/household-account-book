@@ -7,14 +7,18 @@ import { type FC, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useInvoice } from "../hooks/useInvoice";
 import { usePayment } from "../hooks/usePayment";
+import { coupleIdAtom } from "../state/couple.state";
+import { useAtom } from "jotai";
 
 const PastInvoicesScreen = () => {
-  const { invoices, isRefreshing, fetchInvoicesAll } = useInvoice();
+  const { invoices, isRefreshing, fetchInvoicesAllByCoupleId } = useInvoice();
   const { push } = useRouter();
+  const [coupleId] = useAtom(coupleIdAtom);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    fetchInvoicesAll();
+    if (!coupleId) return;
+    fetchInvoicesAllByCoupleId(coupleId);
   }, []);
 
   return (
@@ -31,7 +35,10 @@ const PastInvoicesScreen = () => {
         ItemSeparatorComponent={() => <View style={{ height: 4 }} />}
         ListEmptyComponent={() => <Text>No items</Text>}
         contentContainerStyle={{ paddingBottom: 100 }}
-        onRefresh={fetchInvoicesAll}
+        onRefresh={() => {
+          if (!coupleId) return;
+          fetchInvoicesAllByCoupleId(coupleId);
+        }}
         refreshing={isRefreshing}
       />
     </View>
