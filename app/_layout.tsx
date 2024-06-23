@@ -26,6 +26,7 @@ export default function RootLayout() {
       console.log("user", data);
       if (error || !data) {
         push({ pathname: "/sign-in" });
+        return;
       }
 
       if (!data.user) {

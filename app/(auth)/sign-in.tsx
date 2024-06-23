@@ -1,7 +1,8 @@
 import { Colors } from "@/constants/Colors";
 import { supabase } from "@/lib/supabase";
 import { defaultFontSize, defaultFontWeight } from "@/style/defaultStyle";
-import React, { useState } from "react";
+import { useNavigation } from "expo-router";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -18,6 +19,11 @@ const SignInScreen = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const { setOptions } = useNavigation();
+
+  useEffect(() => {
+    setOptions({ headerTitle: "ログイン" });
+  }, [setOptions]);
 
   const signInWithEmail = async () => {
     setLoading(true);
@@ -111,3 +117,6 @@ const styles = StyleSheet.create({
 });
 
 export default SignInScreen;
+function setOptions(arg0: { headerTitle: string }) {
+  throw new Error("Function not implemented.");
+}
