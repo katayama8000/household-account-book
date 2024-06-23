@@ -19,7 +19,7 @@ const PastInvoicesScreen = () => {
   useEffect(() => {
     if (!coupleId) return;
     fetchInvoicesAllByCoupleId(coupleId);
-  }, []);
+  }, [coupleId]);
 
   return (
     <View
@@ -56,12 +56,11 @@ const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ invoice, routerPush }) => {
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    const fetchData = async () => {
+    (async () => {
       const totalAmount = await fetchPaymentTotal(invoice.id);
       setTotalAmount(totalAmount);
-    };
-    fetchData();
-  }, []);
+    })();
+  }, [invoice]);
 
   return (
     <TouchableOpacity
