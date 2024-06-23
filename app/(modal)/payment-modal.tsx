@@ -1,11 +1,11 @@
 import { Colors } from "@/constants/Colors";
-import { defaultFontSize } from "@/style/defaultStyle";
+import { defaultFontSize, defaultFontWeight } from "@/style/defaultStyle";
 import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useAtom } from "jotai";
 import React, { useEffect } from "react";
 import { Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { usePayment } from "../hooks/usePayment";
 import { activeInvoiceAtom } from "../state/invoice.state";
-import { useAtom } from "jotai";
 
 export default function PaymentModalScreen() {
   const { payments, addPayment, updatePayment, setName, setAmount, name, amount, fetchPaymentsAllByMonthlyInvoiceId } =
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     fontSize: defaultFontSize,
-    fontWeight: "bold",
+    fontWeight: defaultFontWeight,
     marginBottom: 5,
   },
   input: {
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderColor: Colors.primary,
     paddingHorizontal: 10,
-    fontWeight: 600,
+    fontWeight: defaultFontWeight,
   },
   submitWrapper: {
     width: "100%",
@@ -106,6 +106,6 @@ const styles = StyleSheet.create({
   submitButtonText: {
     color: "#fff",
     fontSize: defaultFontSize,
-    fontWeight: "bold",
+    fontWeight: defaultFontWeight,
   },
 });

@@ -4,11 +4,11 @@
     "slug": "household-account-book",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/moufu.jpg",
+    "icon": "./assets/images/moufu.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/images/moufu.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -17,7 +17,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/moufu.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.katayama9000.householdaccountbook"

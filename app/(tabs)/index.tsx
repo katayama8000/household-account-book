@@ -1,18 +1,18 @@
 import { Colors } from "@/constants/Colors";
-import { defaultFontSize, defaultShadowColor } from "@/style/defaultStyle";
+import { supabase } from "@/lib/supabase";
+import { defaultFontSize, defaultFontWeight, defaultShadowColor } from "@/style/defaultStyle";
 import type { Couple, Invoice, Payment, Payment as PaymentRow } from "@/types/Row";
 import { AntDesign } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import type { ExpoRouter } from "expo-router/types/expo-router";
-import { useEffect, type FC } from "react";
-import { Alert, Button, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useAtom } from "jotai";
+import { type FC, useEffect } from "react";
+import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useCouple } from "../hooks/useCouple";
 import { useInvoice } from "../hooks/useInvoice";
 import { usePayment } from "../hooks/usePayment";
 import { coupleIdAtom } from "../state/couple.state";
-import { useAtom } from "jotai";
 import { activeInvoiceAtom } from "../state/invoice.state";
-import { useCouple } from "../hooks/useCouple";
-import { supabase } from "@/lib/supabase";
 
 const HomeScreen: FC = () => {
   const { payments, isRefreshing, deletePayment } = usePayment();
@@ -29,7 +29,8 @@ const HomeScreen: FC = () => {
     (async () => {
       const uid = (await supabase.auth.getSession())?.data.session?.user?.id;
       if (!uid) {
-        throw new Error("uid is not found");
+        router.push({ pathname: "/sign-in" });
+        return;
       }
 
       const coupleId = await fetchCoupleIdByUserId(uid);
@@ -76,12 +77,6 @@ const HomeScreen: FC = () => {
           />
         )}
       </View>
-      <Button
-        onPress={() => {
-          supabase.auth.signOut();
-        }}
-        title="Sign Out"
-      />
 
       <PaymentList
         activeInvoiceId={activeInvoce?.id ?? null}
@@ -223,7 +218,7 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: defaultFontSize,
     paddingLeft: 8,
-    fontWeight: "bold",
+    fontWeight: defaultFontWeight,
   },
   emptyListText: {
     color: "#888",
@@ -249,7 +244,7 @@ const styles = StyleSheet.create({
   },
   itemTitle: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: defaultFontWeight,
     marginBottom: 8,
     color: "#333",
   },
@@ -260,7 +255,7 @@ const styles = StyleSheet.create({
   },
   value: {
     fontSize: 14,
-    fontWeight: "bold",
+    fontWeight: defaultFontWeight,
     color: "#333",
   },
   iconButton: {

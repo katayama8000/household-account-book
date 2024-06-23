@@ -1,5 +1,5 @@
 import { Colors } from "@/constants/Colors";
-import { defaultFontSize, defaultShadowColor } from "@/style/defaultStyle";
+import { defaultFontSize, defaultFontWeight, defaultShadowColor } from "@/style/defaultStyle";
 import type { Payment } from "@/types/Row";
 import dayjs from "dayjs";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -10,7 +10,7 @@ import { usePayment } from "./hooks/usePayment";
 export default function PastInvoiceDetailsScreen() {
   const [payments, setPayments] = useState<Payment[]>([]);
   const { id, date } = useLocalSearchParams();
-  const { fetchPaymentsByMonthlyInvoiceId } = usePayment();
+  const { fetchPaymentsAllByMonthlyInvoiceId } = usePayment();
   const { setOptions } = useNavigation();
   useEffect(() => {
     if (typeof date === "string") {
@@ -22,7 +22,7 @@ export default function PastInvoiceDetailsScreen() {
   useEffect(() => {
     (async () => {
       if (typeof id === "string") {
-        const data = await fetchPaymentsByMonthlyInvoiceId(Number(id));
+        const data = await fetchPaymentsAllByMonthlyInvoiceId(Number(id));
         if (data) {
           setPayments(data);
         }
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   },
   cardText: {
     fontSize: defaultFontSize,
-    fontWeight: "bold",
+    fontWeight: defaultFontWeight,
     color: "#444",
     marginBottom: 8,
   },
