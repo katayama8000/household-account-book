@@ -6,7 +6,10 @@ import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = "https://jqovxmsueffhddmyqcew.supabase.co";
 const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_KEY;
 
-if (!supabaseKey) throw new Error("Missing Supabase Key");
+if (!supabaseKey) {
+  alert("Missing Supabase Key");
+  throw new Error("Missing Supabase Key");
+}
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseKey, {
   auth: {
