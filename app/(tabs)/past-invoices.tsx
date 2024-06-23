@@ -36,7 +36,7 @@ const PastInvoicesScreen = () => {
         ListEmptyComponent={() => <Text>No items</Text>}
         contentContainerStyle={{ paddingBottom: 100 }}
         onRefresh={() => {
-          if (!coupleId) return;
+          if (coupleId === null) return;
           fetchInvoicesAllByCoupleId(coupleId);
         }}
         refreshing={isRefreshing}

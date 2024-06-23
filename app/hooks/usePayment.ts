@@ -17,7 +17,7 @@ export const usePayment = () => {
   const [amount, setAmount] = useState<number | null>(null);
   const { fetchInvoiceByCoupleId } = useInvoice();
   const [coupleId] = useAtom(coupleIdAtom);
-  const router = useRouter();
+  const { back } = useRouter();
   const [activeInvoice] = useAtom(activeInvoiceAtom);
 
   useEffect(() => {
@@ -68,12 +68,12 @@ export const usePayment = () => {
 
       alert("Success");
       resetForm();
-      router.back();
+      back();
     } catch (error) {
       console.error(error);
       alert("An error occurred. Please try again.");
     }
-  }, [name, amount, router, resetForm, fetchInvoiceByCoupleId, coupleId]);
+  }, [name, amount, back, resetForm, fetchInvoiceByCoupleId, coupleId]);
 
   const fetchPaymentsAllByMonthlyInvoiceId = useCallback(
     async (monthlyInvoiceId: Payment["monthly_invoice_id"]) => {
@@ -102,22 +102,6 @@ export const usePayment = () => {
     [setPayments],
   );
 
-  const fetchPaymentById = useCallback(async (id: Payment["id"]): Promise<Payment | null> => {
-    try {
-      const { data, error } = await supabase.from(dev_payments).select("*").eq("id", id);
-      if (error) {
-        console.error(error);
-        alert("An error occurred. Please try again.");
-        return null;
-      }
-      return data ? data[0] : null;
-    } catch (error) {
-      console.error(error);
-      alert("An error occurred. Please try again.");
-      return null;
-    }
-  }, []);
-
   const updatePayment = useCallback(
     async (id: Payment["id"], payment: Pick<Payment, "name" | "amount">): Promise<void> => {
       try {
@@ -127,13 +111,13 @@ export const usePayment = () => {
           alert("An error occurred. Please try again.");
           return;
         }
-        router.back();
+        back();
       } catch (error) {
         console.error(error);
         alert("An error occurred. Please try again.");
       }
     },
-    [router],
+    [back],
   );
 
   const deletePayment = useCallback(async (id: Payment["id"]): Promise<void> => {
@@ -171,7 +155,6 @@ export const usePayment = () => {
     setAmount,
     addPayment,
     fetchPaymentsAllByMonthlyInvoiceId,
-    fetchPaymentById,
     updatePayment,
     deletePayment,
     fetchPaymentTotal,
