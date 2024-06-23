@@ -1,7 +1,7 @@
 import { Colors } from "@/constants/Colors";
 import { supabase } from "@/lib/supabase";
 import { defaultFontSize, defaultFontWeight } from "@/style/defaultStyle";
-import { useNavigation } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -20,6 +20,7 @@ const SignInScreen = () => {
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const { setOptions } = useNavigation();
+  const { push } = useRouter();
 
   useEffect(() => {
     setOptions({ headerTitle: "ログイン" });
@@ -36,6 +37,7 @@ const SignInScreen = () => {
       alert(error.message);
     } else {
       alert("サインインしました");
+      push({ pathname: "/" });
     }
     setLoading(false);
   };
