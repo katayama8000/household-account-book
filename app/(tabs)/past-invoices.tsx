@@ -29,7 +29,12 @@ const PastInvoicesScreen = () => {
       }}
     >
       <FlatList
-        data={invoices}
+        data={invoices.sort((a, b) => {
+          if (a.year === b.year) {
+            return b.month - a.month;
+          }
+          return b.year - a.year;
+        })}
         renderItem={({ item }) => <MonthlyInvoice invoice={item} routerPush={push} />}
         keyExtractor={(item) => item.id.toString()}
         ItemSeparatorComponent={() => <View style={{ height: 4 }} />}
