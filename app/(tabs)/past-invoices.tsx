@@ -29,7 +29,6 @@ const PastInvoicesScreen = () => {
       }}
     >
       <FlatList
-        // 月と年の降順で並び替え
         data={invoices.sort((a, b) => {
           if (a.year === b.year) {
             return b.month - a.month;
