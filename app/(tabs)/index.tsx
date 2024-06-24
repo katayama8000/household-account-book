@@ -7,7 +7,7 @@ import { useRouter } from "expo-router";
 import type { ExpoRouter } from "expo-router/types/expo-router";
 import { useAtom } from "jotai";
 import { type FC, useEffect } from "react";
-import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View, Linking } from "react-native";
 import { useCouple } from "../hooks/useCouple";
 import { useInvoice } from "../hooks/useInvoice";
 import { usePayment } from "../hooks/usePayment";
@@ -143,8 +143,20 @@ const PaymentList: FC<PaymentListProps> = ({
       fetchAllPaymentsByMonthlyInvoiceId(activeInvoiceId);
     }}
     refreshing={isRefreshing}
+    ListFooterComponent={<GithubIssueLink />}
   />
 );
+
+const GithubIssueLink: FC = () => {
+  return (
+    <TouchableOpacity
+      onPress={() => Linking.openURL("https://github.com/katayama8000/household-account-book/issues")}
+      style={{ alignItems: "center", marginTop: 16 }}
+    >
+      <Text style={styles.link}>バグや要望はこちら</Text>
+    </TouchableOpacity>
+  );
+};
 
 type PaymentItemProps = {
   deletePayment: (id: PaymentRow["id"]) => Promise<void>;
@@ -262,6 +274,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     margin: 4,
+  },
+  link: {
+    color: Colors.primary,
+    fontSize: defaultFontSize,
+    textAlign: "center",
+    marginVertical: 16,
   },
 });
 
