@@ -39,10 +39,19 @@ const HomeScreen: FC = () => {
       }
       setCoupleId(coupleId);
 
-      const activeInvoice = await fetchActiveInvoiceByCoupleId(coupleId);
-      setActiveInvoice(activeInvoice);
+      const activeInvoiceData = await fetchActiveInvoiceByCoupleId(coupleId);
+      setActiveInvoice(activeInvoiceData);
     })();
   }, []);
+
+  const updateActiveInvoice = async () => {
+    if (!coupleId) {
+      alert("coupleId is not found");
+      throw new Error("coupleId is not found");
+    }
+    const activeInvoiceData = await fetchActiveInvoiceByCoupleId(coupleId);
+    setActiveInvoice(activeInvoiceData);
+  };
 
   const handleCloseMonth = async (coupleId: Couple["id"]) => {
     Alert.alert("今月の精算を完了します", "よろしいですか？", [
@@ -85,6 +94,7 @@ const HomeScreen: FC = () => {
         fetchAllPaymentsByMonthlyInvoiceId={fetchPaymentsAllByMonthlyInvoiceId}
         deletePayment={deletePayment}
         routerPush={router.push}
+        updateActiveInvoice={updateActiveInvoice}
       />
     </View>
   );
@@ -121,6 +131,7 @@ type PaymentListProps = {
   fetchAllPaymentsByMonthlyInvoiceId: (id: Payment["monthly_invoice_id"]) => void;
   deletePayment: (id: PaymentRow["id"]) => Promise<void>;
   routerPush: (href: ExpoRouter.Href) => void;
+  updateActiveInvoice: () => Promise<void>;
 };
 
 const PaymentList: FC<PaymentListProps> = ({
@@ -130,6 +141,7 @@ const PaymentList: FC<PaymentListProps> = ({
   fetchAllPaymentsByMonthlyInvoiceId,
   deletePayment,
   routerPush,
+  updateActiveInvoice,
 }) => (
   <FlatList
     data={payments.sort((a, b) => b.id - a.id)}
@@ -137,9 +149,10 @@ const PaymentList: FC<PaymentListProps> = ({
     keyExtractor={(item) => item.id.toString()}
     ItemSeparatorComponent={() => <View style={{ height: 4 }} />}
     ListEmptyComponent={() => <Text style={styles.emptyListText}>支払いがまだありません</Text>}
-    contentContainerStyle={{ paddingBottom: 100 }}
-    onRefresh={() => {
+    contentContainerStyle={{ paddingBottom: 12 }}
+    onRefresh={async () => {
       if (activeInvoiceId === null) return;
+      await updateActiveInvoice();
       fetchAllPaymentsByMonthlyInvoiceId(activeInvoiceId);
     }}
     refreshing={isRefreshing}
@@ -149,10 +162,7 @@ const PaymentList: FC<PaymentListProps> = ({
 
 const GithubIssueLink: FC = () => {
   return (
-    <TouchableOpacity
-      onPress={() => Linking.openURL("https://github.com/katayama8000/household-account-book/issues")}
-      style={{ alignItems: "center", marginTop: 16 }}
-    >
+    <TouchableOpacity onPress={() => Linking.openURL("https://github.com/katayama8000/household-account-book/issues")}>
       <Text style={styles.link}>バグや要望はこちら</Text>
     </TouchableOpacity>
   );
@@ -279,7 +289,7 @@ const styles = StyleSheet.create({
     color: Colors.primary,
     fontSize: defaultFontSize,
     textAlign: "center",
-    marginVertical: 16,
+    marginTop: 16,
   },
 });
 
