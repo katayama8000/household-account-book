@@ -12,9 +12,14 @@ jobs:
 
     - name: Set up Node.js
       uses: actions/setup-node@v4
+      with:
+        node-version: 22
 
     - name: Install dependencies
       run: yarn install
+
+    - name: Install Expo CLI
+      run: yarn global add @expo/eas-cli
 
     - name: Log in to Expo
       env:
