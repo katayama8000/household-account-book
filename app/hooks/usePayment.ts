@@ -66,7 +66,7 @@ export const usePayment = () => {
         return;
       }
 
-      alert("Success");
+      alert("投稿できた");
       resetForm();
       back();
     } catch (error) {
