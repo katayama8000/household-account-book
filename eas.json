@@ -13,22 +13,16 @@
       },
       "autoIncrement": "true"
     },
-    "local": {
-      "developmentClient": true,
-      "env": {
-        "EXPO_PUBLIC_APP_ENV": "local"
-      },
-      "extends": "production"
-    },
     "development": {
       "env": {
         "EXPO_PUBLIC_APP_ENV": "development"
       },
       "extends": "production"
     },
-    "preview": {
+    "local": {
+      "developmentClient": true,
       "env": {
-        "EXPO_PUBLIC_APP_ENV": "preview"
+        "EXPO_PUBLIC_APP_ENV": "local"
       },
       "extends": "production"
     }
