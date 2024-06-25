@@ -21,7 +21,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.katayama9000.householdaccountbook",
-      "versionCode": 4
+      "versionCode": 5
     },
     "web": {
       "bundler": "metro",

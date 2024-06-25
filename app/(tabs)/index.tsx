@@ -72,7 +72,6 @@ const HomeScreen: FC = () => {
 
   return (
     <View style={styles.container}>
-      <Text>{process.env.EXPO_PUBLIC_APP_ENV}</Text>
       <View style={styles.buttonWrapper}>
         <AddPaymentButton onPress={() => router.push({ pathname: "/payment-modal", params: { kind: "add" } })} />
         {showCloseMonthButton && (
