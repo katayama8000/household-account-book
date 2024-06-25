@@ -6,7 +6,7 @@ import { AntDesign } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import type { ExpoRouter } from "expo-router/types/expo-router";
 import { useAtom } from "jotai";
-import { type FC, useEffect } from "react";
+import { type FC, useEffect, version } from "react";
 import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View, Linking } from "react-native";
 import { useCouple } from "../hooks/useCouple";
 import { useInvoice } from "../hooks/useInvoice";
@@ -14,6 +14,7 @@ import { usePayment } from "../hooks/usePayment";
 import { coupleIdAtom } from "../state/couple.state";
 import { activeInvoiceAtom } from "../state/invoice.state";
 import dayjs from "dayjs";
+import packageJson from "../../package.json";
 
 const HomeScreen: FC = () => {
   const { payments, isRefreshing, deletePayment } = usePayment();
@@ -163,9 +164,14 @@ const PaymentList: FC<PaymentListProps> = ({
 
 const GithubIssueLink: FC = () => {
   return (
-    <TouchableOpacity onPress={() => Linking.openURL("https://github.com/katayama8000/household-account-book/issues")}>
-      <Text style={styles.link}>バグや要望はこちら</Text>
-    </TouchableOpacity>
+    <View style={styles.linkContainer}>
+      <TouchableOpacity
+        onPress={() => Linking.openURL("https://github.com/katayama8000/household-account-book/issues")}
+      >
+        <Text style={styles.link}>バグや要望はこちら</Text>
+      </TouchableOpacity>
+      <Text style={styles.version}>v{packageJson.version}</Text>
+    </View>
   );
 };
 
@@ -286,11 +292,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     margin: 4,
   },
+  linkContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+  },
   link: {
     color: Colors.primary,
-    fontSize: defaultFontSize,
-    textAlign: "center",
-    marginTop: 16,
+  },
+  version: {
+    color: Colors.black,
+    paddingLeft: 8,
   },
 });
 
