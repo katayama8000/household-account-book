@@ -25,4 +25,6 @@ export const Colors = {
   },
   primary: "#8e44ad",
   secondary: "#f44336",
+  white: "#fff",
+  black: "#000",
 };

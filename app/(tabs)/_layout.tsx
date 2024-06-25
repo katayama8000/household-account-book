@@ -3,6 +3,7 @@ import { Colors } from "@/constants/Colors";
 import { Tabs } from "expo-router";
 import { useAtom } from "jotai";
 import { activeInvoiceAtom } from "../state/invoice.state";
+import { defaultFontWeight } from "@/style/defaultStyle";
 
 export default function TabLayout() {
   const [activeInvoice] = useAtom(activeInvoiceAtom);
@@ -11,13 +12,24 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors.primary,
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: "bold",
+        },
         headerShown: true,
+        headerStyle: {
+          backgroundColor: Colors.primary,
+        },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
           title: activeInvoice === null ? "...loading" : `${activeInvoice?.month}月`,
+          headerTitleStyle: {
+            fontSize: 22,
+            color: Colors.white,
+          },
           tabBarIcon: ({ color, focused }) => <TabBarIcon name={focused ? "today" : "today-outline"} color={color} />,
         }}
       />
@@ -25,6 +37,10 @@ export default function TabLayout() {
         name="past-invoices"
         options={{
           title: "過去",
+          headerTitleStyle: {
+            fontSize: 22,
+            color: Colors.white,
+          },
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon name={focused ? "calendar-number" : "calendar-number-outline"} color={color} />
           ),

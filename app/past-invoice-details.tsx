@@ -6,6 +6,7 @@ import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { usePayment } from "./hooks/usePayment";
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 
 export default function PastInvoiceDetailsScreen() {
   const [monthlyPayments, setMonthlyPayments] = useState<Payment[]>([]);
@@ -14,7 +15,11 @@ export default function PastInvoiceDetailsScreen() {
   const { setOptions } = useNavigation();
   useEffect(() => {
     if (typeof date === "string") {
-      setOptions({ headerTitle: date });
+      setOptions({
+        headerTitle: date,
+        headerTitleStyle: { fontSize: 22, color: Colors.white },
+        headerStyle: { backgroundColor: Colors.primary },
+      });
     }
   }, [date, setOptions]);
 
