@@ -38,7 +38,7 @@ const PastInvoicesScreen = () => {
         renderItem={({ item }) => <MonthlyInvoice invoice={item} routerPush={push} />}
         keyExtractor={(item) => item.id.toString()}
         ItemSeparatorComponent={() => <View style={{ height: 4 }} />}
-        ListEmptyComponent={() => <Text>No items</Text>}
+        ListEmptyComponent={() => <Text>過去の請求がありません</Text>}
         contentContainerStyle={{ paddingBottom: 100 }}
         onRefresh={() => {
           if (coupleId === null) return;
