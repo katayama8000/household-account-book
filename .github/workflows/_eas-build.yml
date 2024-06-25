@@ -1,7 +1,14 @@
 name: Expo Build
-
 on:
-  workflow_dispatch:
+  workflow_call:
+    inputs:
+      eas-profile:
+        required: true
+        type: string
+      platform:
+        required: false
+        type: string
+        default: Android
 
 jobs:
   build:
@@ -24,7 +31,6 @@ jobs:
     - name: 🏗 Install dependencies
       run: yarn install
 
-
     - name: 🏗 Setup Expo and EAS
       uses: expo/expo-github-action@v8
       with:
@@ -32,4 +38,4 @@ jobs:
         token: ${{ secrets.EXPO_TOKEN }}
 
     - name: 🏗 Build project
-      run: eas build --platform android --profile development --non-interactive
+      run: eas build --profile "${{ inputs.eas-profile }}" --platform "${{ inputs.platform }}" --non-interactive --no-wait

@@ -21,3 +21,8 @@ npx expo config --type public
 ```bash
 eas build --platform android --profile development --non-interactive --no-wait
 ```
+
+### Check secret list
+```bash
+eas secret:list
+```

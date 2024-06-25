@@ -1,7 +1,7 @@
 import type { ConfigContext, ExpoConfig } from "expo/config";
 
 export default ({ config }: ConfigContext): ExpoConfig => {
-  const appEnv = process.env.APP_ENV || "development";
+  const appEnv = process.env.EXPO_PUBLIC_APP_ENV || "development";
   const extraConfig = {
     table: {
       couples: "dev_couples",

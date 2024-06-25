@@ -5,4 +5,7 @@
 *.sh linguist-detectable=true
 *.sh linguist-language=shell
 *.yml linguist-detectable=true
-*.yml linguist-language=yaml
+*.yml linguist-language=yml
+*.json linguist-detectable=true
+*.json linguist-language=json
+

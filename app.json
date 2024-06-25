@@ -20,14 +20,18 @@
         "foregroundImage": "./assets/images/moufu.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.katayama9000.householdaccountbook"
+      "package": "com.katayama9000.householdaccountbook",
+      "versionCode": 6
     },
     "web": {
       "bundler": "metro",
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": ["expo-router", "expo-font"],
+    "plugins": [
+      "expo-router",
+      "expo-font"
+    ],
     "experiments": {
       "typedRoutes": true
     },

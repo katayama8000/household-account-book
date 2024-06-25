@@ -15,7 +15,8 @@
     "format": "yarn biome format --write .",
     "format:check": "yarn biome format .",
     "lint": "yarn biome check --apply .",
-    "lint:check": "yarn biome check ."
+    "lint:check": "yarn biome check .",
+    "type-check": "tsc --noEmit"
   },
   "jest": {
     "preset": "jest-expo"
