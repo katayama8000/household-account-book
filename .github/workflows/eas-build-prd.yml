@@ -1,4 +1,4 @@
-name: EAS Build for local
+name: EAS Build for production
 on:
   workflow_dispatch:
 

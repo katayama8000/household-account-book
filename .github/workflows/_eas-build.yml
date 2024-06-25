@@ -8,7 +8,7 @@ on:
       platform:
         required: false
         type: string
-        default: Android
+        default: android
 
 jobs:
   build:
