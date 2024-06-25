@@ -17,6 +17,8 @@ export default function PaymentModalScreen() {
   useEffect(() => {
     setOptions({
       headerTitle: kind === "edit" ? "編集" : "支払い",
+      headerTitleStyle: { fontSize: 22, color: Colors.white },
+      headerStyle: { backgroundColor: Colors.primary },
     });
 
     if (kind === "edit" && typeof id === "string") {
