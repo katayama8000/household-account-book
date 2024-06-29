@@ -56,7 +56,7 @@ export default function PaymentModalScreen() {
         <TextInput
           style={styles.input}
           value={amount ? amount.toString() : ""}
-          onChangeText={(text) => setAmount(Number(text))}
+          onChange={(e) => setAmount(Number(e.nativeEvent.text))}
           keyboardType={Platform.select({ ios: "number-pad", android: "numeric" })}
         />
       </View>
