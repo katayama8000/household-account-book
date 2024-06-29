@@ -11,6 +11,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -36,7 +37,7 @@ const SignInScreen = () => {
     if (error) {
       alert(error.message);
     } else {
-      alert("サインインしました");
+      ToastAndroid.show("投稿した", ToastAndroid.SHORT);
       push({ pathname: "/" });
     }
     setLoading(false);
