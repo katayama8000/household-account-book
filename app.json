@@ -8,7 +8,7 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/moufu_splash.jpg",
+      "image": "./assets/images/moufu_splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
