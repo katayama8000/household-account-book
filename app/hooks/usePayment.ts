@@ -9,6 +9,7 @@ import { coupleIdAtom } from "../state/couple.state";
 import { activeInvoiceAtom } from "../state/invoice.state";
 import { paymentsAtom } from "../state/payment.state";
 import { useInvoice } from "./useInvoice";
+import { ToastAndroid } from "react-native";
 
 export const usePayment = () => {
   const [payments, setPayments] = useAtom(paymentsAtom);
@@ -66,7 +67,7 @@ export const usePayment = () => {
         return;
       }
 
-      alert("投稿できた");
+      ToastAndroid.show("投稿した", ToastAndroid.SHORT);
       resetForm();
       back();
     } catch (error) {
