@@ -2,7 +2,7 @@ import { Colors } from "@/constants/Colors";
 import { defaultFontSize, defaultFontWeight } from "@/style/defaultStyle";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useAtom } from "jotai";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { usePayment } from "../hooks/usePayment";
 import { activeInvoiceAtom } from "../state/invoice.state";
