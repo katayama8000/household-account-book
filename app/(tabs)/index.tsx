@@ -198,7 +198,7 @@ const PaymentItem: FC<PaymentItemProps> = ({ deletePayment, routerPush, payment,
       style={[
         styles.paymentContainer,
         {
-          backgroundColor: isOwner ? "white" : "#f0f0f0",
+          backgroundColor: isOwner ? Colors.white : Colors.gray,
         },
       ]}
       onPress={() => isOwner && routerPush({ pathname: "/payment-modal", params: { kind: "edit", id: payment.id } })}
