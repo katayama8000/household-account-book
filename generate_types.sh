@@ -1,4 +1,6 @@
 #!/bin/bash
+# Start generating TypeScript types for your Supabase schema
+echo "Generating TypeScript types for your Supabase schema..."
 
 # Ensure the PROJECT_REF environment variable is set
 if [ -z "$PROJECT_REF" ]; then
