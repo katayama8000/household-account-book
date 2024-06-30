@@ -192,7 +192,7 @@ type PaymentItemProps = {
 const PaymentItem: FC<PaymentItemProps> = ({ deletePayment, routerPush, payment, userId }) => {
   const { fetchPaymentsAllByMonthlyInvoiceId } = usePayment();
   const [activeInvoce] = useAtom(activeInvoiceAtom);
-  const isOwner = payment.owner === userId;
+  const isOwner = payment.owner_id === userId;
   return (
     <TouchableOpacity
       style={[

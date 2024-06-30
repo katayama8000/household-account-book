@@ -63,7 +63,7 @@ export const usePayment = () => {
           name,
           updated_at: dayjs().toISOString(),
           created_at: dayjs().toISOString(),
-          owner: uid,
+          owner_id: uid,
         },
       ]);
 
@@ -151,14 +151,14 @@ export const usePayment = () => {
     try {
       const { data: invoices, error } = await supabase
         .from(dev_payments)
-        .select("amount, owner")
+        .select("amount, owner_id")
         .eq("monthly_invoice_id", monthlyInvoiceId);
 
       if (error) {
         throw error; // Rethrow the error for proper handling
       }
 
-      const invoiceBalance = invoices.reduce((acc, cur) => acc + (cur.owner === uid ? cur.amount : -cur.amount), 0);
+      const invoiceBalance = invoices.reduce((acc, cur) => acc + (cur.owner_id === uid ? cur.amount : -cur.amount), 0);
 
       return invoiceBalance;
     } catch (error) {

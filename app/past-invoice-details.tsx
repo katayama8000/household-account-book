@@ -44,7 +44,7 @@ export default function PastInvoiceDetailsScreen() {
       style={[
         styles.card,
         {
-          borderLeftColor: item.owner === userId ? Colors.primary : Colors.gray,
+          borderLeftColor: item.owner_id === userId ? Colors.primary : Colors.gray,
         },
       ]}
     >
