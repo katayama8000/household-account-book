@@ -5,14 +5,26 @@ import { Slot, Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import "react-native-reanimated";
 import Constants from "expo-constants";
-import * as Device from "expo-device";
-import * as Notifications from "expo-notifications";
 import { useEffect, useRef, useState } from "react";
 import { Button, Platform, Text, View } from "react-native";
+import {
+  AndroidImportance,
+  addNotificationReceivedListener,
+  getExpoPushTokenAsync,
+  getPermissionsAsync,
+  requestPermissionsAsync,
+  setNotificationChannelAsync,
+  type Subscription,
+  type Notification,
+  addNotificationResponseReceivedListener,
+  removeNotificationSubscription,
+  setNotificationHandler,
+} from "expo-notifications";
+import { isDevice } from "expo-device";
 
 SplashScreen.preventAutoHideAsync();
 
-Notifications.setNotificationHandler({
+setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
     shouldPlaySound: false,
@@ -20,6 +32,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
+// 直接apiを叩いているが、expo-notification-clientを使い、apiを新設する
 async function sendPushNotification(expoPushToken: string) {
   const message = {
     to: expoPushToken,
@@ -40,26 +53,26 @@ async function sendPushNotification(expoPushToken: string) {
   });
 }
 
-function handleRegistrationError(errorMessage: string) {
+const handleRegistrationError = (errorMessage: string) => {
   alert(errorMessage);
   throw new Error(errorMessage);
-}
+};
 
-async function registerForPushNotificationsAsync() {
+const registerForPushNotificationsAsync = async () => {
   if (Platform.OS === "android") {
-    Notifications.setNotificationChannelAsync("default", {
+    setNotificationChannelAsync("default", {
       name: "default",
-      importance: Notifications.AndroidImportance.MAX,
+      importance: AndroidImportance.MAX,
       vibrationPattern: [0, 250, 250, 250],
       lightColor: "#FF231F7C",
     });
   }
 
-  if (Device.isDevice) {
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  if (isDevice) {
+    const { status: existingStatus } = await getPermissionsAsync();
     let finalStatus = existingStatus;
     if (existingStatus !== "granted") {
-      const { status } = await Notifications.requestPermissionsAsync();
+      const { status } = await requestPermissionsAsync();
       finalStatus = status;
     }
     if (finalStatus !== "granted") {
@@ -72,7 +85,7 @@ async function registerForPushNotificationsAsync() {
     }
     try {
       const pushTokenString = (
-        await Notifications.getExpoPushTokenAsync({
+        await getExpoPushTokenAsync({
           projectId,
         })
       ).data;
@@ -84,7 +97,7 @@ async function registerForPushNotificationsAsync() {
   } else {
     handleRegistrationError("Must use physical device for push notifications");
   }
-}
+};
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -124,27 +137,27 @@ export default function RootLayout() {
     })();
   }, [push]);
 
-  const [expoPushToken, setExpoPushToken] = useState("");
-  const [notification, setNotification] = useState<Notifications.Notification | undefined>(undefined);
-  const notificationListener = useRef<Notifications.Subscription>();
-  const responseListener = useRef<Notifications.Subscription>();
+  const [expoPushToken, setExpoPushToken] = useState<string>("");
+  const [notification, setNotification] = useState<Notification | undefined>(undefined);
+  const notificationListener = useRef<Subscription>();
+  const responseListener = useRef<Subscription>();
 
   useEffect(() => {
     registerForPushNotificationsAsync()
       .then((token) => setExpoPushToken(token ?? ""))
       .catch((error) => setExpoPushToken(`${error}`));
 
-    notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
+    notificationListener.current = addNotificationReceivedListener((notification) => {
       setNotification(notification);
     });
 
-    responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
+    responseListener.current = addNotificationResponseReceivedListener((response) => {
       console.log(response);
     });
 
     return () => {
-      notificationListener.current && Notifications.removeNotificationSubscription(notificationListener.current);
-      responseListener.current && Notifications.removeNotificationSubscription(responseListener.current);
+      notificationListener.current && removeNotificationSubscription(notificationListener.current);
+      responseListener.current && removeNotificationSubscription(responseListener.current);
     };
   }, []);
 
