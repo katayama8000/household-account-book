@@ -5,11 +5,11 @@ import dayjs from "dayjs";
 import { useRouter } from "expo-router";
 import { useAtom } from "jotai";
 import { useCallback, useEffect, useState } from "react";
+import { ToastAndroid } from "react-native";
 import { coupleIdAtom } from "../state/couple.state";
 import { activeInvoiceAtom } from "../state/invoice.state";
 import { paymentsAtom } from "../state/payment.state";
 import { useInvoice } from "./useInvoice";
-import { ToastAndroid } from "react-native";
 
 export const usePayment = () => {
   const [payments, setPayments] = useAtom(paymentsAtom);
@@ -50,6 +50,11 @@ export const usePayment = () => {
       return;
     }
 
+    const uid = (await supabase.auth.getSession())?.data.session?.user.id;
+    if (uid === undefined) {
+      alert("uid is not found");
+      return;
+    }
     try {
       const { error } = await supabase.from(dev_payments).insert([
         {
@@ -58,6 +63,7 @@ export const usePayment = () => {
           name,
           updated_at: dayjs().toISOString(),
           created_at: dayjs().toISOString(),
+          owner_id: uid,
         },
       ]);
 
@@ -135,16 +141,30 @@ export const usePayment = () => {
     }
   }, []);
 
-  const fetchPaymentTotal = async (monthly_invoice_id: Payment["monthly_invoice_id"]) => {
-    const { data, error } = await supabase
-      .from(dev_payments)
-      .select("amount")
-      .eq("monthly_invoice_id", monthly_invoice_id);
-    if (error) {
-      console.error(error);
-      return 0;
+  const calculateInvoiceBalance = async (monthlyInvoiceId: Payment["monthly_invoice_id"]) => {
+    const uid = (await supabase.auth.getSession())?.data.session?.user?.id;
+
+    if (!uid) {
+      throw new Error("User ID not found. Please ensure you're authenticated.");
     }
-    return data.reduce((acc, cur) => acc + cur.amount, 0);
+
+    try {
+      const { data: invoices, error } = await supabase
+        .from(dev_payments)
+        .select("amount, owner_id")
+        .eq("monthly_invoice_id", monthlyInvoiceId);
+
+      if (error) {
+        throw error; // Rethrow the error for proper handling
+      }
+
+      const invoiceBalance = invoices.reduce((acc, cur) => acc + (cur.owner_id === uid ? cur.amount : -cur.amount), 0);
+
+      return invoiceBalance;
+    } catch (error) {
+      console.error("Error fetching invoice balance:", error);
+      return 0; // Return 0 on error for default behavior
+    }
   };
 
   return {
@@ -158,6 +178,6 @@ export const usePayment = () => {
     fetchPaymentsAllByMonthlyInvoiceId,
     updatePayment,
     deletePayment,
-    fetchPaymentTotal,
+    calculateInvoiceBalance,
   };
 };

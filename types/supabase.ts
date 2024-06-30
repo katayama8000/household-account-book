@@ -99,6 +99,7 @@ export type Database = {
           id: number
           monthly_invoice_id: number
           name: string
+          owner_id: string
           updated_at: string
         }
         Insert: {
@@ -107,6 +108,7 @@ export type Database = {
           id?: number
           monthly_invoice_id: number
           name: string
+          owner_id: string
           updated_at?: string
         }
         Update: {
@@ -115,6 +117,7 @@ export type Database = {
           id?: number
           monthly_invoice_id?: number
           name?: string
+          owner_id?: string
           updated_at?: string
         }
         Relationships: [
@@ -175,6 +178,7 @@ export type Database = {
           id: number
           monthly_invoice_id: number
           name: string
+          owner_id: string
           updated_at: string
         }
         Insert: {
@@ -183,6 +187,7 @@ export type Database = {
           id?: number
           monthly_invoice_id: number
           name: string
+          owner_id: string
           updated_at?: string
         }
         Update: {
@@ -191,6 +196,7 @@ export type Database = {
           id?: number
           monthly_invoice_id?: number
           name?: string
+          owner_id?: string
           updated_at?: string
         }
         Relationships: [

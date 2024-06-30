@@ -3,12 +3,12 @@ import type { Invoice } from "@/types/Row";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import type { ExpoRouter } from "expo-router/types/expo-router";
+import { useAtom } from "jotai";
 import { type FC, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useInvoice } from "../hooks/useInvoice";
 import { usePayment } from "../hooks/usePayment";
 import { coupleIdAtom } from "../state/couple.state";
-import { useAtom } from "jotai";
 
 const PastInvoicesScreen = () => {
   const { invoices, isRefreshing, fetchInvoicesAllByCoupleId } = useInvoice();
@@ -57,12 +57,12 @@ type MonthlyInvoiceProps = {
 
 const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ invoice, routerPush }) => {
   const [totalAmount, setTotalAmount] = useState<number | null>(null);
-  const { fetchPaymentTotal } = usePayment();
+  const { calculateInvoiceBalance } = usePayment();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     (async () => {
-      const totalAmount = await fetchPaymentTotal(invoice.id);
+      const totalAmount = await calculateInvoiceBalance(invoice.id);
       setTotalAmount(totalAmount);
     })();
   }, [invoice]);
@@ -81,7 +81,15 @@ const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ invoice, routerPush }) => {
         <View style={{}}>
           <Text style={styles.date}>{`${invoice.year}年 ${invoice.month}月`}</Text>
           <Text style={styles.amount}>
-            {totalAmount !== null ? `${totalAmount.toLocaleString()}円` : <ActivityIndicator color="#fff" />}
+            {totalAmount !== null ? (
+              totalAmount > 0 ? (
+                `${totalAmount.toLocaleString()}円の受け取り`
+              ) : (
+                `${totalAmount.toLocaleString()}円の支払い`
+              )
+            ) : (
+              <ActivityIndicator color="#fff" />
+            )}
           </Text>
         </View>
         <MaterialIcons name="arrow-forward-ios" size={24} />

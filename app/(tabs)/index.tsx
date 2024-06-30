@@ -3,18 +3,18 @@ import { supabase } from "@/lib/supabase";
 import { defaultFontSize, defaultFontWeight, defaultShadowColor } from "@/style/defaultStyle";
 import type { Couple, Invoice, Payment, Payment as PaymentRow } from "@/types/Row";
 import { AntDesign } from "@expo/vector-icons";
+import dayjs from "dayjs";
 import { useRouter } from "expo-router";
 import type { ExpoRouter } from "expo-router/types/expo-router";
 import { useAtom } from "jotai";
-import { type FC, useEffect, version } from "react";
-import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View, Linking } from "react-native";
+import { type FC, useEffect, useState } from "react";
+import { Alert, FlatList, Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import packageJson from "../../package.json";
 import { useCouple } from "../hooks/useCouple";
 import { useInvoice } from "../hooks/useInvoice";
 import { usePayment } from "../hooks/usePayment";
 import { coupleIdAtom } from "../state/couple.state";
 import { activeInvoiceAtom } from "../state/invoice.state";
-import dayjs from "dayjs";
-import packageJson from "../../package.json";
 
 const HomeScreen: FC = () => {
   const { payments, isRefreshing, deletePayment } = usePayment();
@@ -25,6 +25,7 @@ const HomeScreen: FC = () => {
   const [activeInvoce, setActiveInvoice] = useAtom(activeInvoiceAtom);
   const router = useRouter();
   const showCloseMonthButton = dayjs().date() >= 20;
+  const [userId, setUserId] = useState<string | null>(null);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
@@ -34,6 +35,7 @@ const HomeScreen: FC = () => {
         router.push({ pathname: "/sign-in" });
         return;
       }
+      setUserId(uid);
 
       const coupleId = await fetchCoupleIdByUserId(uid);
       if (!coupleId) {
@@ -97,6 +99,7 @@ const HomeScreen: FC = () => {
         deletePayment={deletePayment}
         routerPush={router.push}
         updateActiveInvoice={updateActiveInvoice}
+        userId={userId}
       />
     </View>
   );
@@ -134,6 +137,7 @@ type PaymentListProps = {
   deletePayment: (id: PaymentRow["id"]) => Promise<void>;
   routerPush: (href: ExpoRouter.Href) => void;
   updateActiveInvoice: () => Promise<void>;
+  userId: string | null;
 };
 
 const PaymentList: FC<PaymentListProps> = ({
@@ -144,10 +148,13 @@ const PaymentList: FC<PaymentListProps> = ({
   deletePayment,
   routerPush,
   updateActiveInvoice,
+  userId,
 }) => (
   <FlatList
     data={payments.sort((a, b) => b.id - a.id)}
-    renderItem={({ item }) => <PaymentItem payment={item} routerPush={routerPush} deletePayment={deletePayment} />}
+    renderItem={({ item }) => (
+      <PaymentItem payment={item} routerPush={routerPush} deletePayment={deletePayment} userId={userId} />
+    )}
     keyExtractor={(item) => item.id.toString()}
     ItemSeparatorComponent={() => <View style={{ height: 4 }} />}
     ListEmptyComponent={() => <Text style={styles.emptyListText}>支払いがまだありません</Text>}
@@ -179,15 +186,22 @@ type PaymentItemProps = {
   deletePayment: (id: PaymentRow["id"]) => Promise<void>;
   routerPush: (href: ExpoRouter.Href) => void;
   payment: PaymentRow;
+  userId: string | null;
 };
 
-const PaymentItem: FC<PaymentItemProps> = ({ deletePayment, routerPush, payment }) => {
+const PaymentItem: FC<PaymentItemProps> = ({ deletePayment, routerPush, payment, userId }) => {
   const { fetchPaymentsAllByMonthlyInvoiceId } = usePayment();
   const [activeInvoce] = useAtom(activeInvoiceAtom);
+  const isOwner = payment.owner_id === userId;
   return (
     <TouchableOpacity
-      style={styles.paymentContainer}
-      onPress={() => routerPush({ pathname: "/payment-modal", params: { kind: "edit", id: payment.id } })}
+      style={[
+        styles.paymentContainer,
+        {
+          backgroundColor: isOwner ? Colors.white : Colors.gray,
+        },
+      ]}
+      onPress={() => isOwner && routerPush({ pathname: "/payment-modal", params: { kind: "edit", id: payment.id } })}
     >
       <View style={styles.paymentInfoContainer}>
         <Text style={styles.itemTitle}>{payment.name}</Text>
@@ -195,24 +209,26 @@ const PaymentItem: FC<PaymentItemProps> = ({ deletePayment, routerPush, payment 
           <Text style={styles.value}>{payment.amount.toLocaleString()}円</Text>
         </View>
       </View>
-      <TouchableOpacity
-        style={styles.iconButton}
-        onPress={() =>
-          Alert.alert("削除します", "よろしいですか？", [
-            { text: "いいえ", style: "cancel" },
-            {
-              text: "はい",
-              onPress: async () => {
-                deletePayment(payment.id);
-                if (activeInvoce === null) return;
-                await fetchPaymentsAllByMonthlyInvoiceId(activeInvoce.id);
+      {isOwner && (
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={() =>
+            Alert.alert("削除します", "よろしいですか？", [
+              { text: "いいえ", style: "cancel" },
+              {
+                text: "はい",
+                onPress: async () => {
+                  deletePayment(payment.id);
+                  if (activeInvoce === null) return;
+                  await fetchPaymentsAllByMonthlyInvoiceId(activeInvoce.id);
+                },
               },
-            },
-          ])
-        }
-      >
-        <AntDesign name="delete" size={24} color="white" />
-      </TouchableOpacity>
+            ])
+          }
+        >
+          <AntDesign name="delete" size={24} color="white" />
+        </TouchableOpacity>
+      )}
     </TouchableOpacity>
   );
 };

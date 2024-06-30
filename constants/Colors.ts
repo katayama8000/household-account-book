@@ -27,4 +27,5 @@ export const Colors = {
   secondary: "#f44336",
   white: "#fff",
   black: "#000",
+  gray: "#f0f0f0",
 };
