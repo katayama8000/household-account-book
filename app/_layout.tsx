@@ -4,11 +4,11 @@ import { useFonts } from "expo-font";
 import { Slot, Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import "react-native-reanimated";
-import { useState, useEffect, useRef } from "react";
-import { Text, View, Button, Platform } from "react-native";
+import Constants from "expo-constants";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
-import Constants from "expo-constants";
+import { useEffect, useRef, useState } from "react";
+import { Button, Platform, Text, View } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 
