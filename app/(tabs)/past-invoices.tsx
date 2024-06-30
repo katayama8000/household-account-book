@@ -3,12 +3,12 @@ import type { Invoice } from "@/types/Row";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import type { ExpoRouter } from "expo-router/types/expo-router";
+import { useAtom } from "jotai";
 import { type FC, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useInvoice } from "../hooks/useInvoice";
 import { usePayment } from "../hooks/usePayment";
 import { coupleIdAtom } from "../state/couple.state";
-import { useAtom } from "jotai";
 
 const PastInvoicesScreen = () => {
   const { invoices, isRefreshing, fetchInvoicesAllByCoupleId } = useInvoice();

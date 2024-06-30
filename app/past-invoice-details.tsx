@@ -1,4 +1,5 @@
 import { Colors } from "@/constants/Colors";
+import { supabase } from "@/lib/supabase";
 import { defaultFontSize, defaultFontWeight, defaultShadowColor } from "@/style/defaultStyle";
 import type { Payment } from "@/types/Row";
 import dayjs from "dayjs";
@@ -6,7 +7,6 @@ import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { usePayment } from "./hooks/usePayment";
-import { supabase } from "@/lib/supabase";
 
 export default function PastInvoiceDetailsScreen() {
   const [monthlyPayments, setMonthlyPayments] = useState<Payment[]>([]);

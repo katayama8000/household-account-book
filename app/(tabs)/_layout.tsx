@@ -3,7 +3,6 @@ import { Colors } from "@/constants/Colors";
 import { Tabs } from "expo-router";
 import { useAtom } from "jotai";
 import { activeInvoiceAtom } from "../state/invoice.state";
-import { defaultFontWeight } from "@/style/defaultStyle";
 
 export default function TabLayout() {
   const [activeInvoice] = useAtom(activeInvoiceAtom);
