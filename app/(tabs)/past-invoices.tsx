@@ -57,12 +57,12 @@ type MonthlyInvoiceProps = {
 
 const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ invoice, routerPush }) => {
   const [totalAmount, setTotalAmount] = useState<number | null>(null);
-  const { fetchPaymentTotal } = usePayment();
+  const { calculateInvoiceBalance } = usePayment();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     (async () => {
-      const totalAmount = await fetchPaymentTotal(invoice.id);
+      const totalAmount = await calculateInvoiceBalance(invoice.id);
       setTotalAmount(totalAmount);
     })();
   }, [invoice]);
@@ -81,7 +81,15 @@ const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ invoice, routerPush }) => {
         <View style={{}}>
           <Text style={styles.date}>{`${invoice.year}年 ${invoice.month}月`}</Text>
           <Text style={styles.amount}>
-            {totalAmount !== null ? `${totalAmount.toLocaleString()}円` : <ActivityIndicator color="#fff" />}
+            {totalAmount !== null ? (
+              totalAmount > 0 ? (
+                `${totalAmount.toLocaleString()}円の受け取り`
+              ) : (
+                `${totalAmount.toLocaleString()}円の支払い`
+              )
+            ) : (
+              <ActivityIndicator color="#fff" />
+            )}
           </Text>
         </View>
         <MaterialIcons name="arrow-forward-ios" size={24} />
