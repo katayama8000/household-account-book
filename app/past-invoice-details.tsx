@@ -6,14 +6,20 @@ import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { usePayment } from "./hooks/usePayment";
-import { AntDesign, MaterialIcons } from "@expo/vector-icons";
+import { supabase } from "@/lib/supabase";
 
 export default function PastInvoiceDetailsScreen() {
   const [monthlyPayments, setMonthlyPayments] = useState<Payment[]>([]);
   const { id, date } = useLocalSearchParams();
   const { fetchPaymentsAllByMonthlyInvoiceId } = usePayment();
   const { setOptions } = useNavigation();
+  const [userId, setUserId] = useState<string | null>(null);
   useEffect(() => {
+    (async () => {
+      const uid = (await supabase.auth.getSession())?.data.session?.user?.id;
+      if (!uid) return;
+      setUserId(uid);
+    })();
     if (typeof date === "string") {
       setOptions({
         headerTitle: date,
@@ -34,7 +40,14 @@ export default function PastInvoiceDetailsScreen() {
   }, [id]);
 
   const renderItem = ({ item }: { item: Payment }) => (
-    <View style={styles.card}>
+    <View
+      style={[
+        styles.card,
+        {
+          borderLeftColor: item.owner === userId ? Colors.primary : "#f0f0f0",
+        },
+      ]}
+    >
       <Text style={styles.cardText}>入力日：{dayjs(item.updated_at).format("YYYY年MM月DD日")}</Text>
       <Text style={styles.cardText}>項目：{item.name}</Text>
       <Text style={styles.cardText}>金額：{item.amount.toLocaleString()}円</Text>

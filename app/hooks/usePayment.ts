@@ -50,6 +50,11 @@ export const usePayment = () => {
       return;
     }
 
+    const uid = (await supabase.auth.getSession())?.data.session?.user.id;
+    if (uid === undefined) {
+      alert("uid is not found");
+      return;
+    }
     try {
       const { error } = await supabase.from(dev_payments).insert([
         {
@@ -58,6 +63,7 @@ export const usePayment = () => {
           name,
           updated_at: dayjs().toISOString(),
           created_at: dayjs().toISOString(),
+          owner: uid,
         },
       ]);
 
