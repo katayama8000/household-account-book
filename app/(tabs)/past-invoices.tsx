@@ -85,7 +85,7 @@ const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ invoice, routerPush }) => {
               totalAmount > 0 ? (
                 `${totalAmount.toLocaleString()}円の受け取り`
               ) : (
-                `${totalAmount.toLocaleString()}円の支払い`
+                `${Math.abs(totalAmount).toLocaleString()}円の支払い`
               )
             ) : (
               <ActivityIndicator color="#fff" />
