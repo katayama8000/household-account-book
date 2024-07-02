@@ -33,7 +33,7 @@ setNotificationHandler({
 });
 
 // 直接apiを叩いているが、expo-notification-clientを使い、apiを新設する
-async function sendPushNotification(expoPushToken: string) {
+async function sendPushNotification(expoPushToken: string[]) {
   const message = {
     to: expoPushToken,
     sound: "default",
@@ -178,7 +178,7 @@ export default function RootLayout() {
       <Button
         title="Press to Send Notification"
         onPress={async () => {
-          await sendPushNotification(expoPushToken);
+          await sendPushNotification([expoPushToken]);
         }}
       />
       <Stack>
