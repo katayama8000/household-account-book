@@ -24,7 +24,7 @@ const HomeScreen: FC = () => {
   const [coupleId, setCoupleId] = useAtom(coupleIdAtom);
   const [activeInvoce, setActiveInvoice] = useAtom(activeInvoiceAtom);
   const router = useRouter();
-  const showCloseMonthButton = dayjs().date() >= 20;
+  const showCloseMonthButton = process.env.EXPO_PUBLIC_APP_ENV === "development" ? true : dayjs().date() >= 20;
   const [userId, setUserId] = useState<string | null>(null);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>

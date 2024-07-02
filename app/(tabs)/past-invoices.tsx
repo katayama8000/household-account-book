@@ -69,7 +69,12 @@ const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ invoice, routerPush }) => {
 
   return (
     <TouchableOpacity
-      style={styles.card}
+      style={[
+        styles.card,
+        {
+          backgroundColor: invoice.active ? "#FFD700" : "white",
+        },
+      ]}
       onPress={() =>
         routerPush({
           pathname: "/past-invoice-details",
@@ -85,7 +90,7 @@ const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ invoice, routerPush }) => {
               totalAmount > 0 ? (
                 `${totalAmount.toLocaleString()}円の受け取り`
               ) : (
-                `${totalAmount.toLocaleString()}円の支払い`
+                `${Math.abs(totalAmount).toLocaleString()}円の支払い`
               )
             ) : (
               <ActivityIndicator color="#fff" />
