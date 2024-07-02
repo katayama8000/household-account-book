@@ -7,7 +7,7 @@ import { Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, 
 import { usePayment } from "../hooks/usePayment";
 import { activeInvoiceAtom } from "../state/invoice.state";
 
-export default function PaymentModalScreen() {
+const PaymentModalScreen = () => {
   const { payments, addPayment, updatePayment, setName, setAmount, name, amount, fetchPaymentsAllByMonthlyInvoiceId } =
     usePayment();
   const { kind, id } = useLocalSearchParams();
@@ -67,7 +67,7 @@ export default function PaymentModalScreen() {
       </View>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -111,3 +111,5 @@ const styles = StyleSheet.create({
     fontWeight: defaultFontWeight,
   },
 });
+
+export default PaymentModalScreen;
