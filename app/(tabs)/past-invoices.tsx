@@ -69,7 +69,12 @@ const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ invoice, routerPush }) => {
 
   return (
     <TouchableOpacity
-      style={styles.card}
+      style={[
+        styles.card,
+        {
+          backgroundColor: invoice.active ? "#FFD700" : "white",
+        },
+      ]}
       onPress={() =>
         routerPush({
           pathname: "/past-invoice-details",
