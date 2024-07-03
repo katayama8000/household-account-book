@@ -32,25 +32,27 @@ setNotificationHandler({
   }),
 });
 
-// 直接apiを叩いているが、expo-notification-clientを使い、apiを新設する
-async function sendPushNotification(expoPushToken: string[]) {
-  const message = {
-    to: expoPushToken,
-    sound: "default",
-    title: "Original Title",
-    body: "And here is the body!",
-    data: { someData: "goes here" },
+async function sendPushNotification(expoPushToken: string) {
+  const data = {
+    title: "cat",
+    body: "meow",
+    expo_push_tokens: expoPushToken,
   };
 
-  await fetch("https://exp.host/--/api/v2/push/send", {
+  fetch("https://expo-push-notification-api-rust.vercel.app/api/handler", {
     method: "POST",
     headers: {
-      Accept: "application/json",
-      "Accept-encoding": "gzip, deflate",
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(message),
-  });
+    body: JSON.stringify(data),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
 }
 
 const handleRegistrationError = (errorMessage: string) => {
@@ -178,7 +180,7 @@ export default function RootLayout() {
       <Button
         title="Press to Send Notification"
         onPress={async () => {
-          await sendPushNotification([expoPushToken]);
+          await sendPushNotification("ExponentPushToken[e6KjERPHmEH-KgvnAPkLqC]");
         }}
       />
       <Stack>
