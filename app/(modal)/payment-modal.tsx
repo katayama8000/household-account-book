@@ -5,7 +5,7 @@ import { useAtom } from "jotai";
 import { useEffect } from "react";
 import { Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { usePayment } from "../hooks/usePayment";
-import { activeInvoiceAtom } from "../state/invoice.state";
+import { activeInvoiceAtom } from "../../state/invoice.state";
 
 const PaymentModalScreen = () => {
   const { payments, addPayment, updatePayment, setName, setAmount, name, amount, fetchPaymentsAllByMonthlyInvoiceId } =

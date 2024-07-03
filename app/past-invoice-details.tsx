@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
-import { usePayment } from "./hooks/usePayment";
+import { usePayment } from "../hooks/usePayment";
 
 export default function PastInvoiceDetailsScreen() {
   const [monthlyPayments, setMonthlyPayments] = useState<Payment[]>([]);
