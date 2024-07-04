@@ -44,6 +44,14 @@ create table dev_monthly_invoices (
   month smallint not null
 );
 
+create table users (
+  id bigint not null primary key,
+  created_at timestamp default now() not null,
+  user_id text not null,
+  expo_push_token text not null,
+  name text not null
+);
+
 create table dev_payments (
   id bigint not null primary key,
   created_at timestamp default now() not null,
