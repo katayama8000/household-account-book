@@ -1,11 +1,11 @@
-// import { dev_users } from "@/constants/Table";
+import { dev_users } from "@/constants/Table";
 import { dev_couples } from "@/constants/Table";
 import { supabase } from "@/lib/supabase";
 import type { Couple, User as TUser } from "@/types/Row";
 
 export const useUser = () => {
   const fetchUser = async (user_id: TUser["user_id"]) => {
-    const { data, error } = await supabase.from("dev_users").select("*").eq("user_id", user_id).single();
+    const { data, error } = await supabase.from(dev_users).select("*").eq("user_id", user_id).single();
     if (error) {
       console.error("error", error);
       return;

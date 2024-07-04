@@ -21,7 +21,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
   return {
     ...config,
     slug: "household-account-book",
-    name: "家計簿forほのか",
+    name: "もうふといくら",
     extra: {
       ...config.extra,
       extraConfig,
