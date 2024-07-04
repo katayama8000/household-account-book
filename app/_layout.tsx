@@ -4,23 +4,26 @@ import { useFonts } from "expo-font";
 import { Slot, Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import "react-native-reanimated";
+import { useUser } from "@/hooks/useUser";
+import { userAtom } from "@/state/user.state";
 import Constants from "expo-constants";
-import { useEffect, useRef, useState } from "react";
-import { Button, Platform, Text, View } from "react-native";
+import { isDevice } from "expo-device";
 import {
   AndroidImportance,
+  type Notification,
+  type Subscription,
   addNotificationReceivedListener,
+  addNotificationResponseReceivedListener,
   getExpoPushTokenAsync,
   getPermissionsAsync,
+  removeNotificationSubscription,
   requestPermissionsAsync,
   setNotificationChannelAsync,
-  type Subscription,
-  type Notification,
-  addNotificationResponseReceivedListener,
-  removeNotificationSubscription,
   setNotificationHandler,
 } from "expo-notifications";
-import { isDevice } from "expo-device";
+import { useAtom } from "jotai";
+import { useEffect, useRef, useState } from "react";
+import { Button, Platform, Text, View } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -99,6 +102,9 @@ const registerForPushNotificationsAsync = async () => {
 };
 
 export default function RootLayout() {
+  const { fetchUser, updateExpoPushToken } = useUser();
+  const [user, setUser] = useAtom(userAtom);
+
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
@@ -114,12 +120,8 @@ export default function RootLayout() {
     (async () => {
       const { data, error } = await supabase.auth.getUser();
       console.log("user", data);
-      if (error || !data) {
+      if (error || !data || !data.user) {
         push({ pathname: "/sign-in" });
-        return;
-      }
-
-      if (!data.user) {
         return;
       }
 
@@ -141,23 +143,43 @@ export default function RootLayout() {
   const notificationListener = useRef<Subscription>();
   const responseListener = useRef<Subscription>();
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    registerForPushNotificationsAsync()
-      .then((token) => setExpoPushToken(token ?? ""))
-      .catch((error) => setExpoPushToken(`${error}`));
+    (async () => {
+      registerForPushNotificationsAsync()
+        .then((token) => setExpoPushToken(token ?? ""))
+        .catch((error) => setExpoPushToken(`${error}`));
 
-    notificationListener.current = addNotificationReceivedListener((notification) => {
-      setNotification(notification);
-    });
+      const uid = (await supabase.auth.getSession())?.data.session?.user?.id;
+      if (!uid) {
+        push({ pathname: "/sign-in" });
+        return;
+      }
+      const user = await fetchUser(uid);
+      if (!user) {
+        push({ pathname: "/sign-in" });
+        return;
+      }
 
-    responseListener.current = addNotificationResponseReceivedListener((response) => {
-      console.log(response);
-    });
+      setUser(user);
 
-    return () => {
-      notificationListener.current && removeNotificationSubscription(notificationListener.current);
-      responseListener.current && removeNotificationSubscription(responseListener.current);
-    };
+      if (user.expo_push_token) {
+        updateExpoPushToken(uid, expoPushToken);
+      }
+
+      notificationListener.current = addNotificationReceivedListener((notification) => {
+        setNotification(notification);
+      });
+
+      responseListener.current = addNotificationResponseReceivedListener((response) => {
+        console.log(response);
+      });
+
+      return () => {
+        notificationListener.current && removeNotificationSubscription(notificationListener.current);
+        responseListener.current && removeNotificationSubscription(responseListener.current);
+      };
+    })();
   }, []);
 
   if (!loaded) {

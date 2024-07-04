@@ -1,23 +1,63 @@
 // import { dev_users } from "@/constants/Table";
+import { dev_couples } from "@/constants/Table";
 import { supabase } from "@/lib/supabase";
-import type { User as TUser } from "@/types/Row";
-import { useState } from "react";
+import type { Couple, User as TUser } from "@/types/Row";
 
 export const useUser = () => {
-  const [expoPushToken, setExpoPushToken] = useState<string | null>(null);
-
-  const fetchExpoPushToken = async (uid: TUser["user_id"]) => {
-    const { data, error } = await supabase.from("dev_users").select("expo_push_token").eq("user_id", uid);
+  const fetchUser = async (user_id: TUser["user_id"]) => {
+    const { data, error } = await supabase.from("dev_users").select("*").eq("user_id", user_id).single();
     if (error) {
       console.error("error", error);
       return;
     }
-    if (data.length === 0) {
-      // insert expo_push_token
-    } else {
-      setExpoPushToken(data[0].expo_push_token);
+    if (!data) {
+      console.error("no data");
+      return;
+    }
+    return data;
+  };
+
+  const updateExpoPushToken = async (user_id: TUser["user_id"], expoPushToken: string) => {
+    const { error } = await supabase
+      .from("dev_users")
+      .update({ expo_push_token: expoPushToken })
+      .eq("user_id", user_id);
+    if (error) {
+      console.error("error", error);
+      return;
     }
   };
 
-  return { expoPushToken, fetchExpoPushToken };
+  const fetchPartner = async (couple_id: Couple["id"], user_id: TUser["user_id"]) => {
+    const { data, error } = await supabase.from(dev_couples).select("*").eq("id", couple_id).single();
+    if (error) {
+      console.error("error", error);
+      return;
+    }
+    if (!data) {
+      console.error("no data");
+      return;
+    }
+    const partner_id = data.user1_id === user_id ? data.user2_id : data.user1_id;
+
+    const { data: partner, error: partnerError } = await supabase
+      .from("dev_users")
+      .select("*")
+      .eq("user_id", partner_id)
+      .single();
+
+    if (partnerError) {
+      console.error("error", partnerError);
+      return;
+    }
+
+    if (!partner) {
+      console.error("no partner");
+      return;
+    }
+
+    return partner;
+  };
+
+  return { fetchUser, updateExpoPushToken, fetchPartner };
 };

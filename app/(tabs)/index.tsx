@@ -9,10 +9,10 @@ import type { ExpoRouter } from "expo-router/types/expo-router";
 import { useAtom } from "jotai";
 import { type FC, useEffect, useState } from "react";
 import { Alert, FlatList, Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import packageJson from "../../package.json";
 import { useCouple } from "../../hooks/useCouple";
 import { useInvoice } from "../../hooks/useInvoice";
 import { usePayment } from "../../hooks/usePayment";
+import packageJson from "../../package.json";
 import { coupleIdAtom } from "../../state/couple.state";
 import { activeInvoiceAtom } from "../../state/invoice.state";
 
