@@ -27,33 +27,30 @@ SplashScreen.preventAutoHideAsync();
 setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
   }),
 });
 
-async function sendPushNotification(expoPushToken: string) {
-  const data = {
-    title: "cat",
-    body: "meow",
+const sendPushNotification = async (expoPushToken: string, name: string, item: string) => {
+  const message = {
+    title: `${name}が項目を追加しました。`,
+    body: `${item}が追加されました。`,
     expo_push_tokens: expoPushToken,
   };
 
-  fetch("https://expo-push-notification-api-rust.vercel.app/api/handler", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data);
-    })
-    .catch((error) => {
-      console.error("Error:", error);
+  try {
+    await fetch("https://expo-push-notification-api-rust.vercel.app/api/handler", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(message),
     });
-}
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 const handleRegistrationError = (errorMessage: string) => {
   alert(errorMessage);
@@ -180,7 +177,7 @@ export default function RootLayout() {
       <Button
         title="Press to Send Notification"
         onPress={async () => {
-          await sendPushNotification("ExponentPushToken[e6KjERPHmEH-KgvnAPkLqC]");
+          await sendPushNotification("ExponentPushToken[e6KjERPHmEH-KgvnAPkLqC]", "John Doe", "New Item");
         }}
       />
       <Stack>
