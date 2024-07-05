@@ -22,3 +22,6 @@ expo-env.d.ts
 # local env files
 .env
 .env*.local
+
+# google-services.json
+google-services.json
