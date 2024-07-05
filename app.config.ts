@@ -25,6 +25,9 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     extra: {
       ...config.extra,
       extraConfig,
+      android: {
+        googleServicesFile: process.env.GOOGLE_SERVICES,
+      },
     },
   };
 };
