@@ -24,4 +24,4 @@ expo-env.d.ts
 .env*.local
 
 # credentials
-google-services.json
+# google-services.json

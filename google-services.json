@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "573710133054",
+    "project_id": "household-account-book-6d235",
+    "storage_bucket": "household-account-book-6d235.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:573710133054:android:95a0be0f95e90429902e6f",
+        "android_client_info": {
+          "package_name": "com.katayama9000.householdaccountbook"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfdqEdTVuWgqsJ_DqwbwlZA3Ft7PVUwA4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

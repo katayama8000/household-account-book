@@ -7,9 +7,9 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     name: "もうふといくら",
     extra: {
       ...config.extra,
-      android: {
-        googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
-      },
+      // android: {
+      //   googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
+      // },
     },
   };
 };
