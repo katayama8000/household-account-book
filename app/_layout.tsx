@@ -103,7 +103,7 @@ const registerForPushNotificationsAsync = async () => {
 
 export default function RootLayout() {
   const { fetchUser, updateExpoPushToken } = useUser();
-  const [user, setUser] = useAtom(userAtom);
+  const [_, setUser] = useAtom(userAtom);
 
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
@@ -188,6 +188,11 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={DefaultTheme}>
+      <Text>
+        {process.env.GOOGLE_SERVICES_JSON === undefined
+          ? "GOOGLE_SERVICES is undefined"
+          : `GOOGLE_SERVICES: ${process.env.GOOGLE_SERVICES}`}
+      </Text>
       <Text>Your Expo push token: {expoPushToken}</Text>
       <View style={{ alignItems: "center", justifyContent: "center" }}>
         {/* biome-ignore lint/complexity/useOptionalChain: <explanation> */}
@@ -195,6 +200,7 @@ export default function RootLayout() {
         {/* biome-ignore lint/complexity/useOptionalChain: <explanation> */}
         <Text>Body: {notification && notification.request.content.body}</Text>
         <Text>Data: {notification && JSON.stringify(notification.request.content.data)}</Text>
+        <Text>{JSON.stringify(process.env.GOOGLE_SERVICES_JSON)}</Text>
       </View>
       <Button
         title="Press to Send Notification"

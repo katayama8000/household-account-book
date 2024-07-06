@@ -23,6 +23,7 @@ eas build --platform android --profile development --non-interactive --no-wait
 ```
 
 ### Check secret list
+https://docs.expo.dev/build-reference/variables/
 ```bash
 eas secret:list
 ```
