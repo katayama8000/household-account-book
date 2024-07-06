@@ -22,7 +22,7 @@
       },
       "package": "com.katayama9000.householdaccountbook",
       "versionCode": 9,
-      "googleServicesFile": ".google-services.json"
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro",
