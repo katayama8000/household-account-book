@@ -37,7 +37,7 @@ const SignInScreen = () => {
     if (error) {
       alert(error.message);
     } else {
-      ToastAndroid.show("投稿した", ToastAndroid.SHORT);
+      ToastAndroid.show("ログインした", ToastAndroid.SHORT);
       push({ pathname: "/" });
     }
     setLoading(false);

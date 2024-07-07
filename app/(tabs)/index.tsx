@@ -8,7 +8,7 @@ import { useRouter } from "expo-router";
 import type { ExpoRouter } from "expo-router/types/expo-router";
 import { useAtom } from "jotai";
 import { type FC, useEffect, useState } from "react";
-import { Alert, FlatList, Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, FlatList, Linking, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from "react-native";
 import { useCouple } from "../../hooks/useCouple";
 import { useInvoice } from "../../hooks/useInvoice";
 import { usePayment } from "../../hooks/usePayment";
@@ -218,8 +218,9 @@ const PaymentItem: FC<PaymentItemProps> = ({ deletePayment, routerPush, payment,
               {
                 text: "はい",
                 onPress: async () => {
-                  deletePayment(payment.id);
+                  await deletePayment(payment.id);
                   if (activeInvoce === null) return;
+                  ToastAndroid.show("削除した", ToastAndroid.SHORT);
                   await fetchPaymentsAllByMonthlyInvoiceId(activeInvoce.id);
                 },
               },
