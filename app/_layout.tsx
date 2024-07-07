@@ -35,7 +35,7 @@ setNotificationHandler({
   }),
 });
 
-const sendPushNotification = async (expoPushToken: string, name: string, item: string) => {
+const sendPushNotification = async (expoPushToken: string, name = "John Doe", item = "New Item") => {
   const message = {
     title: `${name}が項目を追加しました。`,
     body: `${item}が追加されました。`,
@@ -43,15 +43,22 @@ const sendPushNotification = async (expoPushToken: string, name: string, item: s
   };
 
   try {
-    await fetch("https://expo-push-notification-api-rust.vercel.app/api/handler", {
+    const response = await fetch("https://expo-push-notification-api-rust.vercel.app/api/handler", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(message),
     });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log("Push notification sent successfully:", data);
   } catch (error) {
-    console.error(error);
+    console.error("Failed to send push notification:", error);
   }
 };
 
@@ -188,11 +195,6 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={DefaultTheme}>
-      <Text>
-        {process.env.GOOGLE_SERVICES_JSON === undefined
-          ? "GOOGLE_SERVICES is undefined"
-          : `GOOGLE_SERVICES: ${process.env.GOOGLE_SERVICES}`}
-      </Text>
       <Text>Your Expo push token: {expoPushToken}</Text>
       <View style={{ alignItems: "center", justifyContent: "center" }}>
         {/* biome-ignore lint/complexity/useOptionalChain: <explanation> */}
@@ -200,12 +202,11 @@ export default function RootLayout() {
         {/* biome-ignore lint/complexity/useOptionalChain: <explanation> */}
         <Text>Body: {notification && notification.request.content.body}</Text>
         <Text>Data: {notification && JSON.stringify(notification.request.content.data)}</Text>
-        <Text>{JSON.stringify(process.env.GOOGLE_SERVICES_JSON)}</Text>
       </View>
       <Button
         title="Press to Send Notification"
         onPress={async () => {
-          await sendPushNotification("ExponentPushToken[e6KjERPHmEH-KgvnAPkLqC]", "John Doe", "New Item");
+          await sendPushNotification(expoPushToken);
         }}
       />
       <Stack>
