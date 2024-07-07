@@ -11,7 +11,7 @@ import { usePayment } from "../../hooks/usePayment";
 import { activeInvoiceAtom } from "../../state/invoice.state";
 
 const PaymentModalScreen = () => {
-  const { payments, addPayment, updatePayment, setName, setAmount, name, amount, fetchPaymentsAllByMonthlyInvoiceId } =
+  const { payments, addPayment, updatePayment, setItem, setAmount, item, amount, fetchPaymentsAllByMonthlyInvoiceId } =
     usePayment();
   const { fetchPartner } = useUser();
   const { kind, id } = useLocalSearchParams();
@@ -30,16 +30,16 @@ const PaymentModalScreen = () => {
     if (kind === "edit" && typeof id === "string") {
       const payment = payments.find((p) => p.id === Number(id));
       if (payment) {
-        setName(payment.name);
+        setItem(payment.item);
         setAmount(Number(payment.amount));
       } else {
         alert("payment not found");
       }
     }
-  }, [kind, id, setName, setAmount, payments, setOptions]);
+  }, [kind, id, setItem, setAmount, payments, setOptions]);
 
   const handlePayment = async () => {
-    if (!name || !amount) {
+    if (!item || !amount) {
       alert("Please enter both name and amount.");
       return;
     }
@@ -50,12 +50,12 @@ const PaymentModalScreen = () => {
       if (partner === undefined) return;
 
       if (kind === "edit" && id) {
-        await updatePayment(Number(id), { name, amount });
+        await updatePayment(Number(id), { item, amount });
       } else {
         await addPayment();
       }
 
-      await sendPushNotification(partner.expo_push_token, user.name, name, amount, kind as string);
+      await sendPushNotification(partner.expo_push_token, user.name, item, amount, kind as string);
 
       if (activeInvoce) {
         await fetchPaymentsAllByMonthlyInvoiceId(activeInvoce.id);
@@ -96,7 +96,7 @@ const PaymentModalScreen = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.formWrapper}>
         <Text style={styles.inputLabel}>項目</Text>
-        <TextInput style={styles.input} value={name ?? ""} onChangeText={(text) => setName(text)} />
+        <TextInput style={styles.input} value={item ?? ""} onChangeText={(text) => setItem(text)} />
       </View>
       <View style={styles.formWrapper}>
         <Text style={styles.inputLabel}>値段</Text>
@@ -108,7 +108,7 @@ const PaymentModalScreen = () => {
         />
       </View>
       <View style={styles.submitWrapper}>
-        <TouchableOpacity style={styles.submitButton} onPress={handlePayment} disabled={!name || !amount}>
+        <TouchableOpacity style={styles.submitButton} onPress={handlePayment} disabled={!item || !amount}>
           <Text style={styles.submitButtonText}>{kind === "edit" ? "更新" : "登録"}</Text>
         </TouchableOpacity>
       </View>

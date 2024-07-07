@@ -14,7 +14,7 @@ import { useInvoice } from "./useInvoice";
 export const usePayment = () => {
   const [payments, setPayments] = useAtom(paymentsAtom);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
-  const [name, setName] = useState<string | null>(null);
+  const [item, setItem] = useState<string | null>(null);
   const [amount, setAmount] = useState<number | null>(null);
   const { fetchInvoiceByCoupleId } = useInvoice();
   const [coupleId] = useAtom(coupleIdAtom);
@@ -29,12 +29,12 @@ export const usePayment = () => {
   }, [activeInvoice]);
 
   const resetForm = () => {
-    setName(null);
+    setItem(null);
     setAmount(null);
   };
 
   const addPayment = useCallback(async (): Promise<void> => {
-    if (!name || !amount) {
+    if (!item || !amount) {
       alert("Please enter both name and amount.");
       return;
     }
@@ -60,7 +60,7 @@ export const usePayment = () => {
         {
           amount,
           monthly_invoice_id,
-          name,
+          item,
           updated_at: dayjs().toISOString(),
           created_at: dayjs().toISOString(),
           owner_id: uid,
@@ -80,7 +80,7 @@ export const usePayment = () => {
       console.error(error);
       alert("An error occurred. Please try again.");
     }
-  }, [name, amount, back, resetForm, fetchInvoiceByCoupleId, coupleId]);
+  }, [item, amount, back, resetForm, fetchInvoiceByCoupleId, coupleId]);
 
   const fetchPaymentsAllByMonthlyInvoiceId = useCallback(
     async (monthlyInvoiceId: Payment["monthly_invoice_id"]) => {
@@ -110,7 +110,7 @@ export const usePayment = () => {
   );
 
   const updatePayment = useCallback(
-    async (id: Payment["id"], payment: Pick<Payment, "name" | "amount">): Promise<void> => {
+    async (id: Payment["id"], payment: Pick<Payment, "item" | "amount">): Promise<void> => {
       try {
         const { error } = await supabase.from(dev_payments).update(payment).match({ id });
         if (error) {
@@ -170,9 +170,9 @@ export const usePayment = () => {
   return {
     isRefreshing,
     payments,
-    name,
+    item,
     amount,
-    setName,
+    setItem,
     setAmount,
     addPayment,
     fetchPaymentsAllByMonthlyInvoiceId,
