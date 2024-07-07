@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
-import { usePayment } from "./hooks/usePayment";
+import { usePayment } from "../hooks/usePayment";
 
 export default function PastInvoiceDetailsScreen() {
   const [monthlyPayments, setMonthlyPayments] = useState<Payment[]>([]);
@@ -86,7 +86,8 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: "white",
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     borderRadius: 12,
     marginVertical: 10,
     shadowColor: defaultShadowColor,
@@ -96,11 +97,11 @@ const styles = StyleSheet.create({
     elevation: 4,
     borderLeftWidth: 6,
     borderLeftColor: Colors.primary,
+    gap: 4,
   },
   cardText: {
     fontSize: defaultFontSize,
     fontWeight: defaultFontWeight,
     color: "#444",
-    marginBottom: 8,
   },
 });

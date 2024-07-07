@@ -28,4 +28,4 @@ export const Colors = {
   white: "#fff",
   black: "#000",
   gray: "#f0f0f0",
-};
+} as const;
