@@ -5,9 +5,8 @@
 ## Stack
 - React Native
 - Expo   
-- TypeScript
-- Rust
 - Firebase (FCM)
 - Supabase (Auth, Database)
 - Vercel (Serverless Functions)
+    - https://github.com/katayama8000/expo-push-notification-api-rust
 - GitHub Actions (CI/CD)
