@@ -29,7 +29,7 @@ create table payments (
   updated_at timestamp default now() not null,
   monthly_invoice_id bigint references monthly_invoices (id),
   amount bigint not null,
-  name text not null,
+  item text not null,
   owner_id uuid default uuid_generate_v4()
 );
 
@@ -58,7 +58,7 @@ create table dev_payments (
   updated_at timestamp default now() not null,
   monthly_invoice_id bigint references dev_monthly_invoices (id),
   amount bigint not null,
-  name text not null,
+  item text not null,
   owner_id uuid default uuid_generate_v4()
 );
 
@@ -69,3 +69,4 @@ create table dev_users (
   expo_push_token text not null,
   name text not null
 );
+
