@@ -69,12 +69,7 @@ const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ invoice, routerPush }) => {
 
   return (
     <TouchableOpacity
-      style={[
-        styles.card,
-        {
-          backgroundColor: invoice.active ? "#FFD700" : "white",
-        },
-      ]}
+      style={[styles.card]}
       onPress={() =>
         routerPush({
           pathname: "/past-invoice-details",
@@ -84,7 +79,16 @@ const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ invoice, routerPush }) => {
     >
       <View style={styles.container}>
         <View style={{}}>
-          <Text style={styles.date}>{`${invoice.year}年 ${invoice.month}月`}</Text>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 10,
+            }}
+          >
+            <Text style={styles.date}>{`${invoice.year}年 ${invoice.month}月`}</Text>
+            {invoice.active && <Text style={styles.thisMonth}>今月</Text>}
+          </View>
           <Text style={styles.amount}>
             {totalAmount !== null ? (
               totalAmount > 0 ? (
@@ -119,6 +123,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  thisMonth: {
+    padding: 4,
+    paddingHorizontal: 8,
+    backgroundColor: "#FFD700",
+    borderRadius: 16,
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: "light",
   },
   date: {
     fontSize: defaultFontSize,
