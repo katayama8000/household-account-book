@@ -55,8 +55,6 @@ const PaymentModalScreen = () => {
         await addPayment();
       }
 
-      console.log("expo_push_token:", partner.expo_push_token);
-
       await sendPushNotification(partner.expo_push_token, user.name, name, amount, kind as string);
 
       if (activeInvoce) {
