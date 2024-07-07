@@ -44,15 +44,28 @@ const PaymentModalScreen = () => {
       return;
     }
     if (couple_id === null || user === null) return;
-    const partner = await fetchPartner(couple_id, user.user_id);
-    if (partner === undefined) return;
-    if (kind === "edit" && id) {
-      await updatePayment(Number(id), { name, amount });
-    } else {
-      await addPayment();
+
+    try {
+      const partner = await fetchPartner(couple_id, user.user_id);
+      if (partner === undefined) return;
+
+      if (kind === "edit" && id) {
+        await updatePayment(Number(id), { name, amount });
+      } else {
+        await addPayment();
+      }
+
+      console.log("expo_push_token:", partner.expo_push_token);
+
+      await sendPushNotification(partner.expo_push_token, user.name, name, amount, kind as string);
+
+      if (activeInvoce) {
+        await fetchPaymentsAllByMonthlyInvoiceId(activeInvoce.id);
+      }
+    } catch (error) {
+      console.error("An error occurred while handling the payment:", error);
+      alert("An error occurred while processing the payment. Please try again later.");
     }
-    await sendPushNotification(partner.expo_push_token, user.name, name, amount, kind as string);
-    activeInvoce && (await fetchPaymentsAllByMonthlyInvoiceId(activeInvoce.id));
   };
 
   const sendPushNotification = async (
@@ -65,7 +78,7 @@ const PaymentModalScreen = () => {
     const message = {
       title: `${name}が${kind === "edit" ? "項目を更新しました" : "支払いました"}`,
       body: `${item} ${amount}円`,
-      expo_push_tokens: "ExponentPushToken[e6KjERPHmEH-KgvnAPkLqC]",
+      expo_push_tokens: expoPushToken,
     };
 
     try {

@@ -41,7 +41,7 @@ export const useUser = () => {
     const partner_id = data.user1_id === user_id ? data.user2_id : data.user1_id;
 
     const { data: partner, error: partnerError } = await supabase
-      .from("dev_users")
+      .from(dev_users)
       .select("*")
       .eq("user_id", partner_id)
       .single();
@@ -59,5 +59,5 @@ export const useUser = () => {
     return partner;
   };
 
-  return { fetchUser, updateExpoPushToken, fetchPartner };
+  return { fetchUser, fetchPartner, updateExpoPushToken };
 };

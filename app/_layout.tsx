@@ -10,9 +10,7 @@ import Constants from "expo-constants";
 import { isDevice } from "expo-device";
 import {
   AndroidImportance,
-  type Notification,
   type Subscription,
-  addNotificationReceivedListener,
   addNotificationResponseReceivedListener,
   getExpoPushTokenAsync,
   getPermissionsAsync,
@@ -23,7 +21,7 @@ import {
 } from "expo-notifications";
 import { useAtom } from "jotai";
 import { useEffect, useRef, useState } from "react";
-import { Button, Platform, Text, View } from "react-native";
+import { Platform } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -34,33 +32,6 @@ setNotificationHandler({
     shouldSetBadge: true,
   }),
 });
-
-const sendPushNotification = async (expoPushToken: string, name = "John Doe", item = "New Item") => {
-  const message = {
-    title: `${name}が項目を追加しました。`,
-    body: `${item}が追加されました。`,
-    expo_push_tokens: expoPushToken,
-  };
-
-  try {
-    const response = await fetch("https://expo-push-notification-api-rust.vercel.app/api/handler", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(message),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    console.log("Push notification sent successfully:", data);
-  } catch (error) {
-    console.error("Failed to send push notification:", error);
-  }
-};
 
 const handleRegistrationError = (errorMessage: string) => {
   alert(errorMessage);
@@ -93,13 +64,11 @@ const registerForPushNotificationsAsync = async () => {
       handleRegistrationError("Project ID not found");
     }
     try {
-      const pushTokenString = (
+      return (
         await getExpoPushTokenAsync({
           projectId,
         })
       ).data;
-      console.log(pushTokenString);
-      return pushTokenString;
     } catch (e: unknown) {
       handleRegistrationError(`${e}`);
     }
@@ -145,17 +114,13 @@ export default function RootLayout() {
     })();
   }, [push]);
 
-  const [expoPushToken, setExpoPushToken] = useState<string>("");
-  const [notification, setNotification] = useState<Notification | undefined>(undefined);
   const notificationListener = useRef<Subscription>();
   const responseListener = useRef<Subscription>();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     (async () => {
-      registerForPushNotificationsAsync()
-        .then((token) => setExpoPushToken(token ?? ""))
-        .catch((error) => setExpoPushToken(`${error}`));
+      const token = await registerForPushNotificationsAsync();
 
       const uid = (await supabase.auth.getSession())?.data.session?.user?.id;
       if (!uid) {
@@ -170,13 +135,11 @@ export default function RootLayout() {
 
       setUser(user);
 
-      if (user.expo_push_token) {
-        updateExpoPushToken(uid, expoPushToken);
-      }
+      if (token) updateExpoPushToken(uid, token);
 
-      notificationListener.current = addNotificationReceivedListener((notification) => {
-        setNotification(notification);
-      });
+      // notificationListener.current = addNotificationReceivedListener((notification) => {
+      //   setNotification(notification);
+      // });
 
       responseListener.current = addNotificationResponseReceivedListener((response) => {
         console.log(response);
@@ -195,20 +158,6 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={DefaultTheme}>
-      <Text>Your Expo push token: {expoPushToken}</Text>
-      <View style={{ alignItems: "center", justifyContent: "center" }}>
-        {/* biome-ignore lint/complexity/useOptionalChain: <explanation> */}
-        <Text>Title: {notification && notification.request.content.title} </Text>
-        {/* biome-ignore lint/complexity/useOptionalChain: <explanation> */}
-        <Text>Body: {notification && notification.request.content.body}</Text>
-        <Text>Data: {notification && JSON.stringify(notification.request.content.data)}</Text>
-      </View>
-      <Button
-        title="Press to Send Notification"
-        onPress={async () => {
-          await sendPushNotification(expoPushToken);
-        }}
-      />
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="(modal)/payment-modal" options={{ presentation: "modal" }} />
