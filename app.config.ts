@@ -7,6 +7,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     name: "もうふといくら",
     extra: {
       ...config.extra,
+      // FIXME: get GOOGLE_SERVICES_JSON from expo secrets
       // android: {
       //   googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
       // },
