@@ -204,7 +204,7 @@ const PaymentItem: FC<PaymentItemProps> = ({ deletePayment, routerPush, payment,
       onPress={() => isOwner && routerPush({ pathname: "/payment-modal", params: { kind: "edit", id: payment.id } })}
     >
       <View style={styles.paymentInfoContainer}>
-        <Text style={styles.itemTitle}>{payment.name}</Text>
+        <Text style={styles.itemTitle}>{payment.item}</Text>
         <View style={styles.row}>
           <Text style={styles.value}>{payment.amount.toLocaleString()}円</Text>
         </View>
