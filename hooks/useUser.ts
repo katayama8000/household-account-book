@@ -18,10 +18,7 @@ export const useUser = () => {
   };
 
   const updateExpoPushToken = async (user_id: TUser["user_id"], expoPushToken: string) => {
-    const { error } = await supabase
-      .from("dev_users")
-      .update({ expo_push_token: expoPushToken })
-      .eq("user_id", user_id);
+    const { error } = await supabase.from(dev_users).update({ expo_push_token: expoPushToken }).eq("user_id", user_id);
     if (error) {
       console.error("error", error);
       return;
