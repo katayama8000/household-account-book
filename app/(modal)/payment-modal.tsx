@@ -76,7 +76,7 @@ const PaymentModalScreen = () => {
     const message = {
       title: `${name}が${kind === "edit" ? "項目を更新しました" : "支払いました"}`,
       body: `${item} ${amount}円`,
-      expo_push_tokens: expoPushToken,
+      expo_push_token: expoPushToken,
     };
 
     try {
