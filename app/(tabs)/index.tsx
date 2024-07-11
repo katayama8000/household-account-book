@@ -208,6 +208,7 @@ const PaymentItem: FC<PaymentItemProps> = ({ deletePayment, routerPush, payment,
         <View style={styles.row}>
           <Text style={styles.value}>{payment.amount.toLocaleString()}円</Text>
         </View>
+        {payment.memo && <Text style={styles.memo}>{payment.memo}</Text>}
       </View>
       {isOwner && (
         <TouchableOpacity
@@ -283,6 +284,7 @@ const styles = StyleSheet.create({
   },
   paymentInfoContainer: {
     flex: 1,
+    paddingRight: 16,
   },
   itemTitle: {
     fontSize: 18,
@@ -299,6 +301,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: defaultFontWeight,
     color: "#333",
+  },
+  memo: {
+    fontSize: 12,
+    color: "#666",
+    marginTop: 4,
   },
   iconButton: {
     width: 36,
