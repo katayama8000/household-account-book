@@ -42,11 +42,12 @@ const PaymentModalScreen = () => {
       if (payment) {
         setItem(payment.item);
         setAmount(Number(payment.amount));
+        setMemo(payment.memo);
       } else {
         alert("payment not found");
       }
     }
-  }, [kind, id, setItem, setAmount, payments, setOptions]);
+  }, [kind, id, setItem, setAmount, setMemo, payments, setOptions]);
 
   const handlePayment = async () => {
     if (!item || !amount) {
@@ -123,7 +124,13 @@ const PaymentModalScreen = () => {
       </View>
       <View style={styles.formWrapper}>
         <Text style={styles.inputLabel}>メモ</Text>
-        <TextInput style={styles.input} value={memo ?? ""} onChangeText={(text) => setMemo(text)} />
+        <TextInput
+          style={[styles.input, { height: 60 }]}
+          value={memo ?? ""}
+          onChangeText={(text) => setMemo(text)}
+          numberOfLines={2}
+          multiline
+        />
       </View>
       <View style={styles.submitWrapper}>
         <TouchableOpacity style={styles.submitButton} onPress={handlePayment} disabled={!item || !amount}>
@@ -138,7 +145,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    paddingTop: Platform.OS === "android" ? 40 : 0,
+    paddingTop: 8,
     paddingHorizontal: 16,
   },
   formWrapper: {
@@ -154,11 +161,11 @@ const styles = StyleSheet.create({
     color: Colors.required,
   },
   input: {
-    height: 40,
     borderWidth: 1,
-    borderRadius: 16,
+    borderRadius: 8,
     borderColor: Colors.primary,
     paddingHorizontal: 10,
+    paddingVertical: 4,
     fontWeight: defaultFontWeight,
   },
   submitWrapper: {
@@ -169,7 +176,7 @@ const styles = StyleSheet.create({
     marginTop: 24,
     paddingVertical: 16,
     backgroundColor: Colors.primary,
-    borderRadius: 16,
+    borderRadius: 8,
     width: "100%",
     alignItems: "center",
   },

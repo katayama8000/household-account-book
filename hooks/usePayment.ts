@@ -32,6 +32,7 @@ export const usePayment = () => {
   const resetForm = () => {
     setItem(null);
     setAmount(null);
+    setMemo(null);
   };
 
   const addPayment = useCallback(async (): Promise<void> => {
