@@ -51,6 +51,7 @@ export default function PastInvoiceDetailsScreen() {
       <Text style={styles.cardText}>入力日：{dayjs(item.updated_at).format("YYYY年MM月DD日")}</Text>
       <Text style={styles.cardText}>項目：{item.item}</Text>
       <Text style={styles.cardText}>金額：{item.amount.toLocaleString()}円</Text>
+      {item.memo && <Text style={styles.memoText}>{item.memo}</Text>}
     </View>
   );
 
@@ -103,5 +104,11 @@ const styles = StyleSheet.create({
     fontSize: defaultFontSize,
     fontWeight: defaultFontWeight,
     color: "#444",
+  },
+  memoText: {
+    color: "#666",
+    marginTop: 4,
+    fontFamily: "sans-serif",
+    fontSize: 12,
   },
 });
