@@ -9,6 +9,7 @@ import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View }
 import { useInvoice } from "../../hooks/useInvoice";
 import { usePayment } from "../../hooks/usePayment";
 import { coupleIdAtom } from "../../state/couple.state";
+import { Colors } from "@/constants/Colors";
 
 const PastInvoicesScreen = () => {
   const { invoices, isRefreshing, fetchInvoicesAllByCoupleId } = useInvoice();
@@ -78,7 +79,7 @@ const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ invoice, routerPush }) => {
       }
     >
       <View style={styles.container}>
-        <View style={{}}>
+        <View>
           <View
             style={{
               flexDirection: "row",
@@ -97,7 +98,7 @@ const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ invoice, routerPush }) => {
                 `${Math.abs(totalAmount).toLocaleString()}円の支払い`
               )
             ) : (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={Colors.primary} />
             )}
           </Text>
         </View>
