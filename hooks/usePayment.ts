@@ -16,6 +16,7 @@ export const usePayment = () => {
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [item, setItem] = useState<string | null>(null);
   const [amount, setAmount] = useState<number | null>(null);
+  const [memo, setMemo] = useState<string | null>(null);
   const { fetchInvoiceByCoupleId } = useInvoice();
   const [coupleId] = useAtom(coupleIdAtom);
   const { back } = useRouter();
@@ -172,8 +173,10 @@ export const usePayment = () => {
     payments,
     item,
     amount,
+    memo,
     setItem,
     setAmount,
+    setMemo,
     addPayment,
     fetchPaymentsAllByMonthlyInvoiceId,
     updatePayment,

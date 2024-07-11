@@ -11,12 +11,22 @@ import { usePayment } from "../../hooks/usePayment";
 import { activeInvoiceAtom } from "../../state/invoice.state";
 
 const PaymentModalScreen = () => {
-  const { payments, addPayment, updatePayment, setItem, setAmount, item, amount, fetchPaymentsAllByMonthlyInvoiceId } =
-    usePayment();
+  const {
+    payments,
+    addPayment,
+    updatePayment,
+    fetchPaymentsAllByMonthlyInvoiceId,
+    setItem,
+    setAmount,
+    setMemo,
+    item,
+    amount,
+    memo,
+  } = usePayment();
   const { fetchPartner } = useUser();
   const { kind, id } = useLocalSearchParams();
   const { setOptions } = useNavigation();
-  const [activeInvoce] = useAtom(activeInvoiceAtom);
+  const [activeInvoice] = useAtom(activeInvoiceAtom);
   const [couple_id] = useAtom(coupleIdAtom);
   const [user] = useAtom(userAtom);
 
@@ -57,8 +67,8 @@ const PaymentModalScreen = () => {
 
       await sendPushNotification(partner.expo_push_token, user.name, item, amount, kind as string);
 
-      if (activeInvoce) {
-        await fetchPaymentsAllByMonthlyInvoiceId(activeInvoce.id);
+      if (activeInvoice) {
+        await fetchPaymentsAllByMonthlyInvoiceId(activeInvoice.id);
       }
     } catch (error) {
       console.error("An error occurred while handling the payment:", error);
@@ -95,17 +105,25 @@ const PaymentModalScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.formWrapper}>
-        <Text style={styles.inputLabel}>項目</Text>
+        <Text style={styles.inputLabel}>
+          項目<Text style={styles.asterisk}> *</Text>
+        </Text>
         <TextInput style={styles.input} value={item ?? ""} onChangeText={(text) => setItem(text)} />
       </View>
       <View style={styles.formWrapper}>
-        <Text style={styles.inputLabel}>値段</Text>
+        <Text style={styles.inputLabel}>
+          値段<Text style={styles.asterisk}> *</Text>
+        </Text>
         <TextInput
           style={styles.input}
           value={amount ? amount.toString() : ""}
           onChangeText={(text) => setAmount(Number(text.replace(/[^0-9]/g, "")))}
           keyboardType={Platform.select({ android: "numeric" })}
         />
+      </View>
+      <View style={styles.formWrapper}>
+        <Text style={styles.inputLabel}>メモ</Text>
+        <TextInput style={styles.input} value={memo ?? ""} onChangeText={(text) => setMemo(text)} />
       </View>
       <View style={styles.submitWrapper}>
         <TouchableOpacity style={styles.submitButton} onPress={handlePayment} disabled={!item || !amount}>
@@ -120,7 +138,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    paddingTop: Platform.OS === "android" ? 40 : 0, // Android用に上部パディングを追加
+    paddingTop: Platform.OS === "android" ? 40 : 0,
     paddingHorizontal: 16,
   },
   formWrapper: {
@@ -131,6 +149,9 @@ const styles = StyleSheet.create({
     fontSize: defaultFontSize,
     fontWeight: defaultFontWeight,
     marginBottom: 5,
+  },
+  asterisk: {
+    color: Colors.required,
   },
   input: {
     height: 40,
