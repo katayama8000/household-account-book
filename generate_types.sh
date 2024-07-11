@@ -11,7 +11,7 @@ if [ -z $PROJECT_REF ]; then
 fi
 
 # Generate TypeScript types for your Supabase schema
-npx supabase gen types typescript \
+npx supabase gen types --lang=typescript \
   --project-id $PROJECT_REF \
   --schema public > types/supabase.ts
 

@@ -98,6 +98,7 @@ export type Database = {
           created_at: string
           id: number
           item: string
+          memo: string | null
           monthly_invoice_id: number
           owner_id: string
           updated_at: string
@@ -107,6 +108,7 @@ export type Database = {
           created_at?: string
           id?: number
           item: string
+          memo?: string | null
           monthly_invoice_id: number
           owner_id: string
           updated_at?: string
@@ -116,6 +118,7 @@ export type Database = {
           created_at?: string
           id?: number
           item?: string
+          memo?: string | null
           monthly_invoice_id?: number
           owner_id?: string
           updated_at?: string
@@ -201,6 +204,7 @@ export type Database = {
           created_at: string
           id: number
           item: string
+          memo: string | null
           monthly_invoice_id: number
           owner_id: string
           updated_at: string
@@ -210,6 +214,7 @@ export type Database = {
           created_at?: string
           id?: number
           item: string
+          memo?: string | null
           monthly_invoice_id: number
           owner_id: string
           updated_at?: string
@@ -219,6 +224,7 @@ export type Database = {
           created_at?: string
           id?: number
           item?: string
+          memo?: string | null
           monthly_invoice_id?: number
           owner_id?: string
           updated_at?: string
