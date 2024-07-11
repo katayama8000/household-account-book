@@ -30,7 +30,8 @@ create table payments (
   monthly_invoice_id bigint references monthly_invoices (id),
   amount bigint not null,
   item text not null,
-  owner_id uuid default uuid_generate_v4()
+  owner_id uuid default uuid_generate_v4(),
+  memo text
 );
 
 create table dev_monthly_invoices (
@@ -59,7 +60,8 @@ create table dev_payments (
   monthly_invoice_id bigint references dev_monthly_invoices (id),
   amount bigint not null,
   item text not null,
-  owner_id uuid default uuid_generate_v4()
+  owner_id uuid default uuid_generate_v4(),
+  memo text
 );
 
 create table dev_users (

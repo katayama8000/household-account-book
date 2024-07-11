@@ -11,12 +11,22 @@ import { usePayment } from "../../hooks/usePayment";
 import { activeInvoiceAtom } from "../../state/invoice.state";
 
 const PaymentModalScreen = () => {
-  const { payments, addPayment, updatePayment, setItem, setAmount, item, amount, fetchPaymentsAllByMonthlyInvoiceId } =
-    usePayment();
+  const {
+    payments,
+    addPayment,
+    updatePayment,
+    fetchPaymentsAllByMonthlyInvoiceId,
+    setItem,
+    setAmount,
+    setMemo,
+    item,
+    amount,
+    memo,
+  } = usePayment();
   const { fetchPartner } = useUser();
   const { kind, id } = useLocalSearchParams();
   const { setOptions } = useNavigation();
-  const [activeInvoce] = useAtom(activeInvoiceAtom);
+  const [activeInvoice] = useAtom(activeInvoiceAtom);
   const [couple_id] = useAtom(coupleIdAtom);
   const [user] = useAtom(userAtom);
 
@@ -32,11 +42,12 @@ const PaymentModalScreen = () => {
       if (payment) {
         setItem(payment.item);
         setAmount(Number(payment.amount));
+        setMemo(payment.memo);
       } else {
         alert("payment not found");
       }
     }
-  }, [kind, id, setItem, setAmount, payments, setOptions]);
+  }, [kind, id, setItem, setAmount, setMemo, payments, setOptions]);
 
   const handlePayment = async () => {
     if (!item || !amount) {
@@ -57,8 +68,8 @@ const PaymentModalScreen = () => {
 
       await sendPushNotification(partner.expo_push_token, user.name, item, amount, kind as string);
 
-      if (activeInvoce) {
-        await fetchPaymentsAllByMonthlyInvoiceId(activeInvoce.id);
+      if (activeInvoice) {
+        await fetchPaymentsAllByMonthlyInvoiceId(activeInvoice.id);
       }
     } catch (error) {
       console.error("An error occurred while handling the payment:", error);
@@ -95,16 +106,30 @@ const PaymentModalScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.formWrapper}>
-        <Text style={styles.inputLabel}>項目</Text>
+        <Text style={styles.inputLabel}>
+          項目<Text style={styles.asterisk}> *</Text>
+        </Text>
         <TextInput style={styles.input} value={item ?? ""} onChangeText={(text) => setItem(text)} />
       </View>
       <View style={styles.formWrapper}>
-        <Text style={styles.inputLabel}>値段</Text>
+        <Text style={styles.inputLabel}>
+          値段<Text style={styles.asterisk}> *</Text>
+        </Text>
         <TextInput
           style={styles.input}
           value={amount ? amount.toString() : ""}
           onChangeText={(text) => setAmount(Number(text.replace(/[^0-9]/g, "")))}
           keyboardType={Platform.select({ android: "numeric" })}
+        />
+      </View>
+      <View style={styles.formWrapper}>
+        <Text style={styles.inputLabel}>メモ</Text>
+        <TextInput
+          style={[styles.input, { height: 60 }]}
+          value={memo ?? ""}
+          onChangeText={(text) => setMemo(text)}
+          numberOfLines={2}
+          multiline
         />
       </View>
       <View style={styles.submitWrapper}>
@@ -120,7 +145,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    paddingTop: Platform.OS === "android" ? 40 : 0, // Android用に上部パディングを追加
+    paddingTop: 8,
     paddingHorizontal: 16,
   },
   formWrapper: {
@@ -132,12 +157,15 @@ const styles = StyleSheet.create({
     fontWeight: defaultFontWeight,
     marginBottom: 5,
   },
+  asterisk: {
+    color: Colors.required,
+  },
   input: {
-    height: 40,
     borderWidth: 1,
-    borderRadius: 16,
+    borderRadius: 8,
     borderColor: Colors.primary,
     paddingHorizontal: 10,
+    paddingVertical: 4,
     fontWeight: defaultFontWeight,
   },
   submitWrapper: {
@@ -148,7 +176,7 @@ const styles = StyleSheet.create({
     marginTop: 24,
     paddingVertical: 16,
     backgroundColor: Colors.primary,
-    borderRadius: 16,
+    borderRadius: 8,
     width: "100%",
     alignItems: "center",
   },

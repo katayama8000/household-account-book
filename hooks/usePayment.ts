@@ -16,6 +16,7 @@ export const usePayment = () => {
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [item, setItem] = useState<string | null>(null);
   const [amount, setAmount] = useState<number | null>(null);
+  const [memo, setMemo] = useState<string | null>(null);
   const { fetchInvoiceByCoupleId } = useInvoice();
   const [coupleId] = useAtom(coupleIdAtom);
   const { back } = useRouter();
@@ -31,6 +32,7 @@ export const usePayment = () => {
   const resetForm = () => {
     setItem(null);
     setAmount(null);
+    setMemo(null);
   };
 
   const addPayment = useCallback(async (): Promise<void> => {
@@ -61,6 +63,7 @@ export const usePayment = () => {
           amount,
           monthly_invoice_id,
           item,
+          memo,
           updated_at: dayjs().toISOString(),
           created_at: dayjs().toISOString(),
           owner_id: uid,
@@ -80,7 +83,7 @@ export const usePayment = () => {
       console.error(error);
       alert("An error occurred. Please try again.");
     }
-  }, [item, amount, back, resetForm, fetchInvoiceByCoupleId, coupleId]);
+  }, [item, amount, memo, back, resetForm, fetchInvoiceByCoupleId, coupleId]);
 
   const fetchPaymentsAllByMonthlyInvoiceId = useCallback(
     async (monthlyInvoiceId: Payment["monthly_invoice_id"]) => {
@@ -172,8 +175,10 @@ export const usePayment = () => {
     payments,
     item,
     amount,
+    memo,
     setItem,
     setAmount,
+    setMemo,
     addPayment,
     fetchPaymentsAllByMonthlyInvoiceId,
     updatePayment,
