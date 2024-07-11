@@ -1,12 +1,17 @@
-## What is this?
-- This is a management money app for my wife Honoka and my cats Moufu and Ikura.
-- It works on only Android.
+# HouseHold Account Book
+A dedicated money management app for my wife Honoka and our cats Moufu and Ikura.
 
-## Stack
-- React Native
-- Expo   
-- Firebase (FCM)
-- Supabase (Auth, Database)
-- Vercel (Serverless Functions)
-    - https://github.com/katayama8000/expo-push-notification-api-rust
-- GitHub Actions (CI/CD)
+## Overview
+HouseHold Account Book is a personal finance app designed to help manage and track expenses. This app is specifically tailored for use by my wife Honoka and our beloved cats, Moufu and Ikura.
+
+## Tech Stack
+- Frontend
+    - React Native
+    - Expo
+- Backend
+    - Firebase (FCM)
+    - Supabase (Auth, Database)
+    - Vercel (Serverless Functions)
+        - https://github.com/katayama8000/expo-push-notification-api-rust
+- CI/CD
+    - GitHub Actions
