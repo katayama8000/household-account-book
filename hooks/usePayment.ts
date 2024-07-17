@@ -1,4 +1,4 @@
-import { dev_payments } from "@/constants/Table";
+import { payments_table } from "@/constants/Table";
 import { supabase } from "@/lib/supabase";
 import type { Payment } from "@/types/Row";
 import dayjs from "dayjs";
@@ -58,7 +58,7 @@ export const usePayment = () => {
       return;
     }
     try {
-      const { error } = await supabase.from(dev_payments).insert([
+      const { error } = await supabase.from(payments_table).insert([
         {
           amount,
           monthly_invoice_id,
@@ -90,7 +90,7 @@ export const usePayment = () => {
       setIsRefreshing(true);
       try {
         const { data, error } = await supabase
-          .from(dev_payments)
+          .from(payments_table)
           .select("*")
           .eq("monthly_invoice_id", monthlyInvoiceId);
         if (error) {
@@ -113,9 +113,9 @@ export const usePayment = () => {
   );
 
   const updatePayment = useCallback(
-    async (id: Payment["id"], payment: Pick<Payment, "item" | "amount">): Promise<void> => {
+    async (id: Payment["id"], payment: Pick<Payment, "item" | "amount" | "memo">): Promise<void> => {
       try {
-        const { error } = await supabase.from(dev_payments).update(payment).match({ id });
+        const { error } = await supabase.from(payments_table).update(payment).match({ id });
         if (error) {
           console.error(error);
           alert("An error occurred. Please try again.");
@@ -132,7 +132,7 @@ export const usePayment = () => {
 
   const deletePayment = useCallback(async (id: Payment["id"]): Promise<void> => {
     try {
-      const { error } = await supabase.from(dev_payments).delete().match({ id });
+      const { error } = await supabase.from(payments_table).delete().match({ id });
       if (error) {
         console.error(error);
         alert("An error occurred. Please try again.");
@@ -153,7 +153,7 @@ export const usePayment = () => {
 
     try {
       const { data: invoices, error } = await supabase
-        .from(dev_payments)
+        .from(payments_table)
         .select("amount, owner_id")
         .eq("monthly_invoice_id", monthlyInvoiceId);
 
