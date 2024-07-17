@@ -1,4 +1,4 @@
-import { dev_monthly_invoices } from "@/constants/Table";
+import { monthly_invoices_table } from "@/constants/Table";
 import { supabase } from "@/lib/supabase";
 import type { Invoice } from "@/types/Row";
 import { useAtom } from "jotai";
@@ -13,7 +13,7 @@ export const useInvoice = () => {
   const fetchActiveInvoiceByCoupleId = async (coupleId: Invoice["couple_id"]) => {
     try {
       const { data, error } = await supabase
-        .from(dev_monthly_invoices)
+        .from(monthly_invoices_table)
         .select("*")
         .eq("couple_id", coupleId)
         .eq("active", true)
@@ -30,7 +30,7 @@ export const useInvoice = () => {
   const fetchInvoiceByCoupleId = useCallback(async (coupleId: Invoice["couple_id"]) => {
     try {
       const { data, error } = await supabase
-        .from(dev_monthly_invoices)
+        .from(monthly_invoices_table)
         .select("*")
         .eq("couple_id", coupleId)
         .eq("active", true)
@@ -49,7 +49,7 @@ export const useInvoice = () => {
     async (id: Invoice["couple_id"]) => {
       setIsRefreshing(true);
       try {
-        const { data: invoices, error } = await supabase.from(dev_monthly_invoices).select("*").eq("couple_id", id);
+        const { data: invoices, error } = await supabase.from(monthly_invoices_table).select("*").eq("couple_id", id);
 
         if (error) throw error;
 
@@ -68,7 +68,7 @@ export const useInvoice = () => {
   const addInvoice = async (couple_id: Invoice["couple_id"]) => {
     if (!invoice) return;
     try {
-      const { error } = await supabase.from(dev_monthly_invoices).insert([
+      const { error } = await supabase.from(monthly_invoices_table).insert([
         {
           couple_id,
           is_paid: false,
@@ -85,7 +85,10 @@ export const useInvoice = () => {
 
   const unActiveInvoicesAll = async (couple_id: Invoice["couple_id"]) => {
     try {
-      const { error } = await supabase.from(dev_monthly_invoices).update({ active: false }).eq("couple_id", couple_id);
+      const { error } = await supabase
+        .from(monthly_invoices_table)
+        .update({ active: false })
+        .eq("couple_id", couple_id);
       if (error) throw error;
     } catch (error) {
       console.error(error);
@@ -94,7 +97,7 @@ export const useInvoice = () => {
 
   const turnInvoicePaid = async (invoice_id: Invoice["id"]) => {
     try {
-      const { error } = await supabase.from(dev_monthly_invoices).update({ is_paid: true }).eq("id", invoice_id);
+      const { error } = await supabase.from(monthly_invoices_table).update({ is_paid: true }).eq("id", invoice_id);
       if (error) throw error;
     } catch (error) {
       console.error(error);

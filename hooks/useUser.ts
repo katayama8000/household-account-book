@@ -1,11 +1,11 @@
-import { dev_users } from "@/constants/Table";
-import { dev_couples } from "@/constants/Table";
+import { users_table } from "@/constants/Table";
+import { couples_table } from "@/constants/Table";
 import { supabase } from "@/lib/supabase";
 import type { Couple, User as TUser } from "@/types/Row";
 
 export const useUser = () => {
   const fetchUser = async (user_id: TUser["user_id"]) => {
-    const { data, error } = await supabase.from(dev_users).select("*").eq("user_id", user_id).single();
+    const { data, error } = await supabase.from(users_table).select("*").eq("user_id", user_id).single();
     if (error) {
       console.error("error", error);
       return;
@@ -18,7 +18,10 @@ export const useUser = () => {
   };
 
   const updateExpoPushToken = async (user_id: TUser["user_id"], expoPushToken: string) => {
-    const { error } = await supabase.from(dev_users).update({ expo_push_token: expoPushToken }).eq("user_id", user_id);
+    const { error } = await supabase
+      .from(users_table)
+      .update({ expo_push_token: expoPushToken })
+      .eq("user_id", user_id);
     if (error) {
       console.error("error", error);
       return;
@@ -26,7 +29,7 @@ export const useUser = () => {
   };
 
   const fetchPartner = async (couple_id: Couple["id"], user_id: TUser["user_id"]) => {
-    const { data, error } = await supabase.from(dev_couples).select("*").eq("id", couple_id).single();
+    const { data, error } = await supabase.from(couples_table).select("*").eq("id", couple_id).single();
     if (error) {
       console.error("error", error);
       return;
@@ -38,7 +41,7 @@ export const useUser = () => {
     const partner_id = data.user1_id === user_id ? data.user2_id : data.user1_id;
 
     const { data: partner, error: partnerError } = await supabase
-      .from(dev_users)
+      .from(users_table)
       .select("*")
       .eq("user_id", partner_id)
       .single();

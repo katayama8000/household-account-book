@@ -61,7 +61,7 @@ const PaymentModalScreen = () => {
       if (partner === undefined) return;
 
       if (kind === "edit" && id) {
-        await updatePayment(Number(id), { item, amount });
+        await updatePayment(Number(id), { item, amount, memo });
       } else {
         await addPayment();
       }
