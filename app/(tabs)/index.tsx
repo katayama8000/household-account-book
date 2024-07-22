@@ -8,7 +8,7 @@ import { useRouter } from "expo-router";
 import type { ExpoRouter } from "expo-router/types/expo-router";
 import { useAtom } from "jotai";
 import { type FC, useEffect, useState } from "react";
-import { Alert, FlatList, Linking, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from "react-native";
+import { Alert, Button, FlatList, Linking, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from "react-native";
 import { useCouple } from "../../hooks/useCouple";
 import { useInvoice } from "../../hooks/useInvoice";
 import { usePayment } from "../../hooks/usePayment";
@@ -90,6 +90,14 @@ const HomeScreen: FC = () => {
           />
         )}
       </View>
+      <Button
+        title="sample"
+        onPress={() => {
+          console.log("clicked");
+          router.push({ pathname: "/sample" });
+        }}
+      />
+
       <PaymentList
         activeInvoiceId={activeInvoce?.id ?? null}
         payments={payments}
