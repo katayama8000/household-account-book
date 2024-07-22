@@ -121,13 +121,15 @@ export const usePayment = () => {
           alert("An error occurred. Please try again.");
           return;
         }
+        ToastAndroid.show("更新した", ToastAndroid.SHORT);
+        resetForm();
         back();
       } catch (error) {
         console.error(error);
         alert("An error occurred. Please try again.");
       }
     },
-    [back],
+    [back, resetForm],
   );
 
   const deletePayment = useCallback(async (id: Payment["id"]): Promise<void> => {
