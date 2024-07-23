@@ -9,20 +9,23 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_APP_ENV": "production"
+        "EXPO_PUBLIC_APP_ENV": "production",
+        "APP_ENV": "production"
       },
       "autoIncrement": "true"
     },
     "development": {
       "env": {
-        "EXPO_PUBLIC_APP_ENV": "development"
+        "EXPO_PUBLIC_APP_ENV": "development",
+        "APP_ENV": "development"
       },
       "extends": "production"
     },
     "local": {
       "developmentClient": true,
       "env": {
-        "EXPO_PUBLIC_APP_ENV": "local"
+        "EXPO_PUBLIC_APP_ENV": "local",
+        "APP_ENV": "local"
       },
       "extends": "production"
     }
