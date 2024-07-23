@@ -1,6 +1,6 @@
 import type { ConfigContext, ExpoConfig } from "expo/config";
-import { bundleIdByEnv } from "./config";
-import { isAppEnv } from "./config/helper";
+import { bundleIdByEnv } from "./init";
+import { isAppEnv } from "./init/helper";
 
 const appEnv = process.env.APP_ENV ?? "local";
 if (!isAppEnv(appEnv)) {
