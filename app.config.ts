@@ -8,6 +8,9 @@ if (!isAppEnv(appEnv)) {
 }
 
 export default ({ config }: ConfigContext): ExpoConfig => {
+  console.log(`appEnv: ${appEnv}`);
+  console.log(`bundleId: ${bundleIdByEnv(appEnv)}`);
+  console.log(`config: ${config}`);
   return {
     ...config,
     slug: "household-account-book",
