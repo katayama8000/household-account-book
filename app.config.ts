@@ -1,15 +1,15 @@
 import type { ConfigContext, ExpoConfig } from "expo/config";
-import { bundleIdByEnv } from "./config";
-import { isAppEnv } from "./config/helper";
+// import { bundleIdByEnv } from "./config";
+// import { isAppEnv } from "./config/helper";
 
-const appEnv = process.env.APP_ENV ?? "local";
-if (!isAppEnv(appEnv)) {
-  throw new Error(`unsupported APP_ENV: ${appEnv}`);
-}
+// const appEnv = process.env.APP_ENV ?? "local";
+// if (!isAppEnv(appEnv)) {
+//   throw new Error(`unsupported APP_ENV: ${appEnv}`);
+// }
 
 export default ({ config }: ConfigContext): ExpoConfig => {
-  console.log(`appEnv: ${appEnv}`);
-  console.log(`bundleId: ${bundleIdByEnv(appEnv)}`);
+  // console.log(`appEnv: ${appEnv}`);
+  // console.log(`bundleId: ${bundleIdByEnv(appEnv)}`);
   console.log(`config: ${config}`);
   return {
     ...config,
@@ -21,9 +21,6 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       // android: {
       //   googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
       // },
-    },
-    android: {
-      package: bundleIdByEnv(appEnv),
     },
   };
 };
