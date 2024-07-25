@@ -15,6 +15,17 @@ const bundleIdByEnv = (appEnv: AppEnv): string => {
   }
 };
 
+const googleServicesJsonByEnv = (appEnv: AppEnv): string => {
+  switch (appEnv) {
+    case "production":
+      return "google-services-prod.json";
+    case "development":
+      return "google-services-dev.json";
+    case "local":
+      return "google-services-dev.json";
+  }
+};
+
 const isAppEnv = (s: string): s is AppEnv => {
   return allAppEnvs.some((e) => e === s);
 };
@@ -25,13 +36,10 @@ if (!isAppEnv(appEnv)) {
 }
 
 export default ({ config }: ConfigContext): ExpoConfig => {
-  console.log(`appEnv: ${appEnv}`);
-  console.log(`bundleId: ${bundleIdByEnv(appEnv)}`);
-  console.log(`config: ${config}`);
   return {
     ...config,
     slug: "household-account-book",
-    name: "もうふといくら",
+    name: `もうふといくら${appEnv === "production" ? "" : `(${appEnv})`}`,
     extra: {
       ...config.extra,
     },
@@ -39,7 +47,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       ...config.android,
       package: bundleIdByEnv(appEnv),
       // FIXME: get GOOGLE_SERVICES_JSON from expo secrets
-      // googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
+      googleServicesFile: googleServicesJsonByEnv(appEnv),
     },
   };
 };

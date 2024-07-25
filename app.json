@@ -21,7 +21,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.katayama9000.householdaccountbook",
-      "versionCode": 10,
+      "versionCode": 13,
       "googleServicesFile": "./google-services.json"
     },
     "web": {
