@@ -28,5 +28,5 @@ export const Colors = {
   white: "#fff",
   black: "#000",
   gray: "#f0f0f0",
-  required: "#f44336", // red
+  required: "#f44336",
 } as const;

@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/images/moufu.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#8e44ad"
     },
     "ios": {
       "supportsTablet": true
@@ -21,7 +21,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.katayama9000.householdaccountbook",
-      "versionCode": 9,
+      "versionCode": 20,
       "googleServicesFile": "./google-services.json"
     },
     "web": {
@@ -29,7 +29,10 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": ["expo-router", "expo-font"],
+    "plugins": [
+      "expo-router",
+      "expo-font"
+    ],
     "experiments": {
       "typedRoutes": true
     },
