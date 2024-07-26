@@ -26,14 +26,11 @@ const googleServicesJsonByEnv = (appEnv: AppEnv): string => {
   }
 };
 
-const isAppEnv = (s: string): s is AppEnv => {
-  return allAppEnvs.some((e) => e === s);
-};
+const isAppEnv = (s: string): s is AppEnv => allAppEnvs.some((e) => e === s);
 
 const appEnv = process.env.APP_ENV ?? "local";
-if (!isAppEnv(appEnv)) {
-  throw new Error(`unsupported APP_ENV: ${appEnv}`);
-}
+
+if (!isAppEnv(appEnv)) throw new Error(`unsupported APP_ENV: ${appEnv}`);
 
 export default ({ config }: ConfigContext): ExpoConfig => {
   return {

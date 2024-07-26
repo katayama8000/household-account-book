@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/images/moufu.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#8e44ad"
     },
     "ios": {
       "supportsTablet": true
@@ -21,7 +21,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.katayama9000.householdaccountbook",
-      "versionCode": 14,
+      "versionCode": 16,
       "googleServicesFile": "./google-services-prd.json"
     },
     "web": {
