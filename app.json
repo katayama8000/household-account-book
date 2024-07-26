@@ -21,8 +21,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.katayama9000.householdaccountbook",
-      "versionCode": 16,
-      "googleServicesFile": "./google-services-prd.json"
+      "versionCode": 17
     },
     "web": {
       "bundler": "metro",

@@ -24,6 +24,9 @@ const appEnv = process.env.APP_ENV ?? "local";
 if (!isAppEnv(appEnv)) throw new Error(`unsupported APP_ENV: ${appEnv}`);
 
 export default ({ config }: ConfigContext): ExpoConfig => {
+  console.log(`appEnv: ${appEnv}`);
+  console.log(`bundleId: ${bundleIdByEnv(appEnv)}`);
+  console.log(`googleServiceFile: ${googleServiceFileForAndroidByEnv(appEnv)}`);
   return {
     ...config,
     slug: "household-account-book",
