@@ -15,16 +15,7 @@ const bundleIdByEnv = (appEnv: AppEnv): string => {
   }
 };
 
-const googleServicesJsonByEnv = (appEnv: AppEnv): string => {
-  switch (appEnv) {
-    case "production":
-      return "google-services-prod.json";
-    case "development":
-      return "google-services-dev.json";
-    case "local":
-      return "google-services-dev.json";
-  }
-};
+const googleServiceFileForAndroidByEnv = (appEnv: AppEnv): string => `./google-services-${appEnv}.json`;
 
 const isAppEnv = (s: string): s is AppEnv => allAppEnvs.some((e) => e === s);
 
@@ -44,7 +35,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       ...config.android,
       package: bundleIdByEnv(appEnv),
       // FIXME: get GOOGLE_SERVICES_JSON from expo secrets
-      googleServicesFile: googleServicesJsonByEnv(appEnv),
+      googleServicesFile: googleServiceFileForAndroidByEnv(appEnv),
     },
   };
 };
