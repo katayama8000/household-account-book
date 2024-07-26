@@ -15,7 +15,16 @@ const bundleIdByEnv = (appEnv: AppEnv): string => {
   }
 };
 
-const googleServiceFileForAndroidByEnv = (appEnv: AppEnv): string => `./google-services-${appEnv}.json`;
+const googleServicesJsonByEnv = (appEnv: AppEnv): string => {
+  switch (appEnv) {
+    case "production":
+      return "./google-services-prod.json";
+    case "development":
+      return "./google-services-dev.json";
+    case "local":
+      return "./google-services-dev.json";
+  }
+};
 
 const isAppEnv = (s: string): s is AppEnv => allAppEnvs.some((e) => e === s);
 
@@ -26,7 +35,7 @@ if (!isAppEnv(appEnv)) throw new Error(`unsupported APP_ENV: ${appEnv}`);
 export default ({ config }: ConfigContext): ExpoConfig => {
   console.log(`appEnv: ${appEnv}`);
   console.log(`bundleId: ${bundleIdByEnv(appEnv)}`);
-  console.log(`googleServiceFile: ${googleServiceFileForAndroidByEnv(appEnv)}`);
+  console.log(`googleServiceFile: ${googleServicesJsonByEnv(appEnv)}`);
   return {
     ...config,
     slug: "household-account-book",
@@ -38,7 +47,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       ...config.android,
       package: bundleIdByEnv(appEnv),
       // FIXME: get GOOGLE_SERVICES_JSON from expo secrets
-      googleServicesFile: googleServiceFileForAndroidByEnv(appEnv),
+      googleServicesFile: googleServicesJsonByEnv(appEnv),
     },
   };
 };
