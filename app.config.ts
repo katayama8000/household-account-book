@@ -18,7 +18,7 @@ const bundleIdByEnv = (appEnv: AppEnv): string => {
 const googleServicesJsonByEnv = (appEnv: AppEnv): string => {
   switch (appEnv) {
     case "production":
-      return "./google-services-prod.json";
+      return "./google-services-prd.json";
     case "development":
       return "./google-services-dev.json";
     case "local":
