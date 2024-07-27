@@ -29,10 +29,6 @@ if (!isAppEnv(appEnv)) throw new Error(`unsupported APP_ENV: ${appEnv}`);
 
 export default ({ config }: ConfigContext): ExpoConfig => {
   const { bundleId, googleServicesJson, name } = envConfigs[appEnv];
-  console.log(`appEnv: ${appEnv}`);
-  console.log(`bundleId: ${bundleId}`);
-  console.log(`googleServiceFile: ${googleServicesJson}`);
-
   return {
     ...config,
     slug: "household-account-book",

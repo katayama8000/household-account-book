@@ -21,14 +21,17 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.katayama9000.householdaccountbook",
-      "versionCode": 20
+      "versionCode": 21
     },
     "web": {
       "bundler": "metro",
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": ["expo-router", "expo-font"],
+    "plugins": [
+      "expo-router",
+      "expo-font"
+    ],
     "experiments": {
       "typedRoutes": true
     },
