@@ -15,7 +15,7 @@ const envConfigs: Record<AppEnv, { bundleId: string; googleServicesJson: string;
     name: "(dev)もうふといくら",
   },
   local: {
-    bundleId: "com.katayama9000.householdaccountbook.local",
+    bundleId: "com.katayama9000.householdaccountbook.dev",
     googleServicesJson: "./google-services-dev.json",
     name: "(local)もうふといくら",
   },
