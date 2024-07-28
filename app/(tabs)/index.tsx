@@ -44,7 +44,7 @@ const HomeScreen: FC = () => {
       setCoupleId(coupleId);
 
       const activeInvoiceData = await fetchActiveInvoiceByCoupleId(coupleId);
-      setActiveInvoice(activeInvoiceData);
+      setActiveInvoice(activeInvoiceData ?? null);
     })();
   }, []);
 
@@ -54,7 +54,7 @@ const HomeScreen: FC = () => {
       throw new Error("coupleId is not found");
     }
     const activeInvoiceData = await fetchActiveInvoiceByCoupleId(coupleId);
-    setActiveInvoice(activeInvoiceData);
+    setActiveInvoice(activeInvoiceData ?? null);
   };
 
   const handleCloseMonth = async (coupleId: Couple["id"]) => {
@@ -67,7 +67,7 @@ const HomeScreen: FC = () => {
           await turnInvoicePaid(coupleId);
           await addInvoice(coupleId);
           const activeInvoice = await fetchActiveInvoiceByCoupleId(coupleId);
-          setActiveInvoice(activeInvoice);
+          setActiveInvoice(activeInvoice ?? null);
           Alert.alert("精算が完了しました", "今月もパートナーを大事にね！");
         },
       },
@@ -90,7 +90,6 @@ const HomeScreen: FC = () => {
           />
         )}
       </View>
-
       <PaymentList
         activeInvoiceId={activeInvoce?.id ?? null}
         payments={payments}

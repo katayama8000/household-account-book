@@ -17,7 +17,7 @@ export const usePayment = () => {
   const [item, setItem] = useState<string | null>(null);
   const [amount, setAmount] = useState<number | null>(null);
   const [memo, setMemo] = useState<string | null>(null);
-  const { fetchInvoiceByCoupleId } = useInvoice();
+  const { fetchMonthlyInvoiceIdByCoupleId } = useInvoice();
   const [coupleId] = useAtom(coupleIdAtom);
   const { back } = useRouter();
   const [activeInvoice] = useAtom(activeInvoiceAtom);
@@ -45,7 +45,7 @@ export const usePayment = () => {
       alert("coupleId is not found");
       return;
     }
-    const monthly_invoice_id = (await fetchInvoiceByCoupleId(coupleId))?.id;
+    const monthly_invoice_id = await fetchMonthlyInvoiceIdByCoupleId(coupleId);
 
     if (monthly_invoice_id === undefined) {
       alert("monthly_invoice_id is not found");
@@ -83,7 +83,7 @@ export const usePayment = () => {
       console.error(error);
       alert("An error occurred. Please try again.");
     }
-  }, [item, amount, memo, back, resetForm, fetchInvoiceByCoupleId, coupleId]);
+  }, [item, amount, memo, back, resetForm, fetchMonthlyInvoiceIdByCoupleId, coupleId]);
 
   const fetchPaymentsAllByMonthlyInvoiceId = useCallback(
     async (monthlyInvoiceId: Payment["monthly_invoice_id"]) => {
@@ -149,9 +149,7 @@ export const usePayment = () => {
   const calculateInvoiceBalance = async (monthlyInvoiceId: Payment["monthly_invoice_id"]) => {
     const uid = (await supabase.auth.getSession())?.data.session?.user?.id;
 
-    if (!uid) {
-      throw new Error("User ID not found. Please ensure you're authenticated.");
-    }
+    if (!uid) throw new Error("User ID not found. Please ensure you're authenticated.");
 
     try {
       const { data: invoices, error } = await supabase
@@ -160,7 +158,7 @@ export const usePayment = () => {
         .eq("monthly_invoice_id", monthlyInvoiceId);
 
       if (error) {
-        throw error; // Rethrow the error for proper handling
+        throw error;
       }
 
       const invoiceBalance = invoices.reduce((acc, cur) => acc + (cur.owner_id === uid ? cur.amount : -cur.amount), 0);
@@ -168,7 +166,7 @@ export const usePayment = () => {
       return invoiceBalance;
     } catch (error) {
       console.error("Error fetching invoice balance:", error);
-      return 0; // Return 0 on error for default behavior
+      return 0;
     }
   };
 

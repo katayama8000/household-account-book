@@ -1,50 +1,62 @@
-import { defaultFontSize, defaultFontWeight, defaultShadowColor } from "@/style/defaultStyle";
-import type { Invoice } from "@/types/Row";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useFocusEffect, useRouter } from "expo-router";
+import type React from "react";
+import { useEffect, useCallback, memo, useMemo, useState, type FC } from "react";
+import { View, FlatList, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
+import { useRouter, useFocusEffect } from "expo-router";
 import type { ExpoRouter } from "expo-router/types/expo-router";
 import { useAtom } from "jotai";
-import { type FC, useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useInvoice } from "../../hooks/useInvoice";
-import { usePayment } from "../../hooks/usePayment";
-import { coupleIdAtom } from "../../state/couple.state";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useInvoice } from "@/hooks/useInvoice";
+import { usePayment } from "@/hooks/usePayment";
+import { coupleIdAtom } from "@/state/couple.state";
+import type { InvoiceWithBalance } from "@/state/invoice.state";
 import { Colors } from "@/constants/Colors";
+import { defaultFontSize, defaultFontWeight, defaultShadowColor } from "@/style/defaultStyle";
 
-const PastInvoicesScreen = () => {
-  const { invoices, isRefreshing, fetchInvoicesAllByCoupleId } = useInvoice();
+const PastInvoicesScreen: FC = () => {
+  const { invoices, isRefreshing, fetchInvoicesWithBalancesByCoupleId } = useInvoice();
   const { push } = useRouter();
   const [coupleId] = useAtom(coupleIdAtom);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    if (!coupleId) return;
-    fetchInvoicesAllByCoupleId(coupleId);
-  }, [coupleId]);
+    if (coupleId) {
+      fetchInvoicesWithBalancesByCoupleId(coupleId);
+    }
+  }, [coupleId, fetchInvoicesWithBalancesByCoupleId]);
+
+  const handleRefresh = useCallback(() => {
+    if (coupleId) {
+      fetchInvoicesWithBalancesByCoupleId(coupleId);
+    }
+  }, [coupleId, fetchInvoicesWithBalancesByCoupleId]);
+
+  const renderInvoice = useCallback(
+    ({ item }: { item: InvoiceWithBalance }) => <MonthlyInvoice invoiceWithBalance={item} routerPush={push} />,
+    [push],
+  );
+
+  const keyExtractor = useCallback((item: InvoiceWithBalance) => item.id.toString(), []);
+
+  const sortedInvoices = useMemo(
+    () =>
+      [...invoices].sort((a, b) => {
+        if (a.year === b.year) {
+          return b.month - a.month;
+        }
+        return b.year - a.year;
+      }),
+    [invoices],
+  );
 
   return (
-    <View
-      style={{
-        marginTop: 16,
-        paddingHorizontal: 16,
-      }}
-    >
+    <View style={styles.container}>
       <FlatList
-        data={invoices.sort((a, b) => {
-          if (a.year === b.year) {
-            return b.month - a.month;
-          }
-          return b.year - a.year;
-        })}
-        renderItem={({ item }) => <MonthlyInvoice invoice={item} routerPush={push} />}
-        keyExtractor={(item) => item.id.toString()}
-        ItemSeparatorComponent={() => <View style={{ height: 4 }} />}
-        ListEmptyComponent={() => <Text>過去の請求がありません</Text>}
-        contentContainerStyle={{ paddingBottom: 100 }}
-        onRefresh={() => {
-          if (coupleId === null) return;
-          fetchInvoicesAllByCoupleId(coupleId);
-        }}
+        data={sortedInvoices}
+        renderItem={renderInvoice}
+        keyExtractor={keyExtractor}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
+        ListEmptyComponent={EmptyListMessage}
+        contentContainerStyle={styles.listContent}
+        onRefresh={handleRefresh}
         refreshing={isRefreshing}
       />
     </View>
@@ -52,11 +64,11 @@ const PastInvoicesScreen = () => {
 };
 
 type MonthlyInvoiceProps = {
-  invoice: Invoice;
+  invoiceWithBalance: InvoiceWithBalance;
   routerPush: (href: ExpoRouter.Href) => void;
 };
 
-const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ invoice, routerPush }) => {
+const MonthlyInvoice: FC<MonthlyInvoiceProps> = memo(({ invoiceWithBalance, routerPush }) => {
   const [totalAmount, setTotalAmount] = useState<number | null>(null);
   const { calculateInvoiceBalance } = usePayment();
 
@@ -65,65 +77,91 @@ const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ invoice, routerPush }) => {
       let isMounted = true;
       (async () => {
         try {
-          const amount = await calculateInvoiceBalance(invoice.id);
-          if (isMounted) {
-            setTotalAmount(amount);
-          }
+          if (!invoiceWithBalance.active) return;
+          const amount = await calculateInvoiceBalance(invoiceWithBalance.id);
+          if (isMounted) setTotalAmount(amount);
         } catch (error) {
           console.error("Error calculating invoice balance:", error);
-          if (isMounted) {
-            setTotalAmount(null);
-          }
+          if (isMounted) setTotalAmount(null);
         }
       })();
 
       return () => {
         isMounted = false;
       };
-    }, [invoice.id, calculateInvoiceBalance]),
+    }, [invoiceWithBalance.id, invoiceWithBalance.active, calculateInvoiceBalance]),
   );
 
+  const handlePress = useCallback(() => {
+    routerPush({
+      pathname: "/past-invoice-details",
+      params: { id: invoiceWithBalance.id, date: `${invoiceWithBalance.year}年 ${invoiceWithBalance.month}月` },
+    });
+  }, [invoiceWithBalance.id, invoiceWithBalance.year, invoiceWithBalance.month, routerPush]);
+
   return (
-    <TouchableOpacity
-      style={[styles.card]}
-      onPress={() =>
-        routerPush({
-          pathname: "/past-invoice-details",
-          params: { id: invoice.id, date: `${invoice.year}年 ${invoice.month}月` },
-        })
-      }
-    >
-      <View style={styles.container}>
+    <TouchableOpacity style={styles.card} onPress={handlePress}>
+      <View style={styles.cardContainer}>
         <View>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 10,
-            }}
-          >
-            <Text style={styles.date}>{`${invoice.year}年 ${invoice.month}月`}</Text>
-            {invoice.active && <Text style={styles.thisMonth}>今月</Text>}
+          <View style={styles.dateContainer}>
+            <Text style={styles.date}>{`${invoiceWithBalance.year}年 ${invoiceWithBalance.month}月`}</Text>
+            {invoiceWithBalance.active && <Text style={styles.thisMonth}>今月</Text>}
           </View>
-          <Text style={styles.amount}>
-            {totalAmount !== null ? (
-              totalAmount > 0 ? (
-                `${totalAmount.toLocaleString()}円の受け取り`
-              ) : (
-                `${Math.abs(totalAmount).toLocaleString()}円の支払い`
-              )
-            ) : (
-              <ActivityIndicator color={Colors.primary} />
-            )}
-          </Text>
+          <AmountDisplay
+            active={invoiceWithBalance.active}
+            totalAmount={totalAmount}
+            balance={invoiceWithBalance.balance ?? null}
+          />
         </View>
         <MaterialIcons name="arrow-forward-ios" size={24} />
       </View>
     </TouchableOpacity>
   );
+});
+
+const AmountDisplay: FC<{ active: boolean; totalAmount: number | null; balance: number | null }> = ({
+  active,
+  totalAmount,
+  balance,
+}) => {
+  if (active) {
+    return totalAmount != null ? (
+      <Text style={styles.amount}>
+        {totalAmount > 0
+          ? `${totalAmount.toLocaleString()}円の受け取り`
+          : `${Math.abs(totalAmount).toLocaleString()}円の支払い`}
+      </Text>
+    ) : (
+      <ActivityIndicator color={Colors.primary} />
+    );
+  }
+
+  return balance != null ? (
+    <Text style={styles.amount}>
+      {balance > 0 ? `${balance.toLocaleString()}円の受け取り` : `${Math.abs(balance).toLocaleString()}円の支払い`}
+    </Text>
+  ) : (
+    <ActivityIndicator color={Colors.primary} />
+  );
 };
 
+const EmptyListMessage: FC = () => (
+  <View style={styles.emptyListMessage}>
+    <Text>過去の請求がありません</Text>
+  </View>
+);
+
 const styles = StyleSheet.create({
+  container: {
+    marginTop: 16,
+    paddingHorizontal: 16,
+  },
+  separator: {
+    height: 4,
+  },
+  listContent: {
+    paddingBottom: 100,
+  },
   card: {
     padding: 16,
     borderRadius: 8,
@@ -135,9 +173,19 @@ const styles = StyleSheet.create({
     elevation: 4,
     backgroundColor: "white",
   },
-  container: {
+  cardContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
+  },
+  dateContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  emptyListMessage: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
   },
   thisMonth: {
@@ -160,4 +208,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PastInvoicesScreen;
+export default memo(PastInvoicesScreen);
