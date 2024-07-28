@@ -149,9 +149,7 @@ export const usePayment = () => {
   const calculateInvoiceBalance = async (monthlyInvoiceId: Payment["monthly_invoice_id"]) => {
     const uid = (await supabase.auth.getSession())?.data.session?.user?.id;
 
-    if (!uid) {
-      throw new Error("User ID not found. Please ensure you're authenticated.");
-    }
+    if (!uid) throw new Error("User ID not found. Please ensure you're authenticated.");
 
     try {
       const { data: invoices, error } = await supabase
@@ -160,7 +158,7 @@ export const usePayment = () => {
         .eq("monthly_invoice_id", monthlyInvoiceId);
 
       if (error) {
-        throw error; // Rethrow the error for proper handling
+        throw error;
       }
 
       const invoiceBalance = invoices.reduce((acc, cur) => acc + (cur.owner_id === uid ? cur.amount : -cur.amount), 0);
@@ -168,7 +166,7 @@ export const usePayment = () => {
       return invoiceBalance;
     } catch (error) {
       console.error("Error fetching invoice balance:", error);
-      return 0; // Return 0 on error for default behavior
+      return 0;
     }
   };
 
