@@ -48,6 +48,42 @@ export const useInvoice = () => {
     [setInvoices],
   );
 
+  const fetchInvoicesWithBalancesByCoupleId = useCallback(async (id: Invoice["couple_id"]) => {
+    const uid = (await supabase.auth.getSession())?.data.session?.user?.id;
+    if (!uid) throw new Error("User ID not found. Please ensure you're authenticated.");
+    const { data, error } = await supabase
+      .from(monthly_invoices_table)
+      .select(`
+      id,
+      month,
+      year,
+      is_paid,
+      dev_payments (
+        amount,
+        owner_id
+      )
+    `)
+      .eq("couple_id", id);
+    if (error) {
+      console.error("Error fetching invoices:", error);
+      return null;
+    }
+
+    if (data) {
+      const invoicesWithTotals = data.map((invoice) => ({
+        ...invoice,
+        balance: invoice.dev_payments.reduce(
+          (acc: number, cur: { amount: number; owner_id: string }) =>
+            acc + (cur.owner_id === uid ? cur.amount : -cur.amount),
+          0,
+        ),
+      }));
+      return invoicesWithTotals;
+    }
+
+    return null;
+  }, []);
+
   const addInvoice = async (couple_id: Invoice["couple_id"]) => {
     if (!invoice) return;
     try {
@@ -95,5 +131,6 @@ export const useInvoice = () => {
     fetchActiveInvoiceByCoupleId,
     unActiveInvoicesAll,
     turnInvoicePaid,
+    fetchInvoicesWithBalancesByCoupleId,
   };
 };
