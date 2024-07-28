@@ -23,7 +23,7 @@ export const useInvoice = () => {
 
       return data;
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching active invoice:", error);
       return undefined;
     }
   }, []);
@@ -39,28 +39,24 @@ export const useInvoice = () => {
         const { data, error } = await supabase
           .from(monthly_invoices_table)
           .select(`
-          id,
-          month,
-          year,
-          is_paid,
-          created_at,
-          updated_at,
-          active,
-          couple_id,
-          dev_payments (
-            amount,
-            owner_id
-          )
-        `)
+            id,
+            month,
+            year,
+            is_paid,
+            created_at,
+            updated_at,
+            active,
+            couple_id,
+            dev_payments (
+              amount,
+              owner_id
+            )
+          `)
           .eq("couple_id", id);
 
-        if (error) {
-          throw error;
-        }
+        if (error) throw error;
 
-        if (!data) {
-          return null;
-        }
+        if (!data) return null;
 
         const invoicesWithTotals: InvoiceWithBalance[] = data.map((invoice) => {
           const balance = invoice.dev_payments.reduce(
@@ -75,8 +71,7 @@ export const useInvoice = () => {
         setInvoices(invoicesWithTotals);
         return invoicesWithTotals;
       } catch (error) {
-        console.error("Error in fetchInvoicesWithBalancesByCoupleId:", error);
-        // エラーに応じて適切な処理を行う（例：ユーザーへの通知など）
+        console.error("Error fetching invoices with balances:", error);
         return null;
       } finally {
         setIsRefreshing(false);
@@ -98,7 +93,7 @@ export const useInvoice = () => {
 
       return data?.id;
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching monthly invoice ID:", error);
       return undefined;
     }
   }, []);
@@ -117,7 +112,7 @@ export const useInvoice = () => {
       ]);
       if (error) throw error;
     } catch (error) {
-      console.error(error);
+      console.error("Error adding invoice:", error);
     }
   };
 
@@ -129,7 +124,7 @@ export const useInvoice = () => {
         .eq("couple_id", couple_id);
       if (error) throw error;
     } catch (error) {
-      console.error(error);
+      console.error("Error deactivating invoices:", error);
     }
   };
 
@@ -138,7 +133,7 @@ export const useInvoice = () => {
       const { error } = await supabase.from(monthly_invoices_table).update({ is_paid: true }).eq("id", invoice_id);
       if (error) throw error;
     } catch (error) {
-      console.error(error);
+      console.error("Error marking invoice as paid:", error);
     }
   };
 
