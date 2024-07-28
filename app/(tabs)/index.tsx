@@ -8,7 +8,7 @@ import { useRouter } from "expo-router";
 import type { ExpoRouter } from "expo-router/types/expo-router";
 import { useAtom } from "jotai";
 import { type FC, useEffect, useState } from "react";
-import { Alert, Button, FlatList, Linking, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from "react-native";
+import { Alert, FlatList, Linking, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from "react-native";
 import { useCouple } from "../../hooks/useCouple";
 import { useInvoice } from "../../hooks/useInvoice";
 import { usePayment } from "../../hooks/usePayment";
@@ -18,13 +18,7 @@ import { activeInvoiceAtom } from "../../state/invoice.state";
 
 const HomeScreen: FC = () => {
   const { payments, isRefreshing, deletePayment } = usePayment();
-  const {
-    addInvoice,
-    unActiveInvoicesAll,
-    turnInvoicePaid,
-    fetchActiveInvoiceByCoupleId,
-    fetchInvoicesWithBalancesByCoupleId,
-  } = useInvoice();
+  const { addInvoice, unActiveInvoicesAll, turnInvoicePaid, fetchActiveInvoiceByCoupleId } = useInvoice();
   const { fetchCoupleIdByUserId } = useCouple();
   const { fetchPaymentsAllByMonthlyInvoiceId } = usePayment();
   const [coupleId, setCoupleId] = useAtom(coupleIdAtom);
@@ -96,15 +90,6 @@ const HomeScreen: FC = () => {
           />
         )}
       </View>
-      <Button
-        title="test"
-        onPress={() => {
-          console.log("test");
-          if (coupleId === null) return;
-          fetchInvoicesWithBalancesByCoupleId(coupleId);
-        }}
-      />
-
       <PaymentList
         activeInvoiceId={activeInvoce?.id ?? null}
         payments={payments}
