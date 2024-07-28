@@ -1,10 +1,10 @@
 import { defaultFontSize, defaultFontWeight, defaultShadowColor } from "@/style/defaultStyle";
 import type { Invoice } from "@/types/Row";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import type { ExpoRouter } from "expo-router/types/expo-router";
 import { useAtom } from "jotai";
-import { type FC, useEffect, useState } from "react";
+import { type FC, useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useInvoice } from "../../hooks/useInvoice";
 import { usePayment } from "../../hooks/usePayment";
@@ -60,13 +60,28 @@ const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ invoice, routerPush }) => {
   const [totalAmount, setTotalAmount] = useState<number | null>(null);
   const { calculateInvoiceBalance } = usePayment();
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    (async () => {
-      const totalAmount = await calculateInvoiceBalance(invoice.id);
-      setTotalAmount(totalAmount);
-    })();
-  }, [invoice]);
+  useFocusEffect(
+    useCallback(() => {
+      let isMounted = true;
+      (async () => {
+        try {
+          const amount = await calculateInvoiceBalance(invoice.id);
+          if (isMounted) {
+            setTotalAmount(amount);
+          }
+        } catch (error) {
+          console.error("Error calculating invoice balance:", error);
+          if (isMounted) {
+            setTotalAmount(null);
+          }
+        }
+      })();
+
+      return () => {
+        isMounted = false;
+      };
+    }, [invoice.id, calculateInvoiceBalance]),
+  );
 
   return (
     <TouchableOpacity
