@@ -10,16 +10,17 @@ import { useInvoice } from "../../hooks/useInvoice";
 import { usePayment } from "../../hooks/usePayment";
 import { coupleIdAtom } from "../../state/couple.state";
 import { Colors } from "@/constants/Colors";
+import type { InvoiceWithBalance } from "@/state/invoice.state";
 
 const PastInvoicesScreen = () => {
-  const { invoices, isRefreshing, fetchInvoicesAllByCoupleId } = useInvoice();
+  const { invoices, isRefreshing, fetchInvoicesWithBalancesByCoupleId } = useInvoice();
   const { push } = useRouter();
   const [coupleId] = useAtom(coupleIdAtom);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (!coupleId) return;
-    fetchInvoicesAllByCoupleId(coupleId);
+    fetchInvoicesWithBalancesByCoupleId(coupleId);
   }, [coupleId]);
 
   return (
@@ -36,14 +37,14 @@ const PastInvoicesScreen = () => {
           }
           return b.year - a.year;
         })}
-        renderItem={({ item }) => <MonthlyInvoice invoice={item} routerPush={push} />}
+        renderItem={({ item }) => <MonthlyInvoice invoiceWithBalance={item} routerPush={push} />}
         keyExtractor={(item) => item.id.toString()}
         ItemSeparatorComponent={() => <View style={{ height: 4 }} />}
         ListEmptyComponent={() => <Text>過去の請求がありません</Text>}
         contentContainerStyle={{ paddingBottom: 100 }}
         onRefresh={() => {
           if (coupleId === null) return;
-          fetchInvoicesAllByCoupleId(coupleId);
+          fetchInvoicesWithBalancesByCoupleId(coupleId);
         }}
         refreshing={isRefreshing}
       />
@@ -52,36 +53,37 @@ const PastInvoicesScreen = () => {
 };
 
 type MonthlyInvoiceProps = {
-  invoice: Invoice;
+  invoiceWithBalance: InvoiceWithBalance;
   routerPush: (href: ExpoRouter.Href) => void;
 };
 
-const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ invoice, routerPush }) => {
-  const [totalAmount, setTotalAmount] = useState<number | null>(null);
-  const { calculateInvoiceBalance } = usePayment();
+const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ invoiceWithBalance, routerPush }) => {
+  // const [balance, setBalance] = useState<number | null>(invoiceWithBalance.balance ?? null);
+  // const [totalAmount, setTotalAmount] = useState<number | null>(null);
+  // const { calculateInvoiceBalance } = usePayment();
 
-  useFocusEffect(
-    useCallback(() => {
-      let isMounted = true;
-      (async () => {
-        try {
-          const amount = await calculateInvoiceBalance(invoice.id);
-          if (isMounted) {
-            setTotalAmount(amount);
-          }
-        } catch (error) {
-          console.error("Error calculating invoice balance:", error);
-          if (isMounted) {
-            setTotalAmount(null);
-          }
-        }
-      })();
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     let isMounted = true;
+  //     (async () => {
+  //       try {
+  //         const amount = await calculateInvoiceBalance(invoiceWithBalance.id);
+  //         if (isMounted) {
+  //           setTotalAmount(amount);
+  //         }
+  //       } catch (error) {
+  //         console.error("Error calculating invoice balance:", error);
+  //         if (isMounted) {
+  //           setTotalAmount(null);
+  //         }
+  //       }
+  //     })();
 
-      return () => {
-        isMounted = false;
-      };
-    }, [invoice.id, calculateInvoiceBalance]),
-  );
+  //     return () => {
+  //       isMounted = false;
+  //     };
+  //   }, [invoiceWithBalance.id, calculateInvoiceBalance]),
+  // );
 
   return (
     <TouchableOpacity
@@ -89,7 +91,7 @@ const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ invoice, routerPush }) => {
       onPress={() =>
         routerPush({
           pathname: "/past-invoice-details",
-          params: { id: invoice.id, date: `${invoice.year}年 ${invoice.month}月` },
+          params: { id: invoiceWithBalance.id, date: `${invoiceWithBalance.year}年 ${invoiceWithBalance.month}月` },
         })
       }
     >
@@ -102,15 +104,15 @@ const MonthlyInvoice: FC<MonthlyInvoiceProps> = ({ invoice, routerPush }) => {
               gap: 10,
             }}
           >
-            <Text style={styles.date}>{`${invoice.year}年 ${invoice.month}月`}</Text>
-            {invoice.active && <Text style={styles.thisMonth}>今月</Text>}
+            <Text style={styles.date}>{`${invoiceWithBalance.year}年 ${invoiceWithBalance.month}月`}</Text>
+            {invoiceWithBalance.active && <Text style={styles.thisMonth}>今月</Text>}
           </View>
           <Text style={styles.amount}>
-            {totalAmount !== null ? (
-              totalAmount > 0 ? (
-                `${totalAmount.toLocaleString()}円の受け取り`
+            {invoiceWithBalance.balance != null ? (
+              invoiceWithBalance.balance > 0 ? (
+                `${invoiceWithBalance.balance.toLocaleString()}円の受け取り`
               ) : (
-                `${Math.abs(totalAmount).toLocaleString()}円の支払い`
+                `${Math.abs(invoiceWithBalance.balance).toLocaleString()}円の支払い`
               )
             ) : (
               <ActivityIndicator color={Colors.primary} />
