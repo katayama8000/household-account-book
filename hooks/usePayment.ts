@@ -17,7 +17,7 @@ export const usePayment = () => {
   const [item, setItem] = useState<string | null>(null);
   const [amount, setAmount] = useState<number | null>(null);
   const [memo, setMemo] = useState<string | null>(null);
-  const { fetchInvoiceByCoupleId } = useInvoice();
+  const { fetchMonthlyInvoiceIdByCoupleId } = useInvoice();
   const [coupleId] = useAtom(coupleIdAtom);
   const { back } = useRouter();
   const [activeInvoice] = useAtom(activeInvoiceAtom);
@@ -45,7 +45,7 @@ export const usePayment = () => {
       alert("coupleId is not found");
       return;
     }
-    const monthly_invoice_id = (await fetchInvoiceByCoupleId(coupleId))?.id;
+    const monthly_invoice_id = await fetchMonthlyInvoiceIdByCoupleId(coupleId);
 
     if (monthly_invoice_id === undefined) {
       alert("monthly_invoice_id is not found");
@@ -83,7 +83,7 @@ export const usePayment = () => {
       console.error(error);
       alert("An error occurred. Please try again.");
     }
-  }, [item, amount, memo, back, resetForm, fetchInvoiceByCoupleId, coupleId]);
+  }, [item, amount, memo, back, resetForm, fetchMonthlyInvoiceIdByCoupleId, coupleId]);
 
   const fetchPaymentsAllByMonthlyInvoiceId = useCallback(
     async (monthlyInvoiceId: Payment["monthly_invoice_id"]) => {

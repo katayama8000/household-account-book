@@ -84,6 +84,24 @@ export const useInvoice = () => {
     return null;
   }, []);
 
+  const fetchMonthlyInvoiceIdByCoupleId = useCallback(async (coupleId: Invoice["couple_id"]) => {
+    try {
+      const { data, error } = await supabase
+        .from(monthly_invoices_table)
+        .select("id")
+        .eq("couple_id", coupleId)
+        .eq("active", true)
+        .single();
+
+      if (error) throw error;
+
+      return data?.id;
+    } catch (error) {
+      console.error(error);
+      return undefined;
+    }
+  }, []);
+
   const addInvoice = async (couple_id: Invoice["couple_id"]) => {
     if (!invoice) return;
     try {
@@ -132,5 +150,6 @@ export const useInvoice = () => {
     unActiveInvoicesAll,
     turnInvoicePaid,
     fetchInvoicesWithBalancesByCoupleId,
+    fetchMonthlyInvoiceIdByCoupleId,
   };
 };
