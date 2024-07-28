@@ -10,24 +10,7 @@ export const useInvoice = () => {
   const [invoice] = useAtom(activeInvoiceAtom);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
-  const fetchActiveInvoiceByCoupleId = async (coupleId: Invoice["couple_id"]) => {
-    try {
-      const { data, error } = await supabase
-        .from(monthly_invoices_table)
-        .select("*")
-        .eq("couple_id", coupleId)
-        .eq("active", true)
-        .single();
-
-      if (error) throw error;
-      return data;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  };
-
-  const fetchInvoiceByCoupleId = useCallback(async (coupleId: Invoice["couple_id"]) => {
+  const fetchActiveInvoiceByCoupleId = useCallback(async (coupleId: Invoice["couple_id"]) => {
     try {
       const { data, error } = await supabase
         .from(monthly_invoices_table)
@@ -108,7 +91,6 @@ export const useInvoice = () => {
     invoices,
     isRefreshing,
     fetchInvoicesAllByCoupleId,
-    fetchInvoiceByCoupleId,
     addInvoice,
     fetchActiveInvoiceByCoupleId,
     unActiveInvoicesAll,
