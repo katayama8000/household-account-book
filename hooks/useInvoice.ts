@@ -36,38 +36,80 @@ export const useInvoice = () => {
         const uid = session?.data.session?.user?.id;
         if (!uid) throw new Error("User ID not found. Please ensure you're authenticated.");
 
-        const { data, error } = await supabase
-          .from(monthly_invoices_table)
-          .select(`
-            id,
-            month,
-            year,
-            is_paid,
-            created_at,
-            updated_at,
-            active,
-            couple_id,
-            dev_payments (
-              amount,
-              owner_id
-            )
-          `)
-          .eq("couple_id", id);
+        const isProduction = process.env.EXPO_PUBLIC_APP_ENV === "production";
+        const query = isProduction
+          ? `
+          id,
+          month,
+          year,
+          is_paid,
+          created_at,
+          updated_at,
+          active,
+          couple_id,
+          dev_payments (
+            amount,
+            owner_id
+          )`
+          : `
+          id,
+          month,
+          year,
+          is_paid,
+          created_at,
+          updated_at,
+          active,
+          couple_id,
+          payments (
+            amount,
+            owner_id
+          )`;
+
+        const { data, error } = await supabase.from(monthly_invoices_table).select(query).eq("couple_id", id);
 
         if (error) throw error;
-
         if (!data) return null;
 
+        type InvoiceForDev = {
+          id: number;
+          month: number;
+          year: number;
+          is_paid: boolean;
+          created_at: string;
+          updated_at: string;
+          active: boolean;
+          couple_id: number;
+          dev_payments: { amount: number; owner_id: string }[];
+        };
+
+        type InvoiceForProd = {
+          id: number;
+          month: number;
+          year: number;
+          is_paid: boolean;
+          created_at: string;
+          updated_at: string;
+          active: boolean;
+          couple_id: number;
+          payments: { amount: number; owner_id: string }[];
+        };
+
+        const isInvoiceForProd = (invoice: InvoiceForDev | InvoiceForProd): invoice is InvoiceForProd =>
+          "payments" in invoice;
+
+        const calculateBalance = (payments: { amount: number; owner_id: string }[]) =>
+          payments.reduce((acc, cur) => acc + (cur.owner_id === uid ? cur.amount : -cur.amount), 0);
+
         const invoicesWithTotals: InvoiceWithBalance[] = data.map((invoice) => {
-          const balance = invoice.dev_payments.reduce(
-            (acc: number, cur: { amount: number; owner_id: string }) =>
-              acc + (cur.owner_id === uid ? cur.amount : -cur.amount),
-            0,
-          );
+          if (isInvoiceForProd(invoice)) {
+            const { payments, ...rest } = invoice;
+            const balance = calculateBalance(payments);
+            return { ...rest, balance };
+          }
           const { dev_payments, ...rest } = invoice;
+          const balance = calculateBalance(dev_payments);
           return { ...rest, balance };
         });
-
         setInvoices(invoicesWithTotals);
         return invoicesWithTotals;
       } catch (error) {
