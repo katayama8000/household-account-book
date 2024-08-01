@@ -47,7 +47,7 @@ export const useInvoice = () => {
           updated_at,
           active,
           couple_id,
-          dev_payments (
+          payments (
             amount,
             owner_id
           )`
@@ -60,7 +60,7 @@ export const useInvoice = () => {
           updated_at,
           active,
           couple_id,
-          payments (
+          dev_payments (
             amount,
             owner_id
           )`;
