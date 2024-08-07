@@ -15,16 +15,20 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 const SignInScreen = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const { setOptions } = useNavigation();
   const { push } = useRouter();
 
   useEffect(() => {
-    setOptions({ headerTitle: "ログイン" });
+    setOptions({
+      headerShown: false,
+    });
   }, [setOptions]);
 
   const signInWithEmail = async () => {
@@ -61,12 +65,15 @@ const SignInScreen = () => {
           <TextInput
             onChangeText={(text) => setPassword(text)}
             value={password}
-            secureTextEntry={true}
+            secureTextEntry={!showPassword}
             placeholder="Password"
             placeholderTextColor="#aaa"
             autoCapitalize="none"
             style={styles.input}
           />
+          <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
+            <Ionicons name={showPassword ? "eye-off" : "eye"} size={24} color="#aaa" />
+          </TouchableOpacity>
         </View>
         <TouchableOpacity
           style={[styles.buttonContainer, styles.mt20]}
@@ -99,9 +106,15 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderWidth: 1,
     borderColor: Colors.primary,
+    flexDirection: "row",
+    alignItems: "center",
   },
   input: {
+    flex: 1,
     height: 40,
+  },
+  eyeIcon: {
+    marginLeft: 10,
   },
   buttonContainer: {
     borderRadius: 8,
@@ -120,6 +133,3 @@ const styles = StyleSheet.create({
 });
 
 export default SignInScreen;
-function setOptions(arg0: { headerTitle: string }) {
-  throw new Error("Function not implemented.");
-}
