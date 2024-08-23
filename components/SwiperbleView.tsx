@@ -1,5 +1,4 @@
-import type React from "react";
-import type { FC } from "react";
+import type { FC, ReactNode } from "react";
 import { Dimensions, StyleSheet, type ViewStyle } from "react-native";
 import {
   PanGestureHandler,
@@ -15,8 +14,8 @@ import Animated, {
 } from "react-native-reanimated";
 
 interface Props extends Pick<PanGestureHandlerProps, "simultaneousHandlers"> {
-  children: React.ReactNode;
-  backView?: React.ReactNode;
+  children: ReactNode;
+  backView?: ReactNode;
   onSwipeLeft?: () => void;
   style?: ViewStyle;
 }
@@ -24,8 +23,7 @@ interface Props extends Pick<PanGestureHandlerProps, "simultaneousHandlers"> {
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const SWIPE_THRESHOLD = -SCREEN_WIDTH * 0.2;
 
-export const SwiperView: FC<Props> = (props) => {
-  const { children, backView, onSwipeLeft, simultaneousHandlers, style } = props;
+export const SwiperView: FC<Props> = ({ children, backView, onSwipeLeft, simultaneousHandlers, style }) => {
   const translateX = useSharedValue(0);
 
   const panGesture = useAnimatedGestureHandler<PanGestureHandlerGestureEvent>({
