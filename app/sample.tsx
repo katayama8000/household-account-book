@@ -1,6 +1,6 @@
 import type React from "react";
 import { useState } from "react";
-import { View, Text, StyleSheet, FlatList } from "react-native";
+import { View, Text, StyleSheet, FlatList, Alert } from "react-native";
 import { SwiperView } from "../components/SwiperbleView";
 
 interface CardItem {
@@ -23,6 +23,7 @@ const SampleScreen: React.FC = () => {
 
   const renderCard = ({ item }: { item: CardItem }) => (
     <SwiperView
+      onPress={() => Alert.alert(`Pressed card ${item.id}`)}
       onSwipeLeft={() => handleSwipeLeft(item.id)}
       backView={
         <View style={styles.backView}>

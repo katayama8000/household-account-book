@@ -1,5 +1,6 @@
+import React from "react";
 import type { FC, ReactNode } from "react";
-import { Dimensions, StyleSheet, type ViewStyle } from "react-native";
+import { Dimensions, StyleSheet, type ViewStyle, Alert } from "react-native";
 import {
   PanGestureHandler,
   type PanGestureHandlerGestureEvent,
@@ -16,6 +17,7 @@ import Animated, {
 interface Props extends Pick<PanGestureHandlerProps, "simultaneousHandlers"> {
   children: ReactNode;
   backView?: ReactNode;
+  onPress?: () => void;
   onSwipeLeft?: () => void;
   style?: ViewStyle;
 }
@@ -23,8 +25,29 @@ interface Props extends Pick<PanGestureHandlerProps, "simultaneousHandlers"> {
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const SWIPE_THRESHOLD = -SCREEN_WIDTH * 0.2;
 
-export const SwiperView: FC<Props> = ({ children, backView, onSwipeLeft, simultaneousHandlers, style }) => {
+export const SwiperView: FC<Props> = ({ children, backView, onPress, onSwipeLeft, simultaneousHandlers, style }) => {
   const translateX = useSharedValue(0);
+
+  const handleSwipeLeft = () => {
+    Alert.alert(
+      "削除確認",
+      "このアイテムを削除してもよろしいですか？",
+      [
+        {
+          text: "いいえ",
+          onPress: () => {
+            translateX.value = withTiming(0);
+          },
+          style: "cancel",
+        },
+        {
+          text: "はい",
+          onPress: () => onSwipeLeft?.(),
+        },
+      ],
+      { cancelable: false },
+    );
+  };
 
   const panGesture = useAnimatedGestureHandler<PanGestureHandlerGestureEvent>({
     onActive: (event) => {
@@ -34,7 +57,7 @@ export const SwiperView: FC<Props> = ({ children, backView, onSwipeLeft, simulta
       const shouldBeDismissed = translateX.value < SWIPE_THRESHOLD;
       if (shouldBeDismissed) {
         translateX.value = withTiming(-SCREEN_WIDTH);
-        onSwipeLeft && runOnJS(onSwipeLeft)();
+        runOnJS(handleSwipeLeft)();
       } else {
         translateX.value = withTiming(0);
       }
@@ -50,7 +73,7 @@ export const SwiperView: FC<Props> = ({ children, backView, onSwipeLeft, simulta
   }));
 
   return (
-    <Animated.View style={[styles.container, style]}>
+    <Animated.View style={[styles.container, style]} onTouchEnd={() => onPress?.()}>
       {backView && <Animated.View style={styles.backView}>{backView}</Animated.View>}
       <PanGestureHandler simultaneousHandlers={simultaneousHandlers} onGestureEvent={panGesture}>
         <Animated.View style={[styles.content, facadeStyle]}>{children}</Animated.View>

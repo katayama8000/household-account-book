@@ -15,6 +15,7 @@ import { usePayment } from "../../hooks/usePayment";
 import packageJson from "../../package.json";
 import { coupleIdAtom } from "../../state/couple.state";
 import { activeInvoiceAtom } from "../../state/invoice.state";
+import { SwiperView } from "@/components/SwiperbleView";
 
 const HomeScreen: FC = () => {
   const { payments, isRefreshing, deletePayment } = usePayment();
@@ -200,45 +201,43 @@ const PaymentItem: FC<PaymentItemProps> = ({ deletePayment, routerPush, payment,
   const { fetchPaymentsAllByMonthlyInvoiceId } = usePayment();
   const [activeInvoce] = useAtom(activeInvoiceAtom);
   const isOwner = payment.owner_id === userId;
+
+  const handleDeletePayment = async () => {
+    await deletePayment(payment.id);
+    if (activeInvoce === null) return;
+    ToastAndroid.show("削除した", ToastAndroid.SHORT);
+    await fetchPaymentsAllByMonthlyInvoiceId(activeInvoce.id);
+  };
+
   return (
-    <TouchableOpacity
-      style={[
-        styles.paymentContainer,
-        {
-          backgroundColor: isOwner ? Colors.white : Colors.gray,
-        },
-      ]}
-      onPress={() => isOwner && routerPush({ pathname: "/payment-modal", params: { kind: "edit", id: payment.id } })}
-    >
-      <View style={styles.paymentInfoContainer}>
-        <Text style={styles.itemTitle}>{payment.item}</Text>
-        <View style={styles.row}>
-          <Text style={styles.value}>{payment.amount.toLocaleString()}円</Text>
-        </View>
-        {payment.memo && <Text style={styles.memo}>{payment.memo}</Text>}
-      </View>
-      {isOwner && (
-        <TouchableOpacity
-          style={styles.iconButton}
-          onPress={() =>
-            Alert.alert("削除します", "よろしいですか？", [
-              { text: "いいえ", style: "cancel" },
-              {
-                text: "はい",
-                onPress: async () => {
-                  await deletePayment(payment.id);
-                  if (activeInvoce === null) return;
-                  ToastAndroid.show("削除した", ToastAndroid.SHORT);
-                  await fetchPaymentsAllByMonthlyInvoiceId(activeInvoce.id);
-                },
-              },
-            ])
+    <>
+      {isOwner ? (
+        <SwiperView
+          onSwipeLeft={() => handleDeletePayment()}
+          onPress={() => routerPush({ pathname: "/payment-modal", params: { kind: "edit", id: payment.id } })}
+          backView={
+            <View style={styles.backView}>
+              <Text style={styles.backViewText}>Delete</Text>
+            </View>
           }
+          style={styles.swipeViewContainer}
         >
-          <AntDesign name="delete" size={24} color="white" />
-        </TouchableOpacity>
+          <View style={styles.card}>
+            <Text style={styles.cardText}>{payment.item}</Text>
+          </View>
+        </SwiperView>
+      ) : (
+        <View style={[styles.paymentContainer, { backgroundColor: isOwner ? Colors.white : Colors.gray }]}>
+          <View style={styles.paymentInfoContainer}>
+            <Text style={styles.itemTitle}>{payment.item}</Text>
+            <View style={styles.row}>
+              <Text style={styles.value}>{payment.amount.toLocaleString()}円</Text>
+            </View>
+            {payment.memo && <Text style={styles.memo}>{payment.memo}</Text>}
+          </View>
+        </View>
       )}
-    </TouchableOpacity>
+    </>
   );
 };
 
@@ -333,6 +332,35 @@ const styles = StyleSheet.create({
   version: {
     color: Colors.black,
     paddingLeft: 8,
+  },
+  // ----
+  swipeViewContainer: {
+    marginBottom: 16,
+  },
+  backView: {
+    flex: 1,
+    backgroundColor: "red",
+    justifyContent: "center",
+    alignItems: "flex-end",
+    paddingRight: 16,
+    borderRadius: 8,
+  },
+  backViewText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  card: {
+    padding: 16,
+    backgroundColor: "white",
+    borderRadius: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  cardText: {
+    fontSize: 16,
   },
 });
 
