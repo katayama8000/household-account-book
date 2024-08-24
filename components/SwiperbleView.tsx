@@ -1,20 +1,10 @@
 import React from "react";
 import type { FC, ReactNode } from "react";
 import { Dimensions, StyleSheet, type ViewStyle, Alert } from "react-native";
-import {
-  PanGestureHandler,
-  type PanGestureHandlerGestureEvent,
-  type PanGestureHandlerProps,
-} from "react-native-gesture-handler";
-import Animated, {
-  useAnimatedGestureHandler,
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  runOnJS,
-} from "react-native-reanimated";
+import { GestureDetector, Gesture } from "react-native-gesture-handler";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming, runOnJS } from "react-native-reanimated";
 
-interface Props extends Pick<PanGestureHandlerProps, "simultaneousHandlers"> {
+interface Props {
   children: ReactNode;
   backView?: ReactNode;
   onPress?: () => void;
@@ -25,7 +15,7 @@ interface Props extends Pick<PanGestureHandlerProps, "simultaneousHandlers"> {
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const SWIPE_THRESHOLD = -SCREEN_WIDTH * 0.2;
 
-export const SwiperView: FC<Props> = ({ children, backView, onPress, onSwipeLeft, simultaneousHandlers, style }) => {
+export const SwiperView: FC<Props> = ({ children, backView, onPress, onSwipeLeft, style }) => {
   const translateX = useSharedValue(0);
 
   const handleSwipeLeft = () => {
@@ -49,11 +39,11 @@ export const SwiperView: FC<Props> = ({ children, backView, onPress, onSwipeLeft
     );
   };
 
-  const panGesture = useAnimatedGestureHandler<PanGestureHandlerGestureEvent>({
-    onActive: (event) => {
+  const gesture = Gesture.Pan()
+    .onUpdate((event) => {
       translateX.value = Math.max(-128, Math.min(0, event.translationX));
-    },
-    onEnd: () => {
+    })
+    .onEnd(() => {
       const shouldBeDismissed = translateX.value < SWIPE_THRESHOLD;
       if (shouldBeDismissed) {
         translateX.value = withTiming(-SCREEN_WIDTH);
@@ -61,23 +51,16 @@ export const SwiperView: FC<Props> = ({ children, backView, onPress, onSwipeLeft
       } else {
         translateX.value = withTiming(0);
       }
-    },
-  });
+    });
 
-  const facadeStyle = useAnimatedStyle(() => ({
-    transform: [
-      {
-        translateX: translateX.value,
-      },
-    ],
-  }));
+  const facadeStyle = useAnimatedStyle(() => ({ transform: [{ translateX: translateX.value }] }));
 
   return (
     <Animated.View style={[styles.container, style]} onTouchEnd={() => onPress?.()}>
       {backView && <Animated.View style={styles.backView}>{backView}</Animated.View>}
-      <PanGestureHandler simultaneousHandlers={simultaneousHandlers} onGestureEvent={panGesture}>
+      <GestureDetector gesture={gesture}>
         <Animated.View style={[styles.content, facadeStyle]}>{children}</Animated.View>
-      </PanGestureHandler>
+      </GestureDetector>
     </Animated.View>
   );
 };
@@ -95,5 +78,6 @@ const styles = StyleSheet.create({
   },
   content: {
     width: "100%",
+    backgroundColor: "white",
   },
 });
