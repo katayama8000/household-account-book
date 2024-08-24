@@ -1,3 +1,4 @@
+import { SwiperView } from "@/components/SwiperbleView";
 import { Colors } from "@/constants/Colors";
 import { supabase } from "@/lib/supabase";
 import { defaultFontSize, defaultFontWeight, defaultShadowColor } from "@/style/defaultStyle";
@@ -8,14 +9,13 @@ import { useRouter } from "expo-router";
 import type { ExpoRouter } from "expo-router/types/expo-router";
 import { useAtom } from "jotai";
 import { type FC, useEffect, useState } from "react";
-import { Alert, Button, FlatList, Linking, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from "react-native";
+import { Alert, FlatList, Linking, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from "react-native";
 import { useCouple } from "../../hooks/useCouple";
 import { useInvoice } from "../../hooks/useInvoice";
 import { usePayment } from "../../hooks/usePayment";
 import packageJson from "../../package.json";
 import { coupleIdAtom } from "../../state/couple.state";
 import { activeInvoiceAtom } from "../../state/invoice.state";
-import { SwiperView } from "@/components/SwiperbleView";
 
 const HomeScreen: FC = () => {
   const { payments, isRefreshing, deletePayment } = usePayment();
@@ -91,14 +91,6 @@ const HomeScreen: FC = () => {
           />
         )}
       </View>
-      <Button
-        title="sample"
-        onPress={() => {
-          console.log("clicked");
-          router.push({ pathname: "/sample" });
-        }}
-      />
-
       <PaymentList
         activeInvoiceId={activeInvoce?.id ?? null}
         payments={payments}
