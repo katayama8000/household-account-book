@@ -1,3 +1,4 @@
+import { SwiperView } from "@/components/SwiperbleView";
 import { Colors } from "@/constants/Colors";
 import { supabase } from "@/lib/supabase";
 import { defaultFontSize, defaultFontWeight, defaultShadowColor } from "@/style/defaultStyle";
@@ -192,45 +193,42 @@ const PaymentItem: FC<PaymentItemProps> = ({ deletePayment, routerPush, payment,
   const { fetchPaymentsAllByMonthlyInvoiceId } = usePayment();
   const [activeInvoce] = useAtom(activeInvoiceAtom);
   const isOwner = payment.owner_id === userId;
-  return (
-    <TouchableOpacity
-      style={[
-        styles.paymentContainer,
-        {
-          backgroundColor: isOwner ? Colors.white : Colors.gray,
-        },
-      ]}
-      onPress={() => isOwner && routerPush({ pathname: "/payment-modal", params: { kind: "edit", id: payment.id } })}
-    >
-      <View style={styles.paymentInfoContainer}>
-        <Text style={styles.itemTitle}>{payment.item}</Text>
-        <View style={styles.row}>
-          <Text style={styles.value}>{payment.amount.toLocaleString()}円</Text>
-        </View>
-        {payment.memo && <Text style={styles.memo}>{payment.memo}</Text>}
+
+  const handleDeletePayment = async () => {
+    await deletePayment(payment.id);
+    if (activeInvoce === null) return;
+    ToastAndroid.show("削除した", ToastAndroid.SHORT);
+    await fetchPaymentsAllByMonthlyInvoiceId(activeInvoce.id);
+  };
+
+  const CardContent = (
+    <View style={styles.cardContent}>
+      <Text style={styles.itemTitle}>{payment.item}</Text>
+      <View style={styles.row}>
+        <Text style={styles.value}>{payment.amount.toLocaleString()}円</Text>
       </View>
-      {isOwner && (
-        <TouchableOpacity
-          style={styles.iconButton}
-          onPress={() =>
-            Alert.alert("削除します", "よろしいですか？", [
-              { text: "いいえ", style: "cancel" },
-              {
-                text: "はい",
-                onPress: async () => {
-                  await deletePayment(payment.id);
-                  if (activeInvoce === null) return;
-                  ToastAndroid.show("削除した", ToastAndroid.SHORT);
-                  await fetchPaymentsAllByMonthlyInvoiceId(activeInvoce.id);
-                },
-              },
-            ])
+      {payment.memo && <Text style={styles.memo}>{payment.memo}</Text>}
+    </View>
+  );
+
+  return (
+    <View style={styles.cardContainer}>
+      {isOwner ? (
+        <SwiperView
+          onSwipeLeft={() => handleDeletePayment()}
+          onPress={() => routerPush({ pathname: "/payment-modal", params: { kind: "edit", id: payment.id } })}
+          backView={
+            <View style={styles.backView}>
+              <Text style={styles.backViewText}>削除</Text>
+            </View>
           }
         >
-          <AntDesign name="delete" size={24} color="white" />
-        </TouchableOpacity>
+          <View style={[styles.card, styles.ownerCard]}>{CardContent}</View>
+        </SwiperView>
+      ) : (
+        <View style={[styles.card, styles.nonOwnerCard]}>{CardContent}</View>
       )}
-    </TouchableOpacity>
+    </View>
   );
 };
 
@@ -267,23 +265,37 @@ const styles = StyleSheet.create({
     fontSize: defaultFontSize,
     textAlign: "center",
   },
-  paymentContainer: {
-    backgroundColor: "white",
-    padding: 16,
-    marginBottom: 12,
-    borderRadius: 8,
+  linkContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    justifyContent: "center",
+  },
+  link: {
+    color: Colors.primary,
+  },
+  version: {
+    color: Colors.black,
+    paddingLeft: 8,
+  },
+  cardContainer: {
+    marginBottom: 12,
+  },
+  card: {
+    borderRadius: 8,
+    padding: 16,
     elevation: 4,
     shadowColor: defaultShadowColor,
     shadowOpacity: 0.2,
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 4 },
   },
-  paymentInfoContainer: {
+  ownerCard: {
+    backgroundColor: Colors.white,
+  },
+  nonOwnerCard: {
+    backgroundColor: Colors.gray,
+  },
+  cardContent: {
     flex: 1,
-    paddingRight: 16,
   },
   itemTitle: {
     fontSize: 18,
@@ -306,25 +318,17 @@ const styles = StyleSheet.create({
     color: "#666",
     marginTop: 4,
   },
-  iconButton: {
-    width: 36,
-    height: 36,
-    backgroundColor: Colors.primary,
-    borderRadius: 20,
+  backView: {
+    flex: 1,
+    backgroundColor: "red",
     justifyContent: "center",
-    alignItems: "center",
-    margin: 4,
+    alignItems: "flex-end",
+    paddingRight: 16,
+    borderRadius: 8,
   },
-  linkContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  link: {
-    color: Colors.primary,
-  },
-  version: {
-    color: Colors.black,
-    paddingLeft: 8,
+  backViewText: {
+    color: "white",
+    fontWeight: "bold",
   },
 });
 

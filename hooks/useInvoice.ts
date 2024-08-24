@@ -3,7 +3,7 @@ import { supabase } from "@/lib/supabase";
 import type { Invoice } from "@/types/Row";
 import { useAtom } from "jotai";
 import { useCallback, useState } from "react";
-import { activeInvoiceAtom, invoicesAtom, type InvoiceWithBalance } from "../state/invoice.state";
+import { type InvoiceWithBalance, activeInvoiceAtom, invoicesAtom } from "../state/invoice.state";
 
 export const useInvoice = () => {
   const [invoices, setInvoices] = useAtom(invoicesAtom);

@@ -20,8 +20,9 @@ import {
   setNotificationHandler,
 } from "expo-notifications";
 import { useAtom } from "jotai";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Platform } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -87,9 +88,7 @@ export default function RootLayout() {
   const { push } = useRouter();
 
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
+    if (loaded) SplashScreen.hideAsync();
   }, [loaded]);
 
   useEffect(() => {
@@ -152,17 +151,17 @@ export default function RootLayout() {
     })();
   }, []);
 
-  if (!loaded) {
-    return <Slot />;
-  }
+  if (!loaded) return <Slot />;
 
   return (
     <ThemeProvider value={DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="(modal)/payment-modal" options={{ presentation: "modal" }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="(modal)/payment-modal" options={{ presentation: "modal" }} />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+      </GestureHandlerRootView>
     </ThemeProvider>
   );
 }
