@@ -217,7 +217,7 @@ const PaymentItem: FC<PaymentItemProps> = ({ deletePayment, routerPush, payment,
           onPress={() => routerPush({ pathname: "/payment-modal", params: { kind: "edit", id: payment.id } })}
           backView={
             <View style={styles.backView}>
-              <Text style={styles.backViewText}>Delete</Text>
+              <Text style={styles.backViewText}>削除</Text>
             </View>
           }
           style={styles.swipeViewContainer}

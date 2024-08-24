@@ -30,8 +30,8 @@ export const SwiperView: FC<Props> = ({ children, backView, onPress, onSwipeLeft
 
   const handleSwipeLeft = () => {
     Alert.alert(
-      "削除確認",
-      "このアイテムを削除してもよろしいですか？",
+      "削除します",
+      "よろしいですか？",
       [
         {
           text: "いいえ",
