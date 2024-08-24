@@ -209,8 +209,18 @@ const PaymentItem: FC<PaymentItemProps> = ({ deletePayment, routerPush, payment,
     await fetchPaymentsAllByMonthlyInvoiceId(activeInvoce.id);
   };
 
+  const CardContent = (
+    <View style={styles.cardContent}>
+      <Text style={styles.itemTitle}>{payment.item}</Text>
+      <View style={styles.row}>
+        <Text style={styles.value}>{payment.amount.toLocaleString()}円</Text>
+      </View>
+      {payment.memo && <Text style={styles.memo}>{payment.memo}</Text>}
+    </View>
+  );
+
   return (
-    <>
+    <View style={styles.cardContainer}>
       {isOwner ? (
         <SwiperView
           onSwipeLeft={() => handleDeletePayment()}
@@ -220,24 +230,13 @@ const PaymentItem: FC<PaymentItemProps> = ({ deletePayment, routerPush, payment,
               <Text style={styles.backViewText}>削除</Text>
             </View>
           }
-          style={styles.swipeViewContainer}
         >
-          <View style={styles.card}>
-            <Text style={styles.cardText}>{payment.item}</Text>
-          </View>
+          <View style={[styles.card, styles.ownerCard]}>{CardContent}</View>
         </SwiperView>
       ) : (
-        <View style={[styles.paymentContainer, { backgroundColor: isOwner ? Colors.white : Colors.gray }]}>
-          <View style={styles.paymentInfoContainer}>
-            <Text style={styles.itemTitle}>{payment.item}</Text>
-            <View style={styles.row}>
-              <Text style={styles.value}>{payment.amount.toLocaleString()}円</Text>
-            </View>
-            {payment.memo && <Text style={styles.memo}>{payment.memo}</Text>}
-          </View>
-        </View>
+        <View style={[styles.card, styles.nonOwnerCard]}>{CardContent}</View>
       )}
-    </>
+    </View>
   );
 };
 
@@ -274,23 +273,37 @@ const styles = StyleSheet.create({
     fontSize: defaultFontSize,
     textAlign: "center",
   },
-  paymentContainer: {
-    backgroundColor: "white",
-    padding: 16,
-    marginBottom: 12,
-    borderRadius: 8,
+  linkContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    justifyContent: "center",
+  },
+  link: {
+    color: Colors.primary,
+  },
+  version: {
+    color: Colors.black,
+    paddingLeft: 8,
+  },
+  cardContainer: {
+    marginBottom: 12,
+  },
+  card: {
+    borderRadius: 8,
+    padding: 16,
     elevation: 4,
     shadowColor: defaultShadowColor,
     shadowOpacity: 0.2,
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 4 },
   },
-  paymentInfoContainer: {
+  ownerCard: {
+    backgroundColor: Colors.white,
+  },
+  nonOwnerCard: {
+    backgroundColor: Colors.gray,
+  },
+  cardContent: {
     flex: 1,
-    paddingRight: 16,
   },
   itemTitle: {
     fontSize: 18,
@@ -313,30 +326,6 @@ const styles = StyleSheet.create({
     color: "#666",
     marginTop: 4,
   },
-  iconButton: {
-    width: 36,
-    height: 36,
-    backgroundColor: Colors.primary,
-    borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
-    margin: 4,
-  },
-  linkContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  link: {
-    color: Colors.primary,
-  },
-  version: {
-    color: Colors.black,
-    paddingLeft: 8,
-  },
-  // ----
-  swipeViewContainer: {
-    marginBottom: 16,
-  },
   backView: {
     flex: 1,
     backgroundColor: "red",
@@ -348,19 +337,6 @@ const styles = StyleSheet.create({
   backViewText: {
     color: "white",
     fontWeight: "bold",
-  },
-  card: {
-    padding: 16,
-    backgroundColor: "white",
-    borderRadius: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  cardText: {
-    fontSize: 16,
   },
 });
 
