@@ -5,15 +5,14 @@ import { defaultFontSize, defaultFontWeight, defaultShadowColor } from "@/style/
 import type { Couple, Invoice, Payment, Payment as PaymentRow } from "@/types/Row";
 import { AntDesign } from "@expo/vector-icons";
 import dayjs from "dayjs";
-import { useRouter } from "expo-router";
-import type { ExpoRouter } from "expo-router/types/expo-router";
+import { type Href, useRouter } from "expo-router";
 import { useAtom } from "jotai";
 import { type FC, useEffect, useState } from "react";
 import { Alert, FlatList, Linking, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from "react-native";
 import { useCouple } from "../../hooks/useCouple";
 import { useInvoice } from "../../hooks/useInvoice";
 import { usePayment } from "../../hooks/usePayment";
-import packageJson from "../../package.json";
+import { version } from "../../package.json";
 import { coupleIdAtom } from "../../state/couple.state";
 import { activeInvoiceAtom } from "../../state/invoice.state";
 
@@ -24,7 +23,7 @@ const HomeScreen: FC = () => {
   const { fetchPaymentsAllByMonthlyInvoiceId } = usePayment();
   const [coupleId, setCoupleId] = useAtom(coupleIdAtom);
   const [activeInvoce, setActiveInvoice] = useAtom(activeInvoiceAtom);
-  const router = useRouter();
+  const { push } = useRouter();
   const showCloseMonthButton = process.env.EXPO_PUBLIC_APP_ENV === "development" ? true : dayjs().date() >= 20;
   const [userId, setUserId] = useState<string | null>(null);
 
@@ -33,7 +32,7 @@ const HomeScreen: FC = () => {
     (async () => {
       const uid = (await supabase.auth.getSession())?.data.session?.user?.id;
       if (!uid) {
-        router.push({ pathname: "/sign-in" });
+        push({ pathname: "/sign-in" });
         return;
       }
       setUserId(uid);
@@ -78,7 +77,7 @@ const HomeScreen: FC = () => {
   return (
     <View style={styles.container}>
       <View style={styles.buttonWrapper}>
-        <AddPaymentButton onPress={() => router.push({ pathname: "/payment-modal", params: { kind: "add" } })} />
+        <AddPaymentButton onPress={() => push({ pathname: "/payment-modal", params: { kind: "add" } })} />
         {showCloseMonthButton && (
           <CloseMonthButton
             onPress={async () => {
@@ -97,7 +96,7 @@ const HomeScreen: FC = () => {
         isRefreshing={isRefreshing}
         fetchAllPaymentsByMonthlyInvoiceId={fetchPaymentsAllByMonthlyInvoiceId}
         deletePayment={deletePayment}
-        routerPush={router.push}
+        routerPush={push}
         updateActiveInvoice={updateActiveInvoice}
         userId={userId}
       />
@@ -135,7 +134,7 @@ type PaymentListProps = {
   isRefreshing: boolean;
   fetchAllPaymentsByMonthlyInvoiceId: (id: Payment["monthly_invoice_id"]) => void;
   deletePayment: (id: PaymentRow["id"]) => Promise<void>;
-  routerPush: (href: ExpoRouter.Href) => void;
+  routerPush: (href: Href) => void;
   updateActiveInvoice: () => Promise<void>;
   userId: string | null;
 };
@@ -177,14 +176,14 @@ const GithubIssueLink: FC = () => {
       >
         <Text style={styles.link}>バグや要望はこちら</Text>
       </TouchableOpacity>
-      <Text style={styles.version}>v{packageJson.version}</Text>
+      <Text style={styles.version}>v{version}</Text>
     </View>
   );
 };
 
 type PaymentItemProps = {
   deletePayment: (id: PaymentRow["id"]) => Promise<void>;
-  routerPush: (href: ExpoRouter.Href) => void;
+  routerPush: (href: Href) => void;
   payment: PaymentRow;
   userId: string | null;
 };
