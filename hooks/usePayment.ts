@@ -35,6 +35,7 @@ export const usePayment = () => {
     setMemo(null);
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   const addPayment = useCallback(async (): Promise<void> => {
     if (!item || !amount) {
       alert("Please enter both name and amount.");
@@ -83,7 +84,7 @@ export const usePayment = () => {
       console.error(error);
       alert("An error occurred. Please try again.");
     }
-  }, [item, amount, memo, back, resetForm, fetchMonthlyInvoiceIdByCoupleId, coupleId]);
+  }, [item, amount, memo, back, fetchMonthlyInvoiceIdByCoupleId, coupleId]);
 
   const fetchPaymentsAllByMonthlyInvoiceId = useCallback(
     async (monthlyInvoiceId: Payment["monthly_invoice_id"]) => {
@@ -112,6 +113,7 @@ export const usePayment = () => {
     [setPayments],
   );
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   const updatePayment = useCallback(
     async (id: Payment["id"], payment: Pick<Payment, "item" | "amount" | "memo">): Promise<void> => {
       try {
@@ -129,7 +131,7 @@ export const usePayment = () => {
         alert("An error occurred. Please try again.");
       }
     },
-    [back, resetForm],
+    [back],
   );
 
   const deletePayment = useCallback(async (id: Payment["id"]): Promise<void> => {
