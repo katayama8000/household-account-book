@@ -1,6 +1,6 @@
-import type { Database } from "./supabase";
+import type { Tables } from "./supabase";
 
-export type Couple = Database["public"]["Tables"]["couples"]["Row"];
-export type Payment = Database["public"]["Tables"]["payments"]["Row"];
-export type Invoice = Database["public"]["Tables"]["monthly_invoices"]["Row"];
-export type User = Database["public"]["Tables"]["users"]["Row"];
+export type Couple = Tables<"couples">;
+export type Payment = Tables<"payments">;
+export type Invoice = Tables<"monthly_invoices">;
+export type User = Tables<"users">;
