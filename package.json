@@ -10,8 +10,6 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "test": "jest --watchAll",
-    "expo:lint": "expo lint",
     "format": "yarn biome format --write .",
     "format:check": "yarn biome format .",
     "lint": "yarn biome check --write .",
