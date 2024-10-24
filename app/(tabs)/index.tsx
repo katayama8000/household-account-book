@@ -25,7 +25,6 @@ import { usePayment } from "../../hooks/usePayment";
 import { version } from "../../package.json";
 import { coupleIdAtom } from "../../state/couple.state";
 import { activeInvoiceAtom } from "../../state/invoice.state";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 const HomeScreen: FC = () => {
   const { payments, isRefreshing, deletePayment, isLoading } = usePayment();
@@ -86,7 +85,7 @@ const HomeScreen: FC = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.buttonWrapper}>
         <AddPaymentButton onPress={() => push({ pathname: "/payment-modal", params: { kind: "add" } })} />
         {showCloseMonthButton && (
@@ -115,7 +114,7 @@ const HomeScreen: FC = () => {
           userId={userId}
         />
       )}
-    </SafeAreaView>
+    </View>
   );
 };
 
