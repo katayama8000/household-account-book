@@ -8,16 +8,27 @@ import dayjs from "dayjs";
 import { type Href, useRouter } from "expo-router";
 import { useAtom } from "jotai";
 import { type FC, useEffect, useState } from "react";
-import { Alert, FlatList, Linking, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  Linking,
+  StyleSheet,
+  Text,
+  ToastAndroid,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useCouple } from "../../hooks/useCouple";
 import { useInvoice } from "../../hooks/useInvoice";
 import { usePayment } from "../../hooks/usePayment";
 import { version } from "../../package.json";
 import { coupleIdAtom } from "../../state/couple.state";
 import { activeInvoiceAtom } from "../../state/invoice.state";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const HomeScreen: FC = () => {
-  const { payments, isRefreshing, deletePayment } = usePayment();
+  const { payments, isRefreshing, deletePayment, isLoading } = usePayment();
   const { addInvoice, unActiveInvoicesAll, turnInvoicePaid, fetchActiveInvoiceByCoupleId } = useInvoice();
   const { fetchCoupleIdByUserId } = useCouple();
   const { fetchPaymentsAllByMonthlyInvoiceId } = usePayment();
@@ -75,7 +86,7 @@ const HomeScreen: FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.buttonWrapper}>
         <AddPaymentButton onPress={() => push({ pathname: "/payment-modal", params: { kind: "add" } })} />
         {showCloseMonthButton && (
@@ -90,17 +101,21 @@ const HomeScreen: FC = () => {
           />
         )}
       </View>
-      <PaymentList
-        activeInvoiceId={activeInvoce?.id ?? null}
-        payments={payments}
-        isRefreshing={isRefreshing}
-        fetchAllPaymentsByMonthlyInvoiceId={fetchPaymentsAllByMonthlyInvoiceId}
-        deletePayment={deletePayment}
-        routerPush={push}
-        updateActiveInvoice={updateActiveInvoice}
-        userId={userId}
-      />
-    </View>
+      {isLoading ? (
+        <ActivityIndicator size="large" color={`${Colors.primary}`} />
+      ) : (
+        <PaymentList
+          activeInvoiceId={activeInvoce?.id ?? null}
+          payments={payments}
+          isRefreshing={isRefreshing}
+          fetchAllPaymentsByMonthlyInvoiceId={fetchPaymentsAllByMonthlyInvoiceId}
+          deletePayment={deletePayment}
+          routerPush={push}
+          updateActiveInvoice={updateActiveInvoice}
+          userId={userId}
+        />
+      )}
+    </SafeAreaView>
   );
 };
 
@@ -328,6 +343,11 @@ const styles = StyleSheet.create({
   backViewText: {
     color: "white",
     fontWeight: "bold",
+  },
+  horizontal: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    padding: 10,
   },
 });
 
