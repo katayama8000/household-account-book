@@ -14,6 +14,7 @@ import { useInvoice } from "./useInvoice";
 export const usePayment = () => {
   const [payments, setPayments] = useAtom(paymentsAtom);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [item, setItem] = useState<string | null>(null);
   const [amount, setAmount] = useState<number | null>(null);
   const [memo, setMemo] = useState<string | null>(null);
@@ -23,10 +24,14 @@ export const usePayment = () => {
   const [activeInvoice] = useAtom(activeInvoiceAtom);
 
   useEffect(() => {
-    if (activeInvoice === null) {
-      return;
-    }
-    fetchPaymentsAllByMonthlyInvoiceId(activeInvoice.id);
+    (async () => {
+      if (activeInvoice === null) {
+        return;
+      }
+      setIsLoading(true);
+      await fetchPaymentsAllByMonthlyInvoiceId(activeInvoice.id);
+      setIsLoading(false);
+    })();
   }, [activeInvoice]);
 
   const resetForm = () => {
@@ -150,9 +155,7 @@ export const usePayment = () => {
 
   const calculateInvoiceBalance = async (monthlyInvoiceId: Payment["monthly_invoice_id"]) => {
     const uid = (await supabase.auth.getSession())?.data.session?.user?.id;
-
     if (!uid) throw new Error("User ID not found. Please ensure you're authenticated.");
-
     try {
       const { data: invoices, error } = await supabase
         .from(payments_table)
@@ -174,6 +177,7 @@ export const usePayment = () => {
 
   return {
     isRefreshing,
+    isLoading,
     payments,
     item,
     amount,
