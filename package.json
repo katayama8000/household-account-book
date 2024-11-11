@@ -21,7 +21,7 @@
   "dependencies": {
     "@expo/vector-icons": "^14.0.4",
     "@react-native-async-storage/async-storage": "2.0.0",
-    "@react-navigation/native": "^6.1.18",
+    "@react-navigation/native": "^7.0.0",
     "@supabase/supabase-js": "^2.45.6",
     "dayjs": "^1.11.13",
     "expo": "~51.0.38",
