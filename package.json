@@ -33,7 +33,7 @@
     "expo-notifications": "~0.28.19",
     "expo-router": "~3.5.23",
     "expo-splash-screen": "~0.27.6",
-    "expo-status-bar": "~1.12.1",
+    "expo-status-bar": "~2.0.0",
     "expo-system-ui": "~3.0.7",
     "expo-web-browser": "~13.0.3",
     "jotai": "^2.10.1",
