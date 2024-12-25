@@ -21,7 +21,7 @@ import {
   View,
 } from "react-native";
 
-const SignInScreen = async () => {
+const SignInScreen = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
