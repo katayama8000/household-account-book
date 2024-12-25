@@ -2,7 +2,7 @@ import { supabase } from "@/lib/supabase";
 import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Slot, Stack, useRouter } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
+import { preventAutoHideAsync, hideAsync } from "expo-splash-screen";
 import "react-native-reanimated";
 import { useUser } from "@/hooks/useUser";
 import { userAtom } from "@/state/user.state";
@@ -10,7 +10,7 @@ import Constants from "expo-constants";
 import { isDevice } from "expo-device";
 import {
   AndroidImportance,
-  type Subscription,
+  type EventSubscription,
   addNotificationResponseReceivedListener,
   getExpoPushTokenAsync,
   getPermissionsAsync,
@@ -24,7 +24,7 @@ import { useEffect, useRef } from "react";
 import { Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-SplashScreen.preventAutoHideAsync();
+preventAutoHideAsync();
 
 setNotificationHandler({
   handleNotification: async () => ({
@@ -88,7 +88,7 @@ export default function RootLayout() {
   const { push } = useRouter();
 
   useEffect(() => {
-    if (loaded) SplashScreen.hideAsync();
+    if (loaded) hideAsync();
   }, [loaded]);
 
   useEffect(() => {
@@ -113,8 +113,8 @@ export default function RootLayout() {
     })();
   }, [push]);
 
-  const notificationListener = useRef<Subscription>();
-  const responseListener = useRef<Subscription>();
+  const notificationListener = useRef<EventSubscription>();
+  const responseListener = useRef<EventSubscription>();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {

@@ -16,14 +16,19 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { userAtom } from "@/state/user.state";
+import { useAtom } from "jotai";
+import { useUser } from "@/hooks/useUser";
 
-const SignInScreen = () => {
+const SignInScreen = async () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const { setOptions } = useNavigation();
   const { push } = useRouter();
+  const [_, setUser] = useAtom(userAtom);
+  const { fetchUser } = useUser();
 
   useEffect(() => {
     setOptions({
@@ -33,9 +38,9 @@ const SignInScreen = () => {
 
   const signInWithEmail = async () => {
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
     });
 
     if (error) {
@@ -44,6 +49,18 @@ const SignInScreen = () => {
       ToastAndroid.show("ログインした", ToastAndroid.SHORT);
       push({ pathname: "/" });
     }
+
+    if (data?.user?.id) {
+      const user = await fetchUser(data?.user?.id);
+      if (user) {
+        setUser(user);
+      } else {
+        alert("ユーザーが見つかりませんでした");
+      }
+    }
+
+    // TODO: push_token を db に保存する
+
     setLoading(false);
   };
 
