@@ -4,6 +4,7 @@ import { useFonts } from "expo-font";
 import { Slot, Stack, useRouter } from "expo-router";
 import { hideAsync, preventAutoHideAsync } from "expo-splash-screen";
 import "react-native-reanimated";
+import { usePushNotification } from "@/hooks/usePushNotification";
 import { useUser } from "@/hooks/useUser";
 import { userAtom } from "@/state/user.state";
 import {
@@ -15,7 +16,6 @@ import {
 import { useAtom } from "jotai";
 import { useEffect, useRef } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { usePushNotification } from "@/hooks/usePushNotification";
 
 preventAutoHideAsync();
 
