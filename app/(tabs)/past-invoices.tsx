@@ -5,7 +5,7 @@ import { coupleIdAtom } from "@/state/couple.state";
 import type { InvoiceWithBalance } from "@/state/invoice.state";
 import { defaultFontSize, defaultFontWeight, defaultShadowColor } from "@/style/defaultStyle";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useFocusEffect, useRouter, type Href } from "expo-router";
+import { type Href, useFocusEffect, useRouter } from "expo-router";
 import { useAtom } from "jotai";
 import type React from "react";
 import { type FC, memo, useCallback, useEffect, useMemo, useState } from "react";

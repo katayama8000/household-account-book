@@ -1,8 +1,11 @@
 import { Colors } from "@/constants/Colors";
+import { useUser } from "@/hooks/useUser";
 import { supabase } from "@/lib/supabase";
+import { userAtom } from "@/state/user.state";
 import { defaultFontSize, defaultFontWeight } from "@/style/defaultStyle";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRouter } from "expo-router";
+import { useAtom } from "jotai";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -16,9 +19,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { userAtom } from "@/state/user.state";
-import { useAtom } from "jotai";
-import { useUser } from "@/hooks/useUser";
 
 const SignInScreen = async () => {
   const [email, setEmail] = useState<string>("");

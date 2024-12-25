@@ -2,7 +2,7 @@ import { supabase } from "@/lib/supabase";
 import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Slot, Stack, useRouter } from "expo-router";
-import { preventAutoHideAsync, hideAsync } from "expo-splash-screen";
+import { hideAsync, preventAutoHideAsync } from "expo-splash-screen";
 import "react-native-reanimated";
 import { useUser } from "@/hooks/useUser";
 import { userAtom } from "@/state/user.state";
