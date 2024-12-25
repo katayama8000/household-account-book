@@ -16,6 +16,7 @@ import {
 import { useAtom } from "jotai";
 import { useEffect, useRef } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import * as LocalAuthentication from "expo-local-authentication";
 
 preventAutoHideAsync();
 
@@ -102,6 +103,10 @@ export default function RootLayout() {
   }, []);
 
   if (!loaded) return <Slot />;
+
+  LocalAuthentication.authenticateAsync({
+    promptMessage: "認証してください",
+  });
 
   return (
     <ThemeProvider value={DefaultTheme}>
