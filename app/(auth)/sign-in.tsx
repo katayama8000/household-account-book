@@ -1,4 +1,5 @@
 import { Colors } from "@/constants/Colors";
+import { usePushNotification } from "@/hooks/usePushNotification";
 import { useUser } from "@/hooks/useUser";
 import { supabase } from "@/lib/supabase";
 import { userAtom } from "@/state/user.state";
@@ -28,7 +29,8 @@ const SignInScreen = async () => {
   const { setOptions } = useNavigation();
   const { push } = useRouter();
   const [_, setUser] = useAtom(userAtom);
-  const { fetchUser } = useUser();
+  const { fetchUser, updateExpoPushToken } = useUser();
+  const { registerForPushNotificationsAsync } = usePushNotification();
 
   useEffect(() => {
     setOptions({
@@ -37,31 +39,41 @@ const SignInScreen = async () => {
   }, [setOptions]);
 
   const signInWithEmail = async () => {
-    setLoading(true);
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      setLoading(true);
 
-    if (error) {
-      alert(error.message);
-    } else {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error || !data?.user) {
+        throw new Error(error?.message || "ユーザーが見つかりませんでした");
+      }
+
+      const user = await fetchUser(data.user.id);
+      if (!user) {
+        throw new Error("ユーザーが見つかりませんでした");
+      }
+
+      setUser(user);
+
+      const token = await registerForPushNotificationsAsync();
+      if (token) {
+        await updateExpoPushToken(user.user_id, token);
+      }
+
       ToastAndroid.show("ログインした", ToastAndroid.SHORT);
       push({ pathname: "/" });
-    }
-
-    if (data?.user?.id) {
-      const user = await fetchUser(data?.user?.id);
-      if (user) {
-        setUser(user);
+    } catch (err) {
+      if (err instanceof Error) {
+        alert(err.message);
       } else {
-        alert("ユーザーが見つかりませんでした");
+        alert("不明なエラーが発生しました");
       }
+    } finally {
+      setLoading(false);
     }
-
-    // TODO: push_token を db に保存する
-
-    setLoading(false);
   };
 
   return (
