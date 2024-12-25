@@ -5,8 +5,7 @@ import { coupleIdAtom } from "@/state/couple.state";
 import type { InvoiceWithBalance } from "@/state/invoice.state";
 import { defaultFontSize, defaultFontWeight, defaultShadowColor } from "@/style/defaultStyle";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useFocusEffect, useRouter } from "expo-router";
-import type { ExpoRouter } from "expo-router/types/expo-router";
+import { useFocusEffect, useRouter, type Href } from "expo-router";
 import { useAtom } from "jotai";
 import type React from "react";
 import { type FC, memo, useCallback, useEffect, useMemo, useState } from "react";
@@ -65,7 +64,7 @@ const PastInvoicesScreen: FC = () => {
 
 type MonthlyInvoiceProps = {
   invoiceWithBalance: InvoiceWithBalance;
-  routerPush: (href: ExpoRouter.Href) => void;
+  routerPush: (href: Href) => void;
 };
 
 const MonthlyInvoice: FC<MonthlyInvoiceProps> = memo(({ invoiceWithBalance, routerPush }) => {
