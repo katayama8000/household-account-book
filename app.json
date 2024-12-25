@@ -6,6 +6,7 @@
     "icon": "./assets/images/moufu.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
+    "version": "2.2.4",
     "splash": {
       "image": "./assets/images/moufu.png",
       "resizeMode": "contain",
@@ -20,14 +21,17 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.katayama9000.householdaccountbook",
-      "versionCode": 21
+      "versionCode": 23
     },
     "web": {
       "bundler": "metro",
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": ["expo-router", "expo-font"],
+    "plugins": [
+      "expo-router",
+      "expo-font"
+    ],
     "experiments": {
       "typedRoutes": true
     },
