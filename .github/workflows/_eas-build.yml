@@ -34,4 +34,4 @@ jobs:
         token: ${{ secrets.EXPO_TOKEN }}
 
     - name: 🏗 Build project
-      run: eas build --profile "${{ inputs.eas-profile }}" --platform "${{ inputs.platform }}" --non-interactive --no-wait
+      run: npx eas-cli build --profile "${{ inputs.eas-profile }}" --platform "${{ inputs.platform }}" --non-interactive --no-wait
