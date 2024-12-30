@@ -11,6 +11,7 @@ import { type FC, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Button,
   FlatList,
   Linking,
   StyleSheet,
@@ -25,6 +26,7 @@ import { usePayment } from "../../hooks/usePayment";
 import { version } from "../../package.json";
 import { coupleIdAtom } from "../../state/couple.state";
 import { activeInvoiceAtom } from "../../state/invoice.state";
+import { authenticateAsync, cancelAuthenticate, getEnrolledLevelAsync } from "expo-local-authentication";
 
 const HomeScreen: FC = () => {
   const { payments, isRefreshing, deletePayment, isLoading } = usePayment();
@@ -100,6 +102,33 @@ const HomeScreen: FC = () => {
           />
         )}
       </View>
+      <Button
+        title="認証"
+        onPress={() => {
+          const val = authenticateAsync({
+            promptMessage: "認証してください",
+            requireConfirmation: true,
+            fallbackLabel: "fallback",
+            cancelLabel: "cancel",
+            biometricsSecurityLevel: "strong",
+          });
+          console.log({ val });
+        }}
+      />
+      <Button
+        title="getEnrolledLevelAsync"
+        onPress={() => {
+          const val = getEnrolledLevelAsync();
+          console.log({ val });
+        }}
+      />
+      <Button
+        title="cancelAuthenticate"
+        onPress={() => {
+          const val = cancelAuthenticate();
+          console.log({ val });
+        }}
+      />
       {isLoading ? (
         <ActivityIndicator size="large" color={`${Colors.primary}`} />
       ) : (
