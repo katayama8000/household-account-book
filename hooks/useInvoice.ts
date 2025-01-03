@@ -140,7 +140,7 @@ export const useInvoice = () => {
     }
   }, []);
 
-  const addInvoice = async (couple_id: Invoice["couple_id"]) => {
+  const initInvoice = async (couple_id: Invoice["couple_id"]) => {
     if (!invoice) return;
     try {
       const { error } = await supabase.from(monthly_invoices_table).insert([
@@ -182,7 +182,7 @@ export const useInvoice = () => {
   return {
     invoices,
     isRefreshing,
-    addInvoice,
+    initInvoice,
     fetchActiveInvoiceByCoupleId,
     unActiveInvoicesAll,
     turnInvoicePaid,
