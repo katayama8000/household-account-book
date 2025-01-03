@@ -1,6 +1,6 @@
 import { payments_table } from "@/constants/Table";
 import { supabase } from "@/lib/supabase";
-import type { Payment } from "@/types/Row";
+import type { Couple, Payment } from "@/types/Row";
 import dayjs from "dayjs";
 import { useRouter } from "expo-router";
 import { useAtom } from "jotai";
@@ -10,6 +10,7 @@ import { coupleIdAtom } from "../state/couple.state";
 import { activeInvoiceAtom } from "../state/invoice.state";
 import { paymentsAtom } from "../state/payment.state";
 import { useInvoice } from "./useInvoice";
+import { RecurringPayments } from "@/constants/RecurringPayments";
 
 export const usePayment = () => {
   const [payments, setPayments] = useAtom(paymentsAtom);
@@ -175,20 +176,68 @@ export const usePayment = () => {
     }
   };
 
+  const setupRecurringPayments = useCallback(
+    async (coupleId: Couple["id"]) => {
+      const monthlyInvoiceId = await fetchMonthlyInvoiceIdByCoupleId(coupleId);
+      if (!monthlyInvoiceId) {
+        alert("monthly_invoice_id is not found");
+        return;
+      }
+
+      // user id should be a wife's id
+      const uid = (await supabase.auth.getSession())?.data.session?.user.id;
+      if (!uid) {
+        alert("uid is not found");
+        return;
+      }
+
+      const calculateDate = () =>
+        dayjs()
+          .add(1, "month")
+          .startOf("month")
+          .add(9, "hour") // UTC+9
+          .toISOString();
+
+      console.log("calculateDate", calculateDate());
+
+      const paymentsData = RecurringPayments.map((item) => ({
+        ...item,
+        monthly_invoice_id: monthlyInvoiceId,
+        owner_id: uid,
+        updated_at: calculateDate(),
+        created_at: calculateDate(),
+      }));
+
+      try {
+        const { error } = await supabase.from(payments_table).insert(paymentsData);
+
+        if (error) {
+          console.error("Error inserting payments:", error);
+          alert("An error occurred while adding payments. Please try again.");
+        }
+      } catch (error) {
+        console.error("Unexpected error:", error);
+        alert("An unexpected error occurred. Please try again.");
+      }
+    },
+    [fetchMonthlyInvoiceIdByCoupleId],
+  );
+
   return {
-    isRefreshing,
-    isLoading,
-    payments,
-    item,
-    amount,
-    memo,
-    setItem,
-    setAmount,
-    setMemo,
     addPayment,
-    fetchPaymentsAllByMonthlyInvoiceId,
-    updatePayment,
-    deletePayment,
+    amount,
     calculateInvoiceBalance,
+    deletePayment,
+    fetchPaymentsAllByMonthlyInvoiceId,
+    isLoading,
+    isRefreshing,
+    item,
+    memo,
+    payments,
+    setAmount,
+    setItem,
+    setMemo,
+    setupRecurringPayments,
+    updatePayment,
   };
 };
