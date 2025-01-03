@@ -198,8 +198,6 @@ export const usePayment = () => {
           .add(9, "hour") // UTC+9
           .toISOString();
 
-      console.log("calculateDate", calculateDate());
-
       const paymentsData = RecurringPayments.map((item) => ({
         ...item,
         monthly_invoice_id: monthlyInvoiceId,
