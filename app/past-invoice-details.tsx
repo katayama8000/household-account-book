@@ -5,13 +5,13 @@ import type { Payment } from "@/types/Row";
 import dayjs from "dayjs";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
 import { usePayment } from "../hooks/usePayment";
 
 export default function PastInvoiceDetailsScreen() {
   const [monthlyPayments, setMonthlyPayments] = useState<Payment[]>([]);
   const { id, date } = useLocalSearchParams();
-  const { fetchPaymentsAllByMonthlyInvoiceId } = usePayment();
+  const { fetchPaymentsAllByMonthlyInvoiceId, isRefreshing } = usePayment();
   const { setOptions } = useNavigation();
   const [userId, setUserId] = useState<string | null>(null);
   useEffect(() => {
@@ -54,6 +54,13 @@ export default function PastInvoiceDetailsScreen() {
       {item.memo && <Text style={styles.memoText}>{item.memo}</Text>}
     </View>
   );
+  if (isRefreshing) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator color={Colors.primary} />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
