@@ -191,19 +191,14 @@ export const usePayment = () => {
         return;
       }
 
-      const calculateDate = () =>
-        dayjs()
-          .add(1, "month")
-          .startOf("month")
-          .add(9, "hour") // UTC+9
-          .toISOString();
+      const startOfNextMonth = dayjs().add(1, "month").startOf("month").add(9, "hours");
 
-      const paymentsData = RecurringPayments.map((item) => ({
+      const paymentsData = RecurringPayments(startOfNextMonth).map((item) => ({
         ...item,
         monthly_invoice_id: monthlyInvoiceId,
         owner_id: uid,
-        updated_at: calculateDate(),
-        created_at: calculateDate(),
+        updated_at: startOfNextMonth.toISOString(),
+        created_at: startOfNextMonth.toISOString(),
       }));
 
       try {
