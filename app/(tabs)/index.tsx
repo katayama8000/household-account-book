@@ -28,9 +28,9 @@ import { activeInvoiceAtom } from "../../state/invoice.state";
 
 const HomeScreen: FC = () => {
   const { payments, isRefreshing, deletePayment, isLoading } = usePayment();
-  const { addInvoice, unActiveInvoicesAll, turnInvoicePaid, fetchActiveInvoiceByCoupleId } = useInvoice();
+  const { initInvoice, unActiveInvoicesAll, turnInvoicePaid, fetchActiveInvoiceByCoupleId } = useInvoice();
   const { fetchCoupleIdByUserId } = useCouple();
-  const { fetchPaymentsAllByMonthlyInvoiceId } = usePayment();
+  const { fetchPaymentsAllByMonthlyInvoiceId, setupRecurringPayments } = usePayment();
   const [coupleId, setCoupleId] = useAtom(coupleIdAtom);
   const [activeInvoce, setActiveInvoice] = useAtom(activeInvoiceAtom);
   const { push } = useRouter();
@@ -75,7 +75,8 @@ const HomeScreen: FC = () => {
         onPress: async () => {
           await unActiveInvoicesAll(coupleId);
           await turnInvoicePaid(coupleId);
-          await addInvoice(coupleId);
+          await initInvoice(coupleId);
+          await setupRecurringPayments(coupleId);
           const activeInvoice = await fetchActiveInvoiceByCoupleId(coupleId);
           setActiveInvoice(activeInvoice ?? null);
           Alert.alert("精算が完了しました", "今月もパートナーを大事にね！");
